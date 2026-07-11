@@ -334,6 +334,9 @@
     background: var(--expense-bg); color: var(--expense); font-size: 0.8rem;
     padding: 8px 10px; border-radius: 10px; margin-bottom: 12px;
   }
+  .login-links { display: flex; justify-content: space-between; margin-top: 14px; flex-wrap: wrap; gap: 8px; }
+  .login-links a { font-size: 0.78rem; color: var(--ink-soft); text-decoration: none; }
+  .login-links a:hover { color: var(--accent); text-decoration: underline; }
 
   /* ============ Mobile responsiveness ============ */
   @media (max-width: 640px) {
@@ -434,16 +437,21 @@
       <label data-i18n="yourName">Your name</label>
       <input type="text" id="loginNameInput" placeholder="e.g. Rahim">
     </div>
-    <div class="field" id="loginPinField" style="display:none;">
-      <label id="loginPinLabel" data-i18n="enterPin">PIN</label>
-      <input type="password" id="loginPinInput" inputmode="numeric" maxlength="4" placeholder="••••">
+    <div class="field">
+      <label data-i18n="emailLabel">Email</label>
+      <input type="email" id="loginEmailInput" placeholder="you@example.com" autocomplete="username">
+    </div>
+    <div class="field">
+      <label data-i18n="passwordLabel">Password</label>
+      <input type="password" id="loginPasswordInput" placeholder="••••••••" autocomplete="current-password">
     </div>
     <button class="btn accent" id="loginSubmitBtn" style="width:100%; justify-content:center;">
-      <span class="ic" data-icon="check"></span> <span id="loginSubmitLabel">Continue</span>
+      <span class="ic" data-icon="check"></span> <span id="loginSubmitLabel">Sign in</span>
     </button>
-    <button class="btn outline" id="loginResetBtn" style="width:100%; justify-content:center; margin-top:8px; display:none;">
-      <span class="ic" data-icon="trash"></span> <span data-i18n="forgotPinReset">Forgot PIN? Reset app</span>
-    </button>
+    <div class="login-links">
+      <a href="#" id="toggleModeLink">Need an account? Sign up</a>
+      <a href="#" id="forgotPassLink" data-i18n="forgotPassword">Forgot password?</a>
+    </div>
   </div>
 </div>
 
@@ -663,7 +671,7 @@
 
     <div class="section-title"><span class="ic" data-icon="database"></span> <span data-i18n="data">Data</span></div>
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <button class="btn outline" id="lockAppBtn"><span class="ic" data-icon="lock"></span> <span data-i18n="lockApp">Lock app</span></button>
+      <button class="btn outline" id="lockAppBtn"><span class="ic" data-icon="lock"></span> <span data-i18n="signOut">Sign out</span></button>
       <button class="btn outline" id="resetBtn"><span class="ic" data-icon="trash"></span> <span data-i18n="resetAllData">Reset all data</span></button>
     </div>
   </div>
@@ -673,9 +681,23 @@
 
 <div id="printArea" class="print-only"></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA807mD3fVLWIqZWN38qxwDvFPN_9kElCs",
+    authDomain: "dally-expansion.firebaseapp.com",
+    projectId: "dally-expansion",
+    storageBucket: "dally-expansion.firebasestorage.app",
+    messagingSenderId: "9263459950",
+    appId: "1:9263459950:web:a42d863d13e02c2561007f",
+    measurementId: "G-8DCGNPS4ZW"
+  };
+  firebase.initializeApp(firebaseConfig);
+</script>
 <script>
 (function(){
-  const STORAGE_KEY = 'ledger-app-state-v1';
   const fmt = (n) => (Math.round((n + Number.EPSILON) * 100) / 100).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
   const todayISO = () => new Date().toISOString().slice(0,10);
   const uid = () => Math.random().toString(36).slice(2,10);
@@ -727,16 +749,24 @@
       budgetFallbackName: 'Budget',
       receiptItem: 'Item', receiptCategory: 'Category', receiptAmount: 'Amount', receiptTotal: 'Total',
       receiptDate: 'Date', receiptAccount: 'Account', receiptGeneratedOn: 'Printed on',
-      welcomeTitle: 'Welcome!', welcomeSub: "Let's set up your ledger.",
-      welcomeBackSub: 'Enter your PIN to continue.', continueNoPin: 'Tap continue to open your ledger.',
+      welcomeTitle: 'Welcome back', welcomeSub: 'Sign in to your ledger.',
+      createAccountTitle: 'Create your ledger', createAccountSub: 'Set up an account to get started.',
       yourName: 'Your name', namePlaceholder: 'e.g. Rahim',
-      setPin: 'Set a 4-digit PIN (optional)', enterPin: 'PIN',
-      getStarted: 'Get started', continueBtn: 'Continue', unlock: 'Unlock',
-      lockApp: 'Lock app', forgotPinReset: 'Forgot PIN? Reset app',
-      enterYourName: 'Please enter your name.', pinMustBe4: 'PIN must be exactly 4 digits.',
-      incorrectPin: 'Incorrect PIN. Try again.',
-      confirmFullReset: 'This clears all your accounts, categories, transactions, budgets, profile and PIN. Continue?',
-      welcomeBackName: 'Welcome back, {name}'
+      emailLabel: 'Email', passwordLabel: 'Password',
+      signIn: 'Sign in', signUp: 'Sign up', signOut: 'Sign out',
+      needAccount: 'Need an account? Sign up', haveAccount: 'Already have an account? Sign in',
+      forgotPassword: 'Forgot password?',
+      fillAllFields: 'Please fill in email and password.',
+      enterEmailFirst: 'Enter your email above first.',
+      resetEmailSent: 'Password reset email sent. Check your inbox.',
+      authInvalidEmail: 'That email address looks invalid.',
+      authWeakPassword: 'Password should be at least 6 characters.',
+      authWrongPassword: 'Incorrect email or password.',
+      authUserNotFound: 'No account found with that email.',
+      authEmailInUse: 'An account already exists with that email.',
+      authTooManyRequests: 'Too many attempts. Please wait a moment and try again.',
+      authNetworkError: 'Network error. Check your connection and try again.',
+      authUnknownError: 'Something went wrong. Please try again.'
     },
     bn: {
       tagline: 'প্রতিদিনের আয়-ব্যয়ের হিসাব রাখুন',
@@ -784,16 +814,24 @@
       budgetFallbackName: 'বাজেট',
       receiptItem: 'বিবরণ', receiptCategory: 'ক্যাটাগরি', receiptAmount: 'পরিমাণ', receiptTotal: 'মোট',
       receiptDate: 'তারিখ', receiptAccount: 'অ্যাকাউন্ট', receiptGeneratedOn: 'প্রিন্ট করা হয়েছে',
-      welcomeTitle: 'স্বাগতম!', welcomeSub: 'আপনার লেজার সেট করে নিন।',
-      welcomeBackSub: 'চালিয়ে যেতে আপনার পিন দিন।', continueNoPin: 'লেজার খুলতে Continue চাপুন।',
+      welcomeTitle: 'আবার স্বাগতম', welcomeSub: 'আপনার লেজারে সাইন ইন করুন।',
+      createAccountTitle: 'আপনার লেজার তৈরি করুন', createAccountSub: 'শুরু করতে একটা অ্যাকাউন্ট বানান।',
       yourName: 'আপনার নাম', namePlaceholder: 'যেমন: রহিম',
-      setPin: '৪-সংখ্যার পিন সেট করুন (ঐচ্ছিক)', enterPin: 'পিন',
-      getStarted: 'শুরু করুন', continueBtn: 'চালিয়ে যান', unlock: 'আনলক করুন',
-      lockApp: 'অ্যাপ লক করুন', forgotPinReset: 'পিন ভুলে গেছেন? অ্যাপ রিসেট করুন',
-      enterYourName: 'দয়া করে আপনার নাম লিখুন।', pinMustBe4: 'পিন অবশ্যই ৪ সংখ্যার হতে হবে।',
-      incorrectPin: 'ভুল পিন। আবার চেষ্টা করুন।',
-      confirmFullReset: 'এতে আপনার সব অ্যাকাউন্ট, ক্যাটাগরি, লেনদেন, বাজেট, প্রোফাইল এবং পিন মুছে যাবে। এগিয়ে যাবেন?',
-      welcomeBackName: 'স্বাগতম, {name}'
+      emailLabel: 'ইমেইল', passwordLabel: 'পাসওয়ার্ড',
+      signIn: 'সাইন ইন', signUp: 'সাইন আপ', signOut: 'সাইন আউট',
+      needAccount: 'অ্যাকাউন্ট নেই? সাইন আপ করুন', haveAccount: 'আগে থেকে অ্যাকাউন্ট আছে? সাইন ইন করুন',
+      forgotPassword: 'পাসওয়ার্ড ভুলে গেছেন?',
+      fillAllFields: 'দয়া করে ইমেইল ও পাসওয়ার্ড দিন।',
+      enterEmailFirst: 'আগে উপরে আপনার ইমেইল লিখুন।',
+      resetEmailSent: 'পাসওয়ার্ড রিসেট ইমেইল পাঠানো হয়েছে। ইনবক্স চেক করুন।',
+      authInvalidEmail: 'ইমেইল ঠিকানাটা সঠিক মনে হচ্ছে না।',
+      authWeakPassword: 'পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে।',
+      authWrongPassword: 'ইমেইল বা পাসওয়ার্ড ভুল।',
+      authUserNotFound: 'এই ইমেইলে কোনো অ্যাকাউন্ট পাওয়া যায়নি।',
+      authEmailInUse: 'এই ইমেইলে আগে থেকেই একটা অ্যাকাউন্ট আছে।',
+      authTooManyRequests: 'অনেকবার চেষ্টা হয়েছে। একটু পর আবার চেষ্টা করুন।',
+      authNetworkError: 'নেটওয়ার্ক সমস্যা। কানেকশন চেক করে আবার চেষ্টা করুন।',
+      authUnknownError: 'কিছু একটা ভুল হয়েছে। আবার চেষ্টা করুন।'
     }
   };
 
@@ -822,49 +860,55 @@
   }
 
 
-  let state = {
-    accounts: [
-      { id: uid(), name: 'Cash', balance: 0, icon: 'fa-money-bill-wave' },
-      { id: uid(), name: 'Bank', balance: 0, icon: 'fa-building-columns' }
-    ],
-    categories: [
-      { id: uid(), name: 'Groceries', icon: 'fa-cart-shopping' },
-      { id: uid(), name: 'Transport', icon: 'fa-car' },
-      { id: uid(), name: 'Rent', icon: 'fa-house' },
-      { id: uid(), name: 'Salary', icon: 'fa-briefcase' },
-      { id: uid(), name: 'Food', icon: 'fa-utensils' },
-      { id: uid(), name: 'Other', icon: 'fa-ellipsis' }
-    ],
-    transactions: [],
-    budgets: [],
-    theme: 'light',
-    language: 'en',
-    profile: { name: '', photo: '' },
-    auth: { pinSet: false, pin: '' },
-    reportMonth: new Date().getMonth(),
-    reportYear: new Date().getFullYear()
-  };
+  function defaultState() {
+    return {
+      accounts: [
+        { id: uid(), name: 'Cash', balance: 0, icon: 'fa-money-bill-wave' },
+        { id: uid(), name: 'Bank', balance: 0, icon: 'fa-building-columns' }
+      ],
+      categories: [
+        { id: uid(), name: 'Groceries', icon: 'fa-cart-shopping' },
+        { id: uid(), name: 'Transport', icon: 'fa-car' },
+        { id: uid(), name: 'Rent', icon: 'fa-house' },
+        { id: uid(), name: 'Salary', icon: 'fa-briefcase' },
+        { id: uid(), name: 'Food', icon: 'fa-utensils' },
+        { id: uid(), name: 'Other', icon: 'fa-ellipsis' }
+      ],
+      transactions: [],
+      budgets: [],
+      theme: 'light',
+      language: 'en',
+      profile: { name: '', photo: '' },
+      reportMonth: new Date().getMonth(),
+      reportYear: new Date().getFullYear()
+    };
+  }
 
+  let state = defaultState();
   let loaded = false;
+  let currentUser = null;
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-  async function loadState() {
+  async function loadStateFromFirestore(uid) {
     try {
-      const res = await window.storage.get(STORAGE_KEY, false);
-      if (res && res.value) {
-        const parsed = JSON.parse(res.value);
-        state = Object.assign(state, parsed);
+      const doc = await db.collection('users').doc(uid).get();
+      if (doc.exists) {
+        state = Object.assign(defaultState(), doc.data());
+      } else {
+        state = defaultState();
+        await db.collection('users').doc(uid).set(state);
       }
     } catch (e) {
-      console.log('No saved state yet, using defaults.');
+      console.error('Firestore load failed', e);
+      state = defaultState();
     }
-    loaded = true;
-    render();
-    showLoginScreen();
   }
 
   async function saveState() {
+    if (!currentUser) return;
     try {
-      await window.storage.set(STORAGE_KEY, JSON.stringify(state), false);
+      await db.collection('users').doc(currentUser.uid).set(state);
     } catch (e) {
       console.error('Save failed', e);
     }
@@ -1463,71 +1507,108 @@
 
   document.getElementById('resetBtn').addEventListener('click', ()=>{
     if (!confirm(tr('confirmReset'))) return;
-    state = {
-      accounts: [{ id: uid(), name: 'Cash', balance: 0, icon: 'fa-money-bill-wave' }],
-      categories: [{ id: uid(), name: 'Other', icon: 'fa-ellipsis' }],
-      transactions: [], budgets: [],
-      theme: state.theme, language: state.language,
-      profile: { name: '', photo: '' },
-      auth: { pinSet: false, pin: '' },
-      reportMonth: new Date().getMonth(), reportYear: new Date().getFullYear()
-    };
-    saveState();
-    showLoginScreen();
-    render();
+    const kept = { theme: state.theme, language: state.language };
+    state = Object.assign(defaultState(), kept);
+    saveState(); render();
   });
 
-  // ---------- Login / Lock screen ----------
+  // ---------- Login screen (Firebase Authentication) ----------
   const loginScreen = document.getElementById('loginScreen');
   const loginTitle = document.getElementById('loginTitle');
   const loginSub = document.getElementById('loginSub');
   const loginError = document.getElementById('loginError');
   const loginNameField = document.getElementById('loginNameField');
-  const loginPinField = document.getElementById('loginPinField');
   const loginNameInput = document.getElementById('loginNameInput');
-  const loginPinInput = document.getElementById('loginPinInput');
-  const loginPinLabel = document.getElementById('loginPinLabel');
+  const loginEmailInput = document.getElementById('loginEmailInput');
+  const loginPasswordInput = document.getElementById('loginPasswordInput');
   const loginSubmitBtn = document.getElementById('loginSubmitBtn');
   const loginSubmitLabel = document.getElementById('loginSubmitLabel');
-  const loginResetBtn = document.getElementById('loginResetBtn');
+  const toggleModeLink = document.getElementById('toggleModeLink');
+  const forgotPassLink = document.getElementById('forgotPassLink');
+
+  let authMode = 'signin'; // or 'signup'
 
   function showLoginError(msg) { loginError.textContent = msg; loginError.style.display = 'block'; }
   function clearLoginError() { loginError.style.display = 'none'; }
 
-  function renderLoginScreen() {
-    clearLoginError();
-    loginNameInput.value = '';
-    loginPinInput.value = '';
-    const isFirstTime = !state.profile || !state.profile.name;
-    if (isFirstTime) {
+  function updateLoginModeUI() {
+    if (authMode === 'signup') {
+      loginTitle.textContent = tr('createAccountTitle');
+      loginSub.textContent = tr('createAccountSub');
+      loginNameField.style.display = '';
+      loginSubmitLabel.textContent = tr('signUp');
+      toggleModeLink.textContent = tr('haveAccount');
+    } else {
       loginTitle.textContent = tr('welcomeTitle');
       loginSub.textContent = tr('welcomeSub');
-      loginNameField.style.display = '';
-      loginNameInput.placeholder = tr('namePlaceholder');
-      loginPinField.style.display = '';
-      loginPinLabel.textContent = tr('setPin');
-      loginSubmitLabel.textContent = tr('getStarted');
-      loginResetBtn.style.display = 'none';
-    } else {
-      loginTitle.textContent = tr('welcomeBackName', { name: state.profile.name });
       loginNameField.style.display = 'none';
-      if (state.auth && state.auth.pinSet) {
-        loginSub.textContent = tr('welcomeBackSub');
-        loginPinField.style.display = '';
-        loginPinLabel.textContent = tr('enterPin');
-        loginSubmitLabel.textContent = tr('unlock');
-        loginResetBtn.style.display = '';
-      } else {
-        loginSub.textContent = tr('continueNoPin');
-        loginPinField.style.display = 'none';
-        loginSubmitLabel.textContent = tr('continueBtn');
-        loginResetBtn.style.display = 'none';
-      }
+      loginSubmitLabel.textContent = tr('signIn');
+      toggleModeLink.textContent = tr('needAccount');
     }
   }
 
+  function mapAuthError(err) {
+    switch (err.code) {
+      case 'auth/invalid-email': return tr('authInvalidEmail');
+      case 'auth/weak-password': return tr('authWeakPassword');
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential':
+      case 'auth/invalid-login-credentials': return tr('authWrongPassword');
+      case 'auth/user-not-found': return tr('authUserNotFound');
+      case 'auth/email-already-in-use': return tr('authEmailInUse');
+      case 'auth/too-many-requests': return tr('authTooManyRequests');
+      case 'auth/network-request-failed': return tr('authNetworkError');
+      default: return tr('authUnknownError');
+    }
+  }
+
+  toggleModeLink.addEventListener('click', (ev) => {
+    ev.preventDefault();
+    authMode = authMode === 'signin' ? 'signup' : 'signin';
+    clearLoginError();
+    updateLoginModeUI();
+  });
+
+  forgotPassLink.addEventListener('click', (ev) => {
+    ev.preventDefault();
+    clearLoginError();
+    const email = loginEmailInput.value.trim();
+    if (!email) { showLoginError(tr('enterEmailFirst')); return; }
+    auth.sendPasswordResetEmail(email)
+      .then(() => alert(tr('resetEmailSent')))
+      .catch(err => showLoginError(mapAuthError(err)));
+  });
+
+  loginSubmitBtn.addEventListener('click', () => {
+    clearLoginError();
+    const email = loginEmailInput.value.trim();
+    const password = loginPasswordInput.value;
+    if (!email || !password) { showLoginError(tr('fillAllFields')); return; }
+    loginSubmitBtn.disabled = true;
+    if (authMode === 'signup') {
+      const name = loginNameInput.value.trim();
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(async (cred) => {
+          if (name) { try { await cred.user.updateProfile({ displayName: name }); } catch(e) {} }
+        })
+        .catch(err => { showLoginError(mapAuthError(err)); loginSubmitBtn.disabled = false; });
+    } else {
+      auth.signInWithEmailAndPassword(email, password)
+        .catch(err => { showLoginError(mapAuthError(err)); loginSubmitBtn.disabled = false; });
+    }
+  });
+
+  [loginEmailInput, loginPasswordInput, loginNameInput].forEach(inp => {
+    inp.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') loginSubmitBtn.click(); });
+  });
+
   function showLoginScreen() {
-    renderLoginScreen();
+    clearLoginError();
+    loginEmailInput.value = '';
+    loginPasswordInput.value = '';
+    loginNameInput.value = '';
+    loginSubmitBtn.disabled = false;
+    updateLoginModeUI();
     loginScreen.classList.remove('hidden');
     document.querySelector('.app').classList.remove('show');
   }
@@ -1538,51 +1619,27 @@
     render();
   }
 
-  loginSubmitBtn.addEventListener('click', () => {
-    clearLoginError();
-    const isFirstTime = !state.profile || !state.profile.name;
-    if (isFirstTime) {
-      const name = loginNameInput.value.trim();
-      if (!name) { showLoginError(tr('enterYourName')); return; }
-      const pin = loginPinInput.value.trim();
-      if (pin && !/^\d{4}$/.test(pin)) { showLoginError(tr('pinMustBe4')); return; }
-      state.profile = state.profile || {};
-      state.profile.name = name;
-      state.auth = pin ? { pinSet: true, pin } : { pinSet: false, pin: '' };
-      saveState();
+  document.getElementById('lockAppBtn').addEventListener('click', () => {
+    auth.signOut();
+  });
+
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      currentUser = user;
+      await loadStateFromFirestore(user.uid);
+      if ((!state.profile || !state.profile.name) && user.displayName) {
+        state.profile = state.profile || {};
+        state.profile.name = user.displayName;
+      }
+      loaded = true;
+      loginSubmitBtn.disabled = false;
       unlockApp();
     } else {
-      if (state.auth && state.auth.pinSet) {
-        const pin = loginPinInput.value.trim();
-        if (pin !== state.auth.pin) { showLoginError(tr('incorrectPin')); return; }
-      }
-      unlockApp();
+      currentUser = null;
+      loaded = false;
+      showLoginScreen();
     }
   });
-
-  loginPinInput.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') loginSubmitBtn.click(); });
-  loginNameInput.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') loginSubmitBtn.click(); });
-
-  loginResetBtn.addEventListener('click', () => {
-    if (!confirm(tr('confirmFullReset'))) return;
-    state = {
-      accounts: [{ id: uid(), name: 'Cash', balance: 0, icon: 'fa-money-bill-wave' }],
-      categories: [{ id: uid(), name: 'Other', icon: 'fa-ellipsis' }],
-      transactions: [], budgets: [],
-      theme: state.theme, language: state.language,
-      profile: { name: '', photo: '' },
-      auth: { pinSet: false, pin: '' },
-      reportMonth: new Date().getMonth(), reportYear: new Date().getFullYear()
-    };
-    saveState();
-    renderLoginScreen();
-  });
-
-  document.getElementById('lockAppBtn').addEventListener('click', () => {
-    showLoginScreen();
-  });
-
-  loadState();
 })();
 </script>
 </body>
