@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Garments ERP — Executive Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
   :root{
     --bg:#ffffff;
@@ -225,6 +228,18 @@
 </style>
 </head>
 <body>
+
+<!-- ===================== LOGIN GATE ===================== -->
+<div id="login-overlay" style="position:fixed;inset:0;background:#fff;z-index:9998;display:flex;align-items:center;justify-content:center;">
+  <div style="width:100%;max-width:320px;padding:28px;">
+    <div style="font-family:var(--font-display);font-size:22px;font-weight:700;margin-bottom:4px;">গার্মেন্টস ERP</div>
+    <div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:22px;">চালিয়ে যেতে লগইন করুন</div>
+    <div class="form-field" style="margin-bottom:12px;"><label>Email</label><input type="text" id="login-email" placeholder="you@example.com" autocomplete="username"></div>
+    <div class="form-field" style="margin-bottom:16px;"><label>Password</label><input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"></div>
+    <div id="login-error" style="color:#a4342a;font-size:12px;margin-bottom:12px;display:none;"></div>
+    <button class="btn-primary" id="login-btn" style="width:100%;">সাইন ইন করুন</button>
+  </div>
+</div>
 
 <!-- ===================== SIDEBAR ===================== -->
 <div class="sidebar-wrap" id="sidebar-wrap">
@@ -2954,25 +2969,26 @@
   <div class="view" id="view-master-company">
     <div class="view-head"><h1>Company Master</h1><div class="meta">কোম্পানি প্রোফাইল, রেজিস্ট্রেশন, ব্যাংকিং ও ডকুমেন্ট — সব একই পেজে</div></div>
 
-    <div class="section-divider">Company Profile</div>
+    <div class="section-divider">Company Profile <span class="tag" id="company-profile-sync-tag">Firebase</span></div>
     <div class="panel">
-      <div class="form-grid">
-        <div class="form-field"><label>Company Code</label><input type="text" value="CM-0001"></div>
-        <div class="form-field"><label>Legal Name</label><input type="text" value="গার্মেন্টস ERP লিমিটেড"></div>
-        <div class="form-field"><label>Display / Short Name</label><input type="text" value="GEL"></div>
-        <div class="form-field"><label>Website</label><input type="text" value="www.garmentserp.com"></div>
-        <div class="form-field"><label>Primary Email</label><input type="text" value="info@garmentserp.com"></div>
-        <div class="form-field"><label>Support Email</label><input type="text" value="support@garmentserp.com"></div>
-        <div class="form-field"><label>Phone</label><input type="text" value="+৮৮০ ২ ৯৮৮৭৭৬৬"></div>
-        <div class="form-field"><label>Mobile</label><input type="text" value="+৮৮০ ১৭xx-xxxxxx"></div>
-        <div class="form-field"><label>Fax</label><input type="text" placeholder="+৮৮০ ২ ৯৮৮৭৭৬৭"></div>
-        <div class="form-field full"><label>Registered Address</label><input type="text" value="প্লট #১২, সেক্টর ৭, গাজীপুর, ঢাকা"></div>
-        <div class="form-field"><label>City</label><input type="text" value="ঢাকা"></div>
-        <div class="form-field"><label>Postal Code</label><input type="text" value="1700"></div>
-        <div class="form-field full"><label>Head Office Address</label><input type="text" value="লেভেল ৮, গুলশান এভিনিউ, ঢাকা"></div>
-        <div class="form-field full"><label>Corporate Office Address</label><input type="text" value="বনানী, ঢাকা (৫ম তলা)"></div>
+      <div class="form-grid" id="company-profile-fields">
+        <div class="form-field"><label>Company Code</label><input type="text" value="CM-0001" data-field="companyCode"></div>
+        <div class="form-field"><label>Legal Name</label><input type="text" value="গার্মেন্টস ERP লিমিটেড" data-field="legalName"></div>
+        <div class="form-field"><label>Display / Short Name</label><input type="text" value="GEL" data-field="shortName"></div>
+        <div class="form-field"><label>Website</label><input type="text" value="www.garmentserp.com" data-field="website"></div>
+        <div class="form-field"><label>Primary Email</label><input type="text" value="info@garmentserp.com" data-field="primaryEmail"></div>
+        <div class="form-field"><label>Support Email</label><input type="text" value="support@garmentserp.com" data-field="supportEmail"></div>
+        <div class="form-field"><label>Phone</label><input type="text" value="+৮৮০ ২ ৯৮৮৭৭৬৬" data-field="phone"></div>
+        <div class="form-field"><label>Mobile</label><input type="text" value="+৮৮০ ১৭xx-xxxxxx" data-field="mobile"></div>
+        <div class="form-field"><label>Fax</label><input type="text" placeholder="+৮৮০ ২ ৯৮৮৭৭৬৭" data-field="fax"></div>
+        <div class="form-field full"><label>Registered Address</label><input type="text" value="প্লট #১২, সেক্টর ৭, গাজীপুর, ঢাকা" data-field="registeredAddress"></div>
+        <div class="form-field"><label>City</label><input type="text" value="ঢাকা" data-field="city"></div>
+        <div class="form-field"><label>Postal Code</label><input type="text" value="1700" data-field="postalCode"></div>
+        <div class="form-field full"><label>Head Office Address</label><input type="text" value="লেভেল ৮, গুলশান এভিনিউ, ঢাকা" data-field="headOfficeAddress"></div>
+        <div class="form-field full"><label>Corporate Office Address</label><input type="text" value="বনানী, ঢাকা (৫ম তলা)" data-field="corporateOfficeAddress"></div>
       </div>
-      <div class="form-actions"><button class="btn-primary">সংরক্ষণ করুন</button></div>
+      <div class="form-actions"><button class="btn-primary" id="btn-save-company-profile" data-fb-wired="true">সংরক্ষণ করুন</button></div>
+      <div class="placeholder-note" id="company-profile-status">লোড হচ্ছে...</div>
     </div>
     <div class="list-row"><div class="list-row-main">লোগো — company-logo.png (৪৮×৪৮ px)</div><span class="pill ok">Active</span></div>
     <div class="form-actions"><button class="btn-secondary">লোগো পরিবর্তন করুন</button></div>
@@ -14654,6 +14670,147 @@
 </div>
 
 <script>
+// =====================================================================
+// FIREBASE — real backend (pilot: Auth gate + Company Master CRUD)
+// =====================================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyA807mD3fVLWIqZWN38qxwDvFPN_9kElCs",
+  authDomain: "dally-expansion.firebaseapp.com",
+  projectId: "dally-expansion",
+  storageBucket: "dally-expansion.firebasestorage.app",
+  messagingSenderId: "9263459950",
+  appId: "1:9263459950:web:a42d863d13e02c2561007f",
+  measurementId: "G-8DCGNPS4ZW"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ---- Tiny standalone toast (independent of the demo-mode toast defined later) ----
+const fbToastBox = document.createElement('div');
+fbToastBox.id = 'fb-toast';
+fbToastBox.style.cssText = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);'
+  +'background:#141414;color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;'
+  +'box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999;opacity:0;transition:opacity .25s,transform .25s;'
+  +'pointer-events:none;max-width:80vw;text-align:center;';
+document.body.appendChild(fbToastBox);
+let fbToastTimer = null;
+function fbToast(msg, isWarn){
+  fbToastBox.textContent = msg;
+  fbToastBox.style.background = isWarn ? '#a4342a' : '#141414';
+  fbToastBox.style.opacity = '1';
+  fbToastBox.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(fbToastTimer);
+  fbToastTimer = setTimeout(()=>{
+    fbToastBox.style.opacity = '0';
+    fbToastBox.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 2400);
+}
+
+// ---- Login gate ----
+const loginOverlay = document.getElementById('login-overlay');
+const loginEmail = document.getElementById('login-email');
+const loginPassword = document.getElementById('login-password');
+const loginError = document.getElementById('login-error');
+const loginBtn = document.getElementById('login-btn');
+
+function attemptLogin(){
+  const email = loginEmail.value.trim();
+  const pass = loginPassword.value;
+  loginError.style.display = 'none';
+  if(!email || !pass){
+    loginError.textContent = 'ইমেইল ও পাসওয়ার্ড দিন';
+    loginError.style.display = 'block';
+    return;
+  }
+  loginBtn.disabled = true;
+  loginBtn.textContent = 'সাইন ইন হচ্ছে...';
+  auth.signInWithEmailAndPassword(email, pass)
+    .catch(()=>{
+      loginError.textContent = 'লগইন ব্যর্থ — ইমেইল বা পাসওয়ার্ড ভুল';
+      loginError.style.display = 'block';
+    })
+    .finally(()=>{
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'সাইন ইন করুন';
+    });
+}
+loginBtn.addEventListener('click', attemptLogin);
+loginPassword.addEventListener('keydown', e=>{ if(e.key === 'Enter') attemptLogin(); });
+loginEmail.addEventListener('keydown', e=>{ if(e.key === 'Enter') loginPassword.focus(); });
+
+auth.onAuthStateChanged(function(user){
+  if(user){
+    loginOverlay.style.display = 'none';
+    const av = document.querySelector('.avatar');
+    if(av) av.title = 'লগআউট করতে ট্যাপ করুন — ' + user.email;
+  } else {
+    loginOverlay.style.display = 'flex';
+  }
+});
+
+document.addEventListener('DOMContentLoaded', function(){
+  const av = document.querySelector('.avatar');
+  if(av){
+    av.style.cursor = 'pointer';
+    av.addEventListener('click', function(){
+      if(confirm('লগআউট করতে চান?')) auth.signOut();
+    });
+  }
+});
+
+// ---- Company Master: real Firestore CRUD (pilot module) ----
+function getCompanyProfileInputs(){
+  return document.querySelectorAll('#company-profile-fields [data-field]');
+}
+
+function loadCompanyProfile(){
+  const statusEl = document.getElementById('company-profile-status');
+  if(statusEl) statusEl.textContent = 'Firebase থেকে লোড হচ্ছে...';
+  db.collection('companies').doc('main').get().then(function(doc){
+    if(doc.exists){
+      const data = doc.data();
+      getCompanyProfileInputs().forEach(function(input){
+        const key = input.dataset.field;
+        if(data[key] !== undefined) input.value = data[key];
+      });
+      if(statusEl) statusEl.textContent = '✓ Firebase থেকে লোড হয়েছে (companies/main)';
+    } else {
+      if(statusEl) statusEl.textContent = 'এখনো কোনো ডেটা সেভ হয়নি — নিচের তথ্য দেখে "সংরক্ষণ করুন" চাপুন, প্রথমবার এটাই Firebase-এ তৈরি হবে।';
+    }
+  }).catch(function(err){
+    if(statusEl) statusEl.textContent = '⚠ লোড ব্যর্থ: ' + err.message;
+  });
+}
+
+function saveCompanyProfile(btn){
+  const data = {};
+  getCompanyProfileInputs().forEach(function(input){ data[input.dataset.field] = input.value.trim(); });
+  data.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+  const originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'সংরক্ষণ হচ্ছে...';
+  db.collection('companies').doc('main').set(data, { merge: true })
+    .then(function(){
+      fbToast('✓ Firebase-এ সংরক্ষণ সম্পন্ন হয়েছে');
+      const statusEl = document.getElementById('company-profile-status');
+      if(statusEl) statusEl.textContent = '✓ সর্বশেষ সংরক্ষণ সফল হয়েছে (companies/main)';
+    })
+    .catch(function(err){
+      fbToast('⚠ সংরক্ষণ ব্যর্থ: ' + err.message, true);
+    })
+    .finally(function(){
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    });
+}
+
+document.getElementById('btn-save-company-profile').addEventListener('click', function(e){
+  e.stopPropagation();
+  saveCompanyProfile(this);
+});
+
+// =====================================================================
 document.getElementById('today-chip').textContent = new Date().toLocaleDateString('bn-BD', { day:'numeric', month:'long', year:'numeric' });
 
 // ---- Accordion menu (level 1 & level 2 groups) ----
@@ -15383,6 +15540,7 @@ function navigateToView(viewKey){
   document.querySelector('.topbar-path').textContent = 'Core Platform / ' + paths[viewKey];
   document.querySelector('.avatar').textContent = viewKey.replace(/[^a-z]/gi,'').slice(0,3).toUpperCase();
   requestAnimationFrame(()=>{ if(typeof resizeAllCharts==='function') resizeAllCharts(); });
+  if(viewKey === 'master-company' && typeof loadCompanyProfile === 'function') loadCompanyProfile();
 }
 
 // ---- Group/Subgroup heads that also carry a data-view (e.g. "General Ledger (GL)") ----
@@ -15656,6 +15814,7 @@ if('ResizeObserver' in window){
   });
 
   document.querySelectorAll('.view button').forEach(function(btn){
+    if(btn.hasAttribute('data-fb-wired')) return; // handled by real Firebase logic, not the demo engine
     const label = btn.textContent.trim();
     const panel = btn.closest('.panel');
     const table = panel ? panel.querySelector('table') : null;
