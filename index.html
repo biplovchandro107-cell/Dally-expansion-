@@ -218,6 +218,32 @@
   .link-action:hover{ color:var(--ink); }
   .link-action.danger{ color:#8a2b2b; }
 
+  /* ===== Generic add/edit modal (replaces sequential window.prompt) ===== */
+  .gen-modal-backdrop{
+    position:fixed; inset:0; background:rgba(20,20,20,.45); z-index:9997;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    opacity:0; pointer-events:none; transition:opacity .18s ease;
+  }
+  .gen-modal-backdrop.show{ opacity:1; pointer-events:auto; }
+  .gen-modal{
+    background:#fff; width:100%; max-width:560px; max-height:86vh; border-radius:14px;
+    box-shadow:0 20px 60px rgba(0,0,0,.28); display:flex; flex-direction:column; overflow:hidden;
+    transform:translateY(10px); transition:transform .18s ease;
+  }
+  .gen-modal-backdrop.show .gen-modal{ transform:translateY(0); }
+  .gen-modal-head{ display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid var(--g2); flex-shrink:0;}
+  .gen-modal-title{ font-family:var(--font-display); font-size:17px; font-weight:700;}
+  .gen-modal-sub{ font-size:11.5px; color:var(--g4); margin-top:2px;}
+  .gen-modal-close{
+    width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color:var(--g4); font-size:14px; flex-shrink:0; border:1px solid transparent;
+  }
+  .gen-modal-close:hover{ background:var(--g1); color:var(--ink);}
+  .gen-modal-body{ padding:20px 22px; overflow-y:auto;}
+  .gen-modal-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px 18px;}
+  @media(max-width:520px){ .gen-modal-grid{ grid-template-columns:1fr; } }
+  .gen-modal-actions{ padding:16px 22px; border-top:1px solid var(--g2); display:flex; gap:10px; flex-shrink:0;}
+
   .toggle-switch{ width:36px; height:20px; border-radius:20px; background:var(--g2); position:relative; flex-shrink:0; cursor:pointer;}
   .toggle-switch::after{ content:''; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:#fff; transition:.15s; }
   .toggle-switch.on{ background:var(--ink); }
@@ -15284,20 +15310,21 @@ function wireSubcollectionTable(opts){
     }
   });
 
-  document.getElementById(opts.addBtnId).addEventListener('click', function(e){
+  const addBtnEl2 = document.getElementById(opts.addBtnId);
+  addBtnEl2.addEventListener('click', function(e){
     e.stopPropagation();
     if(opts.onAdd){ opts.onAdd(colRef, render); return; }
-    const data = {};
-    for(const f of opts.fields){
-      const val = window.prompt(f.label + ' লিখুন:', '');
-      if(val === null){ fbToast('বাতিল করা হয়েছে'); return; }
-      data[f.key] = val.trim();
-    }
-    data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-    colRef.add(data).then(function(){
-      fbToast('✓ নতুন এন্ট্রি Firebase-এ যোগ হয়েছে');
-      render();
-    }).catch(function(err){ fbToast('⚠ যোগ করতে ব্যর্থ: ' + err.message, true); });
+    openFbAddModal({
+      title: addBtnEl2.textContent.trim(),
+      fields: opts.fields,
+      onSave: function(data){
+        data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        return colRef.add(data).then(function(){
+          fbToast('✓ নতুন এন্ট্রি Firebase-এ সংরক্ষণ হয়েছে');
+          render();
+        });
+      }
+    });
   });
 
   render.colRef = colRef;
@@ -15411,6 +15438,78 @@ loadCP();
 loadCPExtras();
 
 // =====================================================================
+// ---- Shared "add entry" modal for Firestore-backed tables (single form, real save — no more prompt() chains) ----
+let fbModalBackdrop = null;
+function buildFbModal(){
+  if(fbModalBackdrop) return fbModalBackdrop;
+  const backdrop = document.createElement('div');
+  backdrop.className = 'gen-modal-backdrop';
+  backdrop.innerHTML =
+    '<div class="gen-modal" role="dialog" aria-modal="true">' +
+      '<div class="gen-modal-head">' +
+        '<div><div class="gen-modal-title"></div><div class="gen-modal-sub"></div></div>' +
+        '<div class="gen-modal-close" aria-label="বন্ধ করুন">✕</div>' +
+      '</div>' +
+      '<form class="gen-modal-body"><div class="gen-modal-grid"></div></form>' +
+      '<div class="gen-modal-actions">' +
+        '<button type="button" class="btn-primary gen-modal-save">সংরক্ষণ করুন</button>' +
+        '<button type="button" class="btn-secondary gen-modal-cancel">বাতিল</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(backdrop);
+  fbModalBackdrop = backdrop;
+  backdrop.addEventListener('click', function(e){ if(e.target === backdrop) closeFbModal(); });
+  backdrop.querySelector('.gen-modal-close').addEventListener('click', closeFbModal);
+  backdrop.querySelector('.gen-modal-cancel').addEventListener('click', closeFbModal);
+  backdrop.querySelector('.gen-modal-body').addEventListener('submit', function(e){ e.preventDefault(); });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && backdrop.classList.contains('show')) closeFbModal();
+  });
+  return backdrop;
+}
+function closeFbModal(){ if(fbModalBackdrop) fbModalBackdrop.classList.remove('show'); }
+
+// opts: { title, subtitle, fields:[{label,key}], onSave: function(data) -> Promise }
+function openFbAddModal(opts){
+  const modal = buildFbModal();
+  const grid = modal.querySelector('.gen-modal-grid');
+  grid.innerHTML = '';
+  modal.querySelector('.gen-modal-title').textContent = opts.title || 'নতুন এন্ট্রি';
+  modal.querySelector('.gen-modal-sub').textContent = opts.subtitle || '';
+
+  opts.fields.forEach(function(f){
+    const field = document.createElement('div');
+    field.className = 'form-field';
+    field.innerHTML = '<label>' + f.label + '</label><input type="text" data-key="' + f.key + '" autocomplete="off">';
+    grid.appendChild(field);
+  });
+
+  modal.classList.add('show');
+  const firstInput = grid.querySelector('input');
+  if(firstInput) setTimeout(function(){ firstInput.focus(); }, 60);
+
+  const saveBtn = modal.querySelector('.gen-modal-save');
+  // onclick (not addEventListener) — reopening the modal always replaces the previous
+  // handler outright, so a cancelled prior use never leaves a stale listener behind
+  saveBtn.onclick = function(){
+    const data = {};
+    opts.fields.forEach(function(f){
+      const input = grid.querySelector('input[data-key="' + f.key + '"]');
+      data[f.key] = input.value.trim();
+    });
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'সংরক্ষণ হচ্ছে...';
+    Promise.resolve(opts.onSave(data)).then(function(){
+      closeFbModal();
+    }).catch(function(err){
+      fbToast('⚠ সংরক্ষণ ব্যর্থ: ' + err.message, true);
+    }).finally(function(){
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'সংরক্ষণ করুন';
+    });
+  };
+}
+
 // ---- BUYER MASTER ----
 function wireFlatCollectionTable(opts){
   // opts: { collectionName, tbodyId, addBtnId, colCount, fields, rowRenderer, onAdd }
@@ -15447,20 +15546,21 @@ function wireFlatCollectionTable(opts){
     }
   });
 
-  document.getElementById(opts.addBtnId).addEventListener('click', function(e){
+  const addBtnEl1 = document.getElementById(opts.addBtnId);
+  addBtnEl1.addEventListener('click', function(e){
     e.stopPropagation();
     if(opts.onAdd){ opts.onAdd(colRef, render); return; }
-    const data = {};
-    for(const f of opts.fields){
-      const val = window.prompt(f.label + ' লিখুন:', '');
-      if(val === null){ fbToast('বাতিল করা হয়েছে'); return; }
-      data[f.key] = val.trim();
-    }
-    data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-    colRef.add(data).then(function(){
-      fbToast('✓ নতুন এন্ট্রি Firebase-এ যোগ হয়েছে');
-      render();
-    }).catch(function(err){ fbToast('⚠ যোগ করতে ব্যর্থ: ' + err.message, true); });
+    openFbAddModal({
+      title: addBtnEl1.textContent.trim(),
+      fields: opts.fields,
+      onSave: function(data){
+        data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        return colRef.add(data).then(function(){
+          fbToast('✓ নতুন এন্ট্রি Firebase-এ সংরক্ষণ হয়েছে');
+          render();
+        });
+      }
+    });
   });
 
   render.colRef = colRef;
@@ -20792,32 +20892,98 @@ if('ResizeObserver' in window){
     }, 2200);
   }
 
-  // ---- Add a row to any table, based on its <thead> columns ----
+  // ---- Single shared modal shell, reused for every table's "add entry" form ----
+  let genModalBackdrop = null;
+  function buildGenModal(){
+    if(genModalBackdrop) return genModalBackdrop;
+    const backdrop = document.createElement('div');
+    backdrop.className = 'gen-modal-backdrop';
+    backdrop.innerHTML =
+      '<div class="gen-modal" role="dialog" aria-modal="true">' +
+        '<div class="gen-modal-head">' +
+          '<div><div class="gen-modal-title"></div><div class="gen-modal-sub"></div></div>' +
+          '<div class="gen-modal-close" aria-label="বন্ধ করুন">✕</div>' +
+        '</div>' +
+        '<form class="gen-modal-body"><div class="gen-modal-grid"></div></form>' +
+        '<div class="gen-modal-actions">' +
+          '<button type="button" class="btn-primary gen-modal-save">সংরক্ষণ করুন</button>' +
+          '<button type="button" class="btn-secondary gen-modal-cancel">বাতিল</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(backdrop);
+    genModalBackdrop = backdrop;
+    // ব্যাকড্রপে ক্লিক করলে বা ✕/বাতিল চাপলে মোডাল বন্ধ হবে
+    backdrop.addEventListener('click', function(e){ if(e.target === backdrop) closeGenModal(); });
+    backdrop.querySelector('.gen-modal-close').addEventListener('click', closeGenModal);
+    backdrop.querySelector('.gen-modal-cancel').addEventListener('click', closeGenModal);
+    backdrop.querySelector('.gen-modal-body').addEventListener('submit', function(e){ e.preventDefault(); });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && backdrop.classList.contains('show')) closeGenModal();
+    });
+    return backdrop;
+  }
+  function closeGenModal(){
+    if(genModalBackdrop) genModalBackdrop.classList.remove('show');
+  }
+
+  // ---- Add a row to any table: one modal with every column as a field, shown all at once ----
   function addTableRow(table, btn){
     const headerCells = Array.from(table.querySelectorAll('thead th'));
     const tbody = table.querySelector('tbody');
     if(!tbody) return;
-    const sampleRow = tbody.querySelector('tr');
-    const sampleCells = sampleRow ? Array.from(sampleRow.children) : [];
-    const values = [];
-    for(let i=0;i<headerCells.length;i++){
-      const label = headerCells[i].textContent.trim();
-      const sampleCell = sampleCells[i];
-      const hasMarkup = sampleCell && sampleCell.querySelector('span');
-      // ফাঁকা হেডার বা যেসব কলামে পিল/লিংক থাকে (স্ট্যাটাস, অ্যাকশন) সেগুলোর
-      // জন্য নমুনা সারির মার্কআপ পুনরায় ব্যবহার করা হয়, প্রম্পট করা হয় না
-      if(!label || hasMarkup){
-        values.push(sampleCell ? sampleCell.innerHTML : (label ? '—' : ''));
-        continue;
-      }
-      const val = window.prompt(label + ' লিখুন:', '');
-      if(val === null){ showToast('বাতিল করা হয়েছে'); return; } // ব্যবহারকারী Cancel করলে থেমে যাবে
-      values.push(val.trim() || '—');
-    }
-    const tr = document.createElement('tr');
-    tr.innerHTML = values.map(v=>'<td>'+v+'</td>').join('');
-    tbody.appendChild(tr);
-    showToast('✓ নতুন এন্ট্রি যোগ হয়েছে');
+
+    // "লোড হচ্ছে..." / খালি-অবস্থার এক-কলাম colspan সারিকে নমুনা হিসেবে গণ্য করা হবে না
+    const rawSampleRow = tbody.querySelector('tr');
+    const isPlaceholderRow = rawSampleRow && rawSampleRow.children.length === 1
+      && rawSampleRow.children[0].hasAttribute('colspan');
+    const sampleCells = (rawSampleRow && !isPlaceholderRow) ? Array.from(rawSampleRow.children) : [];
+
+    const modal = buildGenModal();
+    const grid = modal.querySelector('.gen-modal-grid');
+    grid.innerHTML = '';
+
+    const panel = table.closest('.panel');
+    const panelTitleEl = panel ? panel.querySelector('.panel-title') : null;
+    modal.querySelector('.gen-modal-title').textContent = btn.textContent.trim();
+    modal.querySelector('.gen-modal-sub').textContent = panelTitleEl
+      ? panelTitleEl.childNodes[0].textContent.trim() : '';
+
+    // প্রতিটা কলামের জন্য একটা ফিল্ড — ফাঁকা হেডার (আইকন/অ্যাকশন কলাম) বাদে সবই এডিটেবল
+    const fieldMeta = [];
+    headerCells.forEach(function(th, i){
+      const label = th.textContent.trim();
+      if(!label){ fieldMeta.push({ i:i, skip:true }); return; }
+      const field = document.createElement('div');
+      field.className = 'form-field';
+      field.innerHTML = '<label>' + label + '</label><input type="text" data-col="' + i + '" autocomplete="off">';
+      grid.appendChild(field);
+      fieldMeta.push({ i:i, skip:false });
+    });
+
+    modal.classList.add('show');
+    const firstInput = grid.querySelector('input');
+    if(firstInput) setTimeout(function(){ firstInput.focus(); }, 60);
+
+    const saveBtn = modal.querySelector('.gen-modal-save');
+    // onclick (not addEventListener) — reopening the modal always replaces the previous
+    // handler outright, so a cancelled prior use never leaves a stale listener behind
+    saveBtn.onclick = function(){
+      const values = fieldMeta.map(function(meta){
+        if(meta.skip){
+          const sc = sampleCells[meta.i];
+          return sc ? sc.innerHTML : '—';
+        }
+        const input = grid.querySelector('input[data-col="' + meta.i + '"]');
+        const val = input.value.trim();
+        return val ? val.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '—';
+      });
+      if(isPlaceholderRow) tbody.innerHTML = '';
+      const tr = document.createElement('tr');
+      tr.innerHTML = values.map(function(v){ return '<td>' + v + '</td>'; }).join('');
+      tbody.appendChild(tr);
+      showToast('✓ নতুন এন্ট্রি যোগ হয়েছে');
+      closeGenModal();
+    };
   }
 
   // ---- Delete a row on click (with confirmation) ----
