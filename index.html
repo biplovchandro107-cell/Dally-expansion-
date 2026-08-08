@@ -546,12 +546,11 @@
         <div class="nav-item group-link" data-view="merch-strikeoff"><span>11. Strike Off</span></div>
         <div class="nav-item group-link" data-view="merch-order"><span>12. Order Management</span></div>
         <div class="nav-item group-link" data-view="merch-tna"><span>13. Time &amp; Action (TNA)</span></div>
-        <div class="nav-item group-link" data-view="merch-fabricbooking"><span>14. Fabric Booking</span></div>
-        <div class="nav-item group-link" data-view="merch-trimbooking"><span>15. Trim Booking</span></div>
-        <div class="nav-item group-link" data-view="merch-shipment"><span>16. Shipment Planning</span></div>
-        <div class="nav-item group-link" data-view="merch-handover"><span>17. Commercial Handover</span></div>
-        <div class="nav-item group-link" data-view="merch-documents"><span>18. Merchandising Documents</span></div>
-        <div class="nav-item group-link" data-view="merch-reports"><span>19. Merchandising Reports</span></div>
+        <div class="nav-item group-link" data-view="merch-bookingsheet"><span>14. Booking Sheet (Fabric + Trim)</span></div>
+        <div class="nav-item group-link" data-view="merch-shipment"><span>15. Shipment Planning</span></div>
+        <div class="nav-item group-link" data-view="merch-handover"><span>16. Commercial Handover</span></div>
+        <div class="nav-item group-link" data-view="merch-documents"><span>17. Merchandising Documents</span></div>
+        <div class="nav-item group-link" data-view="merch-reports"><span>18. Merchandising Reports</span></div>
       </div>
     </div>
 
@@ -3258,6 +3257,22 @@
   <div class="view" id="view-master-buyer">
     <div class="view-head"><h1>Buyer Master</h1><div class="meta">বায়ার প্রোফাইল, কন্টাক্ট, ঠিকানা, কমার্শিয়াল, ডকুমেন্ট ও অ্যানালাইসিস — সব একই পেজে</div></div>
 
+    <div class="section-divider">Merchandiser Directory</div>
+    <div class="panel">
+      <div class="panel-title">নতুন মার্চেন্ডাইজার যোগ করুন <span class="soon-tag" style="margin-left:6px;">শুধু Admin</span></div>
+      <div class="meta" style="margin-bottom:10px;">প্রতিটা মার্চেন্ডাইজারের ইমেইল অবশ্যই তার Login ইমেইলের সাথে হুবহু (ছোট হাতের অক্ষরে) মিলতে হবে — Firestore Security Rules এই ইমেইল দিয়েই সরাসরি যাচাই করে বায়ার/অর্ডার/বুকিং শীট ফিল্টার করে।</div>
+      <div class="form-grid">
+        <div class="form-field"><label>মার্চেন্ডাইজারের নাম</label><input type="text" id="mdir-add-name" placeholder="যেমন: Tanvir Hasan"></div>
+        <div class="form-field"><label>Login ইমেইল</label><input type="text" id="mdir-add-email" placeholder="যেমন: tanvir@company.com"></div>
+      </div>
+      <div class="form-actions"><button class="btn-primary" id="btn-add-merchandiser" data-fb-wired="true">মার্চেন্ডাইজার সেভ করুন</button></div>
+      <table style="margin-top:14px;">
+        <thead><tr><th>নাম</th><th>Login ইমেইল</th></tr></thead>
+        <tbody id="mdir-tbody" data-fb-wired="true"><tr><td colspan="2" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+      <div class="placeholder-note">রো-তে ক্লিক করলে মুছে ফেলা যাবে। এই তালিকা থেকেই নিচের "Assigned Merchandiser" ড্রপডাউন পূরণ হয়।</div>
+    </div>
+
     <div class="section-divider">Buyer Profile</div>
     <div class="kpi-row">
       <div class="kpi-card"><div class="kpi-label">Total Buyers</div><div class="kpi-value" id="bm-kpi-total">০</div><div class="kpi-delta flat">লাইভ Firebase ডেটা</div></div>
@@ -3272,16 +3287,17 @@
         <div class="form-field"><label>Buyer Type</label><select id="bm-add-type"><option>Direct Buyer</option><option>Buying House</option></select></div>
         <div class="form-field"><label>Buyer Category</label><select id="bm-add-category"><option>Regular</option><option>Key Account</option><option>Strategic</option></select></div>
         <div class="form-field"><label>Status</label><select id="bm-add-status"><option>Active</option><option>Inactive</option></select></div>
+        <div class="form-field"><label>Assigned Merchandiser</label><select id="bm-add-merch"><option value="">লোড হচ্ছে...</option></select></div>
       </div>
       <div class="form-actions"><button class="btn-primary" id="btn-add-buyer" data-fb-wired="true">বায়ার সেভ করুন</button></div>
       <div class="panel-title" style="margin-top:18px;">Buyer List</div>
       <table>
-        <thead><tr><th>Buyer Code</th><th>Buyer Name</th><th>Buyer Group</th><th>Buyer Type</th><th>Buyer Category</th><th>Status</th></tr></thead>
+        <thead><tr><th>Buyer Code</th><th>Buyer Name</th><th>Buyer Group</th><th>Buyer Type</th><th>Buyer Category</th><th>Status</th><th>Assigned Merchandiser</th></tr></thead>
         <tbody id="bm-buyer-tbody" data-fb-wired="true">
-          <tr><td colspan="6" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>
+          <tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>
         </tbody>
       </table>
-      <div class="placeholder-note">তালিকার যেকোনো সারিতে ক্লিক করলে মুছে ফেলার অপশন আসবে।</div>
+      <div class="placeholder-note">তালিকার যেকোনো সারিতে ক্লিক করলে মুছে ফেলার অপশন আসবে। আপনি যদি মার্চেন্ডাইজার হিসেবে লগইন করা থাকেন, শুধু আপনার নিজের বায়ারই এখানে দেখা যাবে।</div>
     </div>
 
     <div class="section-divider">Buyer Contact</div>
@@ -5559,55 +5575,59 @@
     </div>
   </div>
 
-  <!-- ===== MERCHANDISING: 14. FABRIC BOOKING ===== -->
-  <div class="view" id="view-merch-fabricbooking">
-    <div class="view-head"><h1>Fabric Booking</h1><div class="meta">ফেব্রিক বুকিং, রিকোয়ারমেন্ট ও পারচেজ প্ল্যান — সব একই পেজে</div></div>
+  <!-- ===== MERCHANDISING: 14. BOOKING SHEET (Fabric + Trim, combined — Knitting/Dyeing/Cutting/Sewing এ পাঠানোর জন্য একই শীট) ===== -->
+  <div class="view" id="view-merch-bookingsheet">
+    <div class="view-head"><h1>Booking Sheet</h1><div class="meta">অর্ডার কনফার্ম হওয়ার পর একটাই বুকিং সিট — ফেব্রিক + ট্রিম + ডিপার্টমেন্ট স্ট্যাটাস একসাথে, Knitting / Dyeing / Cutting / Sewing সবার জন্য</div></div>
 
-    <div class="section-divider">নতুন Fabric Booking</div>
+    <div class="section-divider">নতুন Booking Sheet</div>
     <div class="panel">
       <div class="form-grid">
-        <div class="form-field"><label>Style No.</label><input type="text" id="fb-style" placeholder="যেমন: STY-3301"></div>
-        <div class="form-field"><label>Fabric Requirement</label><input type="text" id="fb-req" placeholder="যেমন: ৮,৬৪০ কেজি"></div>
-        <div class="form-field"><label>Fabric Booking Request</label><input type="text" id="fb-request" placeholder="যেমন: ৮,৬৪০ কেজি"></div>
-        <div class="form-field"><label>Fabric Purchase Plan</label><input type="text" id="fb-plan" placeholder="যেমন: ২ ধাপে"></div>
-        <div class="form-field"><label>Fabric Arrival Status</label><select id="fb-status"><option>Pending</option><option>Partial</option><option>Arrived</option></select></div>
+        <div class="form-field"><label>Order No.</label><select id="bs-add-order"><option value="">লোড হচ্ছে...</option></select></div>
+        <div class="form-field"><label>Style No.</label><input type="text" id="bs-style" placeholder="অর্ডার সিলেক্ট করলে অটো আসবে"></div>
+        <div class="form-field"><label>Buyer</label><input type="text" id="bs-buyer" placeholder="অর্ডার সিলেক্ট করলে অটো আসবে" readonly></div>
       </div>
-      <div class="form-actions"><button class="btn-primary" id="btn-add-fabricbooking" data-fb-wired="true">সেভ করুন</button></div>
-    </div>
 
-    <div class="section-divider">Fabric Booking Status</div>
-    <div class="panel">
-      <table>
-        <thead><tr><th>Style No.</th><th>Fabric Requirement</th><th>Fabric Booking Request</th><th>Fabric Purchase Plan</th><th>Fabric Arrival Status</th></tr></thead>
-        <tbody id="fb-tbody" data-fb-wired="true"><tr><td colspan="5" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
-      </table>
-      <div class="placeholder-note">রো-তে ক্লিক করলে মুছে ফেলা যাবে।</div>
-    </div>
-  </div>
-
-  <!-- ===== MERCHANDISING: 15. TRIM BOOKING ===== -->
-  <div class="view" id="view-merch-trimbooking">
-    <div class="view-head"><h1>Trim Booking</h1><div class="meta">ট্রিম বুকিং, রিকোয়ারমেন্ট, অ্যারাইভাল ও ব্যালান্স — সব একই পেজে</div></div>
-
-    <div class="section-divider">নতুন Trim Booking</div>
-    <div class="panel">
+      <div class="panel-title" style="margin-top:16px;">Fabric</div>
       <div class="form-grid">
-        <div class="form-field"><label>Style No.</label><input type="text" id="tb-style" placeholder="যেমন: STY-3301"></div>
-        <div class="form-field"><label>Trim Requirement</label><input type="text" id="tb-req" placeholder="যেমন: USD ৬,৯১২"></div>
-        <div class="form-field"><label>Trim Booking</label><input type="text" id="tb-booking" placeholder="যেমন: USD ৬,৯১২"></div>
-        <div class="form-field"><label>Trim Arrival</label><select id="tb-arrival"><option>Pending</option><option>Partial</option><option>Received</option></select></div>
-        <div class="form-field"><label>Trim Balance</label><input type="text" id="tb-balance" placeholder="যেমন: ০" value="0"></div>
+        <div class="form-field"><label>Fabric Requirement</label><input type="text" id="bs-fab-req" placeholder="যেমন: ৮,৬৪০ কেজি"></div>
+        <div class="form-field"><label>Fabric Booking Request</label><input type="text" id="bs-fab-request" placeholder="যেমন: ৮,৬৪০ কেজি"></div>
+        <div class="form-field"><label>Fabric Purchase Plan</label><input type="text" id="bs-fab-plan" placeholder="যেমন: ২ ধাপে"></div>
+        <div class="form-field"><label>Fabric Arrival Status</label><select id="bs-fab-status"><option>Pending</option><option>Partial</option><option>Arrived</option></select></div>
       </div>
-      <div class="form-actions"><button class="btn-primary" id="btn-add-trimbooking" data-fb-wired="true">সেভ করুন</button></div>
+
+      <div class="panel-title" style="margin-top:16px;">Trim</div>
+      <div class="form-grid">
+        <div class="form-field"><label>Trim Requirement</label><input type="text" id="bs-trim-req" placeholder="যেমন: USD ৬,৯১২"></div>
+        <div class="form-field"><label>Trim Booking</label><input type="text" id="bs-trim-booking" placeholder="যেমন: USD ৬,৯১২"></div>
+        <div class="form-field"><label>Trim Arrival</label><select id="bs-trim-arrival"><option>Pending</option><option>Partial</option><option>Received</option></select></div>
+        <div class="form-field"><label>Trim Balance</label><input type="text" id="bs-trim-balance" placeholder="যেমন: ০" value="0"></div>
+      </div>
+
+      <div class="panel-title" style="margin-top:16px;">Department Status (Knitting → Dyeing → Cutting → Sewing)</div>
+      <div class="form-grid">
+        <div class="form-field"><label>Knitting</label><select id="bs-dept-knitting"><option>Pending</option><option>Running</option><option>Completed</option></select></div>
+        <div class="form-field"><label>Dyeing</label><select id="bs-dept-dyeing"><option>Pending</option><option>Running</option><option>Completed</option></select></div>
+        <div class="form-field"><label>Cutting</label><select id="bs-dept-cutting"><option>Pending</option><option>Running</option><option>Completed</option></select></div>
+        <div class="form-field"><label>Sewing</label><select id="bs-dept-sewing"><option>Pending</option><option>Running</option><option>Completed</option></select></div>
+      </div>
+
+      <div class="form-actions"><button class="btn-primary" id="btn-add-bookingsheet" data-fb-wired="true">Booking Sheet সেভ করুন</button></div>
     </div>
 
-    <div class="section-divider">Trim Booking Status</div>
+    <div class="section-divider">Booking Sheet Status — সব ডিপার্টমেন্ট একই ভিউতে</div>
     <div class="panel">
       <table>
-        <thead><tr><th>Style No.</th><th>Trim Requirement</th><th>Trim Booking</th><th>Trim Arrival</th><th>Trim Balance</th></tr></thead>
-        <tbody id="tb-tbody" data-fb-wired="true"><tr><td colspan="5" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+        <thead>
+          <tr>
+            <th>Style / Order</th><th>Buyer</th>
+            <th>Fabric Req.</th><th>Fabric Booking</th><th>Fabric Arrival</th>
+            <th>Trim Req.</th><th>Trim Booking</th><th>Trim Arrival</th><th>Trim Balance</th>
+            <th>Knitting</th><th>Dyeing</th><th>Cutting</th><th>Sewing</th>
+          </tr>
+        </thead>
+        <tbody id="bs-tbody" data-fb-wired="true"><tr><td colspan="13" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
       </table>
-      <div class="placeholder-note">রো-তে ক্লিক করলে মুছে ফেলা যাবে।</div>
+      <div class="placeholder-note">রো-তে ক্লিক করলে মুছে ফেলা যাবে। এই টেবিলটাই প্রিন্ট করে Knitting, Dyeing, Garments Cutting ও Sewing — সব ডিপার্টমেন্টে একইসাথে পাঠানো যাবে। আপনি মার্চেন্ডাইজার হিসেবে লগইন করা থাকলে শুধু আপনার নিজের বায়ারের বুকিং সিটই দেখা যাবে।</div>
     </div>
   </div>
 
@@ -5704,8 +5724,8 @@
           <tr data-report="boms"><td>BOM Report</td><td class="mr-count">লোড হচ্ছে...</td><td class="mr-last">—</td><td><span class="link-action mr-export">এক্সপোর্ট</span></td></tr>
           <tr data-report="sampleTypes"><td>Sample Report</td><td class="mr-count">লোড হচ্ছে...</td><td class="mr-last">—</td><td><span class="link-action mr-export">এক্সপোর্ট</span></td></tr>
           <tr data-report="orders"><td>Order Status Report</td><td class="mr-count">লোড হচ্ছে...</td><td class="mr-last">—</td><td><span class="link-action mr-export">এক্সপোর্ট</span></td></tr>
-          <tr data-report="fabricBooking"><td>Fabric Requirement Report</td><td class="mr-count">লোড হচ্ছে...</td><td class="mr-last">—</td><td><span class="link-action mr-export">এক্সপোর্ট</span></td></tr>
-          <tr data-report="trimBooking"><td>Trim Requirement Report</td><td class="mr-count">লোড হচ্ছে...</td><td class="mr-last">—</td><td><span class="link-action mr-export">এক্সপোর্ট</span></td></tr>
+          <tr data-report="bookingSheet"><td>Fabric Requirement Report</td><td class="mr-count">লোড হচ্ছে...</td><td class="mr-last">—</td><td><span class="link-action mr-export">এক্সপোর্ট</span></td></tr>
+          <tr data-report="bookingSheet"><td>Trim Requirement Report</td><td class="mr-count">লোড হচ্ছে...</td><td class="mr-last">—</td><td><span class="link-action mr-export">এক্সপোর্ট</span></td></tr>
           <tr data-report="tnaTasks"><td>TNA Report</td><td class="mr-count">লোড হচ্ছে...</td><td class="mr-last">—</td><td><span class="link-action mr-export">এক্সপোর্ট</span></td></tr>
           <tr data-report="shipmentPlanning"><td>Shipment Report</td><td class="mr-count">লোড হচ্ছে...</td><td class="mr-last">—</td><td><span class="link-action mr-export">এক্সপোর্ট</span></td></tr>
           <tr data-report="costSheets"><td>Profit / Cost Analysis Report</td><td class="mr-count">লোড হচ্ছে...</td><td class="mr-last">—</td><td><span class="link-action mr-export">এক্সপোর্ট</span></td></tr>
@@ -16869,13 +16889,42 @@ loginBtn.addEventListener('click', attemptLogin);
 loginPassword.addEventListener('keydown', e=>{ if(e.key === 'Enter') attemptLogin(); });
 loginEmail.addEventListener('keydown', e=>{ if(e.key === 'Enter') loginPassword.focus(); });
 
+// ---- Merchandiser scope (Buyer → Assigned Merchandiser data isolation) ----
+// window.currentMerch: null পর্যন্ত = এখনো রেজলভ হয়নি (লোডিং)
+//   { id, name, email } = merchandisers/{email} ডকুমেন্ট পাওয়া গেছে -> শুধু নিজের বায়ার/অর্ডার/বুকিং শীট দেখবে
+//   'admin' = merchandisers/{email} ডকুমেন্ট নেই -> ধরে নেওয়া হচ্ছে Admin/Manager, সব ডেটা দেখতে পারবে
+// লক্ষ্য করুন: এই id সবসময় লগইন ইমেইল (ছোট হাতের অক্ষরে) — Firestore Security Rules request.auth.token.email
+// দিয়ে এই একই জিনিস সার্ভার-সাইডে যাচাই করে, তাই UI-এর এই ফিল্টার শুধু সুবিধার জন্য, আসল নিরাপত্তা Security Rules-এই আছে।
+window.currentMerch = null;
+window.currentMerchReady = new Promise(function(resolve){ window._resolveMerchScope = resolve; });
+
+function resolveMerchScope(user){
+  if(!user){ window.currentMerch = 'admin'; window._resolveMerchScope(window.currentMerch); return; }
+  const emailKey = (user.email || '').toLowerCase();
+  db.collection('merchandisers').doc(emailKey).get().then(function(doc){
+    if(!doc.exists){
+      window.currentMerch = 'admin';
+    } else {
+      window.currentMerch = { id: doc.id, name: doc.data().name || user.email, email: emailKey };
+    }
+    window._resolveMerchScope(window.currentMerch);
+    document.dispatchEvent(new CustomEvent('merch-scope-ready'));
+  }).catch(function(){
+    window.currentMerch = 'admin';
+    window._resolveMerchScope(window.currentMerch);
+    document.dispatchEvent(new CustomEvent('merch-scope-ready'));
+  });
+}
+
 auth.onAuthStateChanged(function(user){
   if(user){
     loginOverlay.style.display = 'none';
     const av = document.querySelector('.avatar');
     if(av) av.title = 'লগআউট করতে ট্যাপ করুন — ' + user.email;
+    resolveMerchScope(user);
   } else {
     loginOverlay.style.display = 'flex';
+    window.currentMerch = null;
   }
 });
 
@@ -17376,8 +17425,53 @@ function wireFlatCollectionTable(opts){
   return render;
 }
 
+// ---- MERCHANDISER DIRECTORY ----
+const renderMerchandiserDirectory = wireFlatCollectionTable({
+  collectionName: 'merchandisers', tbodyId: 'mdir-tbody', addBtnId: 'btn-add-merchandiser', colCount: 2,
+  rowRenderer: function(d){ return '<td>'+(d.name||'—')+'</td><td>'+(d.email||'—')+'</td>'; },
+  onAdd: function(colRef, render){
+    const nameEl = document.getElementById('mdir-add-name');
+    const emailEl = document.getElementById('mdir-add-email');
+    const name = nameEl.value.trim();
+    const email = emailEl.value.trim().toLowerCase();
+    if(!name || !email){ fbToast('⚠ নাম ও ইমেইল দুটোই দিন', true); return; }
+    colRef.doc(email).set({ name: name, email: email, createdAt: firebase.firestore.FieldValue.serverTimestamp() }).then(function(){
+      fbToast('✓ মার্চেন্ডাইজার যোগ হয়েছে');
+      nameEl.value = ''; emailEl.value = '';
+      render();
+      populateMerchandiserDropdown('bm-add-merch');
+    }).catch(function(err){ fbToast('⚠ সেভ ব্যর্থ: ' + err.message, true); });
+  }
+});
+function loadMerchandiserDirectory(){
+  renderMerchandiserDirectory();
+  populateMerchandiserDropdown('bm-add-merch');
+}
+
+async function allMerchandisers(){
+  const snap = await db.collection('merchandisers').orderBy('createdAt','desc').get();
+  return snap.docs.map(function(d){ return { id: d.id, name: d.data().name, email: d.data().email }; });
+}
+
+async function populateMerchandiserDropdown(selectId){
+  const sel = document.getElementById(selectId);
+  if(!sel) return;
+  const list = await allMerchandisers();
+  if(!list.length){
+    sel.innerHTML = '<option value="">আগে Merchandiser Directory-তে মার্চেন্ডাইজার যোগ করুন</option>';
+    return;
+  }
+  sel.innerHTML = '<option value="">— নির্বাচন করুন —</option>' + list.map(function(m){
+    return '<option value="'+m.id+'" data-name="'+(m.name||'').replace(/"/g,'&quot;')+'">'+(m.name||m.email)+' ('+m.email+')</option>';
+  }).join('');
+}
+
 async function currentBuyerNames(){
-  const snap = await db.collection('buyers').orderBy('createdAt','desc').get();
+  let q = db.collection('buyers').orderBy('createdAt','desc');
+  if(window.currentMerch && window.currentMerch !== 'admin'){
+    q = db.collection('buyers').where('assignedMerchandiserId','==', window.currentMerch.id);
+  }
+  const snap = await q.get();
   return snap.docs.map(function(d){ return d.data().buyerName; }).filter(Boolean);
 }
 
@@ -17387,10 +17481,14 @@ function pickBuyerName(names){
 }
 
 const bmBuyerTbody = document.getElementById('bm-buyer-tbody');
-function renderBuyerList(){
-  db.collection('buyers').orderBy('createdAt','desc').get().then(function(snap){
+async function renderBuyerList(){
+  await window.currentMerchReady;
+  let q = db.collection('buyers').orderBy('createdAt','desc');
+  const scoped = window.currentMerch && window.currentMerch !== 'admin';
+  if(scoped){ q = db.collection('buyers').where('assignedMerchandiserId','==', window.currentMerch.id); }
+  q.get().then(function(snap){
     if(snap.empty){
-      bmBuyerTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);">এখনো কোনো বায়ার যোগ করা হয়নি</td></tr>';
+      bmBuyerTbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);">'+(scoped ? 'আপনার নামে এখনো কোনো বায়ার Assign করা হয়নি' : 'এখনো কোনো বায়ার যোগ করা হয়নি')+'</td></tr>';
       document.getElementById('bm-kpi-total').textContent = '০';
       document.getElementById('bm-kpi-active').textContent = '০';
       document.getElementById('bm-kpi-key').textContent = '০';
@@ -17410,16 +17508,20 @@ function renderBuyerList(){
       const tr = document.createElement('tr');
       tr.dataset.docId = r.id;
       const statusPill = r.d.status === 'Active' ? '<span class="pill ok">Active</span>' : '<span class="pill mid">Inactive</span>';
-      tr.innerHTML = '<td>'+r.code+'</td><td>'+(r.d.buyerName||'—')+'</td><td>'+(r.d.buyerGroup||'—')+'</td><td>'+(r.d.buyerType||'—')+'</td><td>'+(r.d.category||'—')+'</td><td>'+statusPill+'</td>';
+      const merchLabel = r.d.assignedMerchandiserName || '—';
+      tr.innerHTML = '<td>'+r.code+'</td><td>'+(r.d.buyerName||'—')+'</td><td>'+(r.d.buyerGroup||'—')+'</td><td>'+(r.d.buyerType||'—')+'</td><td>'+(r.d.category||'—')+'</td><td>'+statusPill+'</td><td>'+merchLabel+'</td>';
       bmBuyerTbody.appendChild(tr);
     });
     document.getElementById('bm-kpi-total').textContent = String(snap.size);
     document.getElementById('bm-kpi-active').textContent = String(active);
     document.getElementById('bm-kpi-key').textContent = String(key);
   }).catch(function(err){
-    bmBuyerTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+    bmBuyerTbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
   });
 }
+document.addEventListener('merch-scope-ready', function(){
+  if(document.getElementById('view-master-buyer') && document.getElementById('view-master-buyer').classList.contains('active')) renderBuyerList();
+});
 
 bmBuyerTbody.addEventListener('click', function(e){
   const tr = e.target.closest('tr');
@@ -17442,6 +17544,8 @@ document.getElementById('btn-add-buyer').addEventListener('click', function(e){
   btn.disabled = true; btn.textContent = 'সেভ হচ্ছে...';
   db.collection('buyers').get().then(function(snap){
     const code = 'BYR-' + String(snap.size + 1).padStart(4,'0');
+    const merchSel = document.getElementById('bm-add-merch');
+    const merchOpt = merchSel.options[merchSel.selectedIndex];
     return db.collection('buyers').add({
       buyerCode: code,
       buyerName: name,
@@ -17449,6 +17553,8 @@ document.getElementById('btn-add-buyer').addEventListener('click', function(e){
       buyerType: document.getElementById('bm-add-type').value,
       category: document.getElementById('bm-add-category').value,
       status: document.getElementById('bm-add-status').value,
+      assignedMerchandiserId: merchSel.value || null,
+      assignedMerchandiserName: merchSel.value ? (merchOpt.dataset.name || merchOpt.textContent) : null,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
   }).then(function(){
@@ -17544,6 +17650,7 @@ const renderBuyerDocs = wireFlatCollectionTable({
 });
 
 function loadBuyerMaster(){
+  loadMerchandiserDirectory();
   renderBuyerList();
   renderBuyerContacts();
   renderBuyerAddresses();
@@ -17669,8 +17776,20 @@ function orderStatusPillClass(status){
   return 'pill mid';
 }
 
-function renderOrders(){
-  db.collection('orders').orderBy('createdAt','desc').get().then(function(snap){
+async function assignedMerchForBuyerName(buyerName){
+  if(!buyerName) return { id: null, name: null };
+  const snap = await db.collection('buyers').where('buyerName','==', buyerName).limit(1).get();
+  if(snap.empty) return { id: null, name: null };
+  const d = snap.docs[0].data();
+  return { id: d.assignedMerchandiserId || null, name: d.assignedMerchandiserName || null };
+}
+
+async function renderOrders(){
+  await window.currentMerchReady;
+  const scoped = window.currentMerch && window.currentMerch !== 'admin';
+  let q = db.collection('orders').orderBy('createdAt','desc');
+  if(scoped){ q = db.collection('orders').where('assignedMerchandiserId','==', window.currentMerch.id); }
+  q.get().then(function(snap){
     const entryTbody = document.getElementById('om-entry-tbody');
     const detTbody = document.getElementById('om-details-tbody');
     const ctrlTbody = document.getElementById('om-control-tbody');
@@ -17725,7 +17844,8 @@ document.getElementById('btn-add-order').addEventListener('click', function(e){
   const btn = this;
   const original = btn.textContent;
   btn.disabled = true; btn.textContent = 'সেভ হচ্ছে...';
-  db.collection('orders').get().then(function(snap){
+  Promise.all([ db.collection('orders').get(), assignedMerchForBuyerName(buyer) ]).then(function(results){
+    const snap = results[0], merch = results[1];
     const orderNo = 'ORD-' + String(6600 + snap.size + 1);
     return db.collection('orders').add({
       orderNo: orderNo,
@@ -17742,6 +17862,8 @@ document.getElementById('btn-add-order').addEventListener('click', function(e){
       revision: document.getElementById('om-add-revision').value.trim(),
       split: document.getElementById('om-add-split').value.trim(),
       merge: document.getElementById('om-add-merge').value.trim(),
+      assignedMerchandiserId: merch.id,
+      assignedMerchandiserName: merch.name,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
   }).then(function(){
@@ -18543,63 +18665,123 @@ function loadTNA(){
   renderTNATasks();
 }
 
-// ---- FABRIC BOOKING ----
-const renderFabricBooking = wireFlatCollectionTable({
-  collectionName: 'fabricBooking', tbodyId: 'fb-tbody', addBtnId: 'btn-add-fabricbooking', colCount: 5,
-  fields: [],
-  rowRenderer: function(d){
-    return '<td>'+(d.style||'—')+'</td><td>'+(d.requirement||'—')+'</td><td>'+(d.request||'—')+'</td><td>'+(d.plan||'—')+'</td><td>'+samplePillHtml(d.status)+'</td>';
-  },
-  onAdd: function(colRef, render){
-    const style = document.getElementById('fb-style').value.trim();
-    if(!style){ fbToast('⚠ Style No. দিন', true); return; }
-    colRef.add({
-      style: style,
-      requirement: document.getElementById('fb-req').value.trim(),
-      request: document.getElementById('fb-request').value.trim(),
-      plan: document.getElementById('fb-plan').value.trim(),
-      status: document.getElementById('fb-status').value,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(function(){
-      fbToast('✓ সেভ হয়েছে');
-      ['fb-style','fb-req','fb-request','fb-plan'].forEach(function(id){ document.getElementById(id).value=''; });
-      render();
-    }).catch(function(err){ fbToast('⚠ সেভ ব্যর্থ: ' + err.message, true); });
+// ---- BOOKING SHEET (Fabric + Trim + Department status, combined — একটাই কালেকশন 'bookingSheet') ----
+async function populateBookingSheetOrderDropdown(){
+  await window.currentMerchReady;
+  const sel = document.getElementById('bs-add-order');
+  const scoped = window.currentMerch && window.currentMerch !== 'admin';
+  let q = db.collection('orders').orderBy('createdAt','desc');
+  if(scoped){ q = db.collection('orders').where('assignedMerchandiserId','==', window.currentMerch.id); }
+  const snap = await q.get();
+  if(snap.empty){
+    sel.innerHTML = '<option value="">আগে Order Management-এ অর্ডার যোগ করুন</option>';
+    return;
   }
-});
-
-function loadFabricBooking(){
-  renderFabricBooking();
+  sel.innerHTML = '<option value="">— অর্ডার নির্বাচন করুন —</option>' + snap.docs.map(function(doc){
+    const d = doc.data();
+    const label = (d.orderNo||doc.id) + ' — ' + (d.style||'—') + ' (' + (d.buyer||'—') + ')';
+    return '<option value="'+doc.id+'" data-style="'+(d.style||'').replace(/"/g,'&quot;')+'" data-buyer="'+(d.buyer||'').replace(/"/g,'&quot;')+'" data-order="'+(d.orderNo||'').replace(/"/g,'&quot;')+'">'+label+'</option>';
+  }).join('');
 }
 
-// ---- TRIM BOOKING ----
-const renderTrimBooking = wireFlatCollectionTable({
-  collectionName: 'trimBooking', tbodyId: 'tb-tbody', addBtnId: 'btn-add-trimbooking', colCount: 5,
-  fields: [],
-  rowRenderer: function(d){
-    return '<td>'+(d.style||'—')+'</td><td>'+(d.requirement||'—')+'</td><td>'+(d.booking||'—')+'</td><td>'+samplePillHtml(d.arrival)+'</td><td>'+(d.balance||'—')+'</td>';
-  },
-  onAdd: function(colRef, render){
-    const style = document.getElementById('tb-style').value.trim();
-    if(!style){ fbToast('⚠ Style No. দিন', true); return; }
-    colRef.add({
-      style: style,
-      requirement: document.getElementById('tb-req').value.trim(),
-      booking: document.getElementById('tb-booking').value.trim(),
-      arrival: document.getElementById('tb-arrival').value,
-      balance: document.getElementById('tb-balance').value.trim(),
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(function(){
-      fbToast('✓ সেভ হয়েছে');
-      ['tb-style','tb-req','tb-booking'].forEach(function(id){ document.getElementById(id).value=''; });
-      document.getElementById('tb-balance').value = '0';
-      render();
-    }).catch(function(err){ fbToast('⚠ সেভ ব্যর্থ: ' + err.message, true); });
+document.getElementById('bs-add-order').addEventListener('change', function(){
+  const opt = this.options[this.selectedIndex];
+  document.getElementById('bs-style').value = opt ? (opt.dataset.style||'') : '';
+  document.getElementById('bs-buyer').value = opt ? (opt.dataset.buyer||'') : '';
+});
+
+function bookingSheetDeptPill(status){
+  if(status === 'Completed') return '<span class="pill ok">Completed</span>';
+  if(status === 'Running') return '<span class="pill mid">Running</span>';
+  return '<span class="pill warn">Pending</span>';
+}
+
+const bsTbody = document.getElementById('bs-tbody');
+async function renderBookingSheet(){
+  await window.currentMerchReady;
+  const scoped = window.currentMerch && window.currentMerch !== 'admin';
+  let q = db.collection('bookingSheet').orderBy('createdAt','desc');
+  if(scoped){ q = db.collection('bookingSheet').where('assignedMerchandiserId','==', window.currentMerch.id); }
+  q.get().then(function(snap){
+    if(snap.empty){
+      bsTbody.innerHTML = '<tr><td colspan="13" style="text-align:center;color:var(--muted);">এখনো কোনো Booking Sheet তৈরি হয়নি</td></tr>';
+      return;
+    }
+    bsTbody.innerHTML = '';
+    snap.forEach(function(doc){
+      const d = doc.data();
+      const tr = document.createElement('tr');
+      tr.dataset.docId = doc.id;
+      tr.innerHTML = '<td>'+(d.style||'—')+' <span style="color:var(--g4);">/ '+(d.orderNo||'—')+'</span></td>'
+        + '<td>'+(d.buyer||'—')+'</td>'
+        + '<td>'+(d.fabricRequirement||'—')+'</td><td>'+(d.fabricBookingRequest||'—')+'</td><td>'+samplePillHtml(d.fabricArrival)+'</td>'
+        + '<td>'+(d.trimRequirement||'—')+'</td><td>'+(d.trimBooking||'—')+'</td><td>'+samplePillHtml(d.trimArrival)+'</td><td>'+(d.trimBalance||'—')+'</td>'
+        + '<td>'+bookingSheetDeptPill(d.deptKnitting)+'</td><td>'+bookingSheetDeptPill(d.deptDyeing)+'</td><td>'+bookingSheetDeptPill(d.deptCutting)+'</td><td>'+bookingSheetDeptPill(d.deptSewing)+'</td>';
+      bsTbody.appendChild(tr);
+    });
+  }).catch(function(err){
+    bsTbody.innerHTML = '<tr><td colspan="13" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+  });
+}
+
+bsTbody.addEventListener('click', function(e){
+  const tr = e.target.closest('tr');
+  if(!tr || !tr.dataset.docId) return;
+  if(window.confirm('এই Booking Sheet এন্ট্রিটি মুছে ফেলতে চান?')){
+    db.collection('bookingSheet').doc(tr.dataset.docId).delete().then(function(){
+      fbToast('✓ মুছে ফেলা হয়েছে');
+      renderBookingSheet();
+    }).catch(function(err){ fbToast('⚠ মুছতে ব্যর্থ: ' + err.message, true); });
   }
 });
 
-function loadTrimBooking(){
-  renderTrimBooking();
+document.getElementById('btn-add-bookingsheet').addEventListener('click', async function(e){
+  e.stopPropagation();
+  const orderSel = document.getElementById('bs-add-order');
+  const opt = orderSel.options[orderSel.selectedIndex];
+  const style = document.getElementById('bs-style').value.trim();
+  if(!orderSel.value || !style){ fbToast('⚠ আগে একটা অর্ডার নির্বাচন করুন', true); return; }
+  const btn = this;
+  const original = btn.textContent;
+  btn.disabled = true; btn.textContent = 'সেভ হচ্ছে...';
+  try{
+    const buyerName = opt.dataset.buyer || '';
+    const merch = await assignedMerchForBuyerName(buyerName);
+    await db.collection('bookingSheet').add({
+      orderId: orderSel.value,
+      orderNo: opt.dataset.order || '',
+      style: style,
+      buyer: buyerName,
+      fabricRequirement: document.getElementById('bs-fab-req').value.trim(),
+      fabricBookingRequest: document.getElementById('bs-fab-request').value.trim(),
+      fabricPurchasePlan: document.getElementById('bs-fab-plan').value.trim(),
+      fabricArrival: document.getElementById('bs-fab-status').value,
+      trimRequirement: document.getElementById('bs-trim-req').value.trim(),
+      trimBooking: document.getElementById('bs-trim-booking').value.trim(),
+      trimArrival: document.getElementById('bs-trim-arrival').value,
+      trimBalance: document.getElementById('bs-trim-balance').value.trim(),
+      deptKnitting: document.getElementById('bs-dept-knitting').value,
+      deptDyeing: document.getElementById('bs-dept-dyeing').value,
+      deptCutting: document.getElementById('bs-dept-cutting').value,
+      deptSewing: document.getElementById('bs-dept-sewing').value,
+      assignedMerchandiserId: merch.id,
+      assignedMerchandiserName: merch.name,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    fbToast('✓ Booking Sheet Firebase-এ সেভ হয়েছে');
+    ['bs-fab-req','bs-fab-request','bs-fab-plan','bs-trim-req','bs-trim-booking'].forEach(function(id){ document.getElementById(id).value=''; });
+    document.getElementById('bs-trim-balance').value = '0';
+    renderBookingSheet();
+  } catch(err){
+    fbToast('⚠ সেভ ব্যর্থ: ' + err.message, true);
+  } finally {
+    btn.disabled = false; btn.textContent = original;
+  }
+});
+
+function loadBookingSheet(){
+  populateBookingSheetOrderDropdown();
+  renderBookingSheet();
 }
 
 // ---- SHIPMENT PLANNING ----
@@ -19648,7 +19830,7 @@ function saveSS(btn){
   });
 
 // ==================== BACKUP ====================
-const BACKUP_COLLECTIONS = ['companies','companyProfile','buyers','buyerInquiries','orders','techPacks','costSheets','boms','sampleTypes','sampleProcess','productLibrary','styleDevelopment','fabricMarkerConsumption','fabricSizeColorConsumption','trimConsumption','labDips','strikeOff','tnaPlans','tnaTasks','fabricBooking','trimBooking','shipmentPlanning','commercialHandover','grns','stockIssues','internalTransfers','externalTransfers','transferControl','stockAdjustments','physicalInventory','batchLot','barcodes','qrCodes','rfidTags','reservations','materialAllocation','stockValuation','materialTraceability','inventoryAlerts'];
+const BACKUP_COLLECTIONS = ['companies','companyProfile','merchandisers','buyers','buyerInquiries','orders','techPacks','costSheets','boms','sampleTypes','sampleProcess','productLibrary','styleDevelopment','fabricMarkerConsumption','fabricSizeColorConsumption','trimConsumption','labDips','strikeOff','tnaPlans','tnaTasks','bookingSheet','shipmentPlanning','commercialHandover','grns','stockIssues','internalTransfers','externalTransfers','transferControl','stockAdjustments','physicalInventory','batchLot','barcodes','qrCodes','rfidTags','reservations','materialAllocation','stockValuation','materialTraceability','inventoryAlerts'];
 
 function getBKInputs(){
   return document.querySelectorAll('#view-sysadmin-backup [data-field]');
@@ -20483,8 +20665,7 @@ const titles = {
   'merch-strikeoff':'Strike Off',
   'merch-order':'Order Management',
   'merch-tna':'Time & Action (TNA)',
-  'merch-fabricbooking':'Fabric Booking',
-  'merch-trimbooking':'Trim Booking',
+  'merch-bookingsheet':'Booking Sheet',
   'merch-shipment':'Shipment Planning',
   'merch-handover':'Commercial Handover',
   'merch-documents':'Merchandising Documents',
@@ -20838,8 +21019,7 @@ const paths = {
   'merch-strikeoff':'Merchandising',
   'merch-order':'Merchandising',
   'merch-tna':'Merchandising',
-  'merch-fabricbooking':'Merchandising',
-  'merch-trimbooking':'Merchandising',
+  'merch-bookingsheet':'Merchandising',
   'merch-shipment':'Merchandising',
   'merch-handover':'Merchandising',
   'merch-documents':'Merchandising',
@@ -27115,8 +27295,7 @@ function navigateToView(viewKey){
   if(viewKey === 'merch-labdip' && typeof loadLabDip === 'function') loadLabDip();
   if(viewKey === 'merch-strikeoff' && typeof loadStrikeOff === 'function') loadStrikeOff();
   if(viewKey === 'merch-tna' && typeof loadTNA === 'function') loadTNA();
-  if(viewKey === 'merch-fabricbooking' && typeof loadFabricBooking === 'function') loadFabricBooking();
-  if(viewKey === 'merch-trimbooking' && typeof loadTrimBooking === 'function') loadTrimBooking();
+  if(viewKey === 'merch-bookingsheet' && typeof loadBookingSheet === 'function') loadBookingSheet();
   if(viewKey === 'merch-shipment' && typeof loadShipmentPlanning === 'function') loadShipmentPlanning();
   if(viewKey === 'merch-handover' && typeof loadCommercialHandover === 'function') loadCommercialHandover();
   if(viewKey === 'merch-documents' && typeof loadMerchDocuments === 'function') loadMerchDocuments();
