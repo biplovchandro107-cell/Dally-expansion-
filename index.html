@@ -517,6 +517,16 @@
       </div>
     </div>
 
+    <div class="menu-group" data-group="factorysecurity">
+      <div class="menu-group-head" data-toggle="body-factorysecurity" style="text-transform:uppercase; letter-spacing:1px; font-size:11.5px; padding-top:14px;">
+        <span>Factory Security</span>
+        <span class="chevron">›</span>
+      </div>
+      <div class="menu-group-body" id="body-factorysecurity">
+        <div class="nav-item group-link" data-view="security-gateregister"><span>1. Gate Register</span></div>
+      </div>
+    </div>
+
     <div class="menu-group" data-group="merchandising">
       <div class="menu-group-head" data-toggle="body-merchandising" style="text-transform:uppercase; letter-spacing:1px; font-size:11.5px; padding-top:14px;">
         <span>Merchandising</span>
@@ -4851,6 +4861,45 @@
         <tbody id="ivi-tbody" data-fb-wired="true"><tr><td colspan="4" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
       </table>
       <div class="placeholder-note">রো-তে ক্লিক করলে মুছে ফেলা যাবে।</div>
+    </div>
+  </div>
+
+  <!-- ===== FACTORY SECURITY: 1. GATE REGISTER ===== -->
+  <div class="view" id="view-security-gateregister">
+    <div class="view-head"><h1>Gate Register</h1><div class="meta">গেটে গাড়ি/মালামাল ও ভিজিটর ইন-আউট লগ — সিকিউরিটির জন্য</div></div>
+
+    <div class="panel">
+      <div class="form-grid">
+        <div class="form-field"><label>Entry Type</label><select id="sgr-entrytype"><option value="vehicle">গাড়ি/মালামাল (Vehicle/Goods)</option><option value="visitor">ভিজিটর (অন্য কোম্পানির লোক)</option></select></div>
+        <div class="form-field"><label>Direction</label><select id="sgr-direction"><option>IN (ঢুকছে)</option><option>OUT (বের হচ্ছে)</option></select></div>
+      </div>
+
+      <div id="sgr-fields-vehicle">
+        <div class="form-grid">
+          <div class="form-field"><label>Vehicle No.</label><input type="text" id="sgr-vehicleno" placeholder="যেমন: ঢাকা মেট্রো-গ ১১-২২৩৩"></div>
+          <div class="form-field"><label>Driver Name</label><input type="text" id="sgr-drivername" placeholder="ড্রাইভারের নাম"></div>
+          <div class="form-field"><label>Purpose</label><select id="sgr-purpose"><option>মাল রিসিভ (Fabric/Trims)</option><option>মাল পাঠানো (Subcontract/Return)</option><option>ফিনিশড গুডস শিপমেন্ট</option></select></div>
+          <div class="form-field"><label>চালান নং / Gate Pass নং</label><input type="text" id="sgr-refno" placeholder="যেমন: CH-4471 বা GP-0091"></div>
+          <div class="form-field"><label>Approved By (Gate Pass হলে)</label><input type="text" id="sgr-approvedby" placeholder="যিনি অনুমোদন দিয়েছেন"></div>
+        </div>
+      </div>
+
+      <div id="sgr-fields-visitor" style="display:none;">
+        <div class="form-grid">
+          <div class="form-field"><label>ভিজিটরের নাম</label><input type="text" id="sgr-visitorname" placeholder="ভিজিটরের পূর্ণ নাম"></div>
+          <div class="form-field"><label>কোন কোম্পানি থেকে</label><input type="text" id="sgr-visitorcompany" placeholder="যেমন: H&amp;M QC Team / ABC Buying House"></div>
+          <div class="form-field"><label>উদ্দেশ্য</label><select id="sgr-visitorpurpose"><option>মিটিং</option><option>QC ইন্সপেকশন</option><option>অডিট (Buyer/Compliance)</option><option>চাকরির ইন্টারভিউ</option><option>ডেলিভারি/পিকআপ</option><option>অন্যান্য</option></select></div>
+          <div class="form-field"><label>কার সাথে দেখা করবে</label><input type="text" id="sgr-meetingwith" placeholder="ফ্যাক্টরির কোন কর্মচারীর সাথে"></div>
+          <div class="form-field"><label>NID/আইডি নম্বর</label><input type="text" id="sgr-visitorid" placeholder="জাতীয় পরিচয়পত্র বা অন্য আইডি নম্বর"></div>
+        </div>
+      </div>
+
+      <div class="form-actions"><button class="btn-primary" id="btn-add-sgr" data-fb-wired="true">এন্ট্রি সেভ করুন</button></div>
+      <table>
+        <thead><tr><th>সময়</th><th>Type</th><th>নাম / গাড়ি নং</th><th>কোম্পানি / ড্রাইভার</th><th>Direction</th><th>উদ্দেশ্য</th><th>Ref./NID/সাক্ষাৎ</th><th>স্টোর স্ট্যাটাস</th></tr></thead>
+        <tbody id="sgr-tbody" data-fb-wired="true"><tr><td colspan="8" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+      <div class="meta" style="margin-top:8px;">"স্টোর স্ট্যাটাস" শুধু "গাড়ি/মালামাল" এন্ট্রির ক্ষেত্রে প্রযোজ্য — "GRN-এর সাথে মিলিয়ে নিন" লিংকে ক্লিক করে স্টোর অফিসার নিশ্চিত করবেন যে গেটে ঢোকা মাল GRN-এ এন্ট্রি হয়েছে কিনা। ভিজিটর এন্ট্রিতে এটা প্রযোজ্য নয়।</div>
     </div>
   </div>
 
@@ -19437,6 +19486,119 @@ const renderInvIntegration = wireFlatCollectionTable({
 });
 function loadInventoryIntegration(){ renderInvIntegration(); }
 
+// ---- FACTORY SECURITY: 1. GATE REGISTER — CRUD (Vehicle/Goods + Visitor) + স্টোর স্ট্যাটাস টগল ----
+const sgrEntryTypeEl = document.getElementById('sgr-entrytype');
+const sgrVehicleFields = document.getElementById('sgr-fields-vehicle');
+const sgrVisitorFields = document.getElementById('sgr-fields-visitor');
+if(sgrEntryTypeEl){
+  sgrEntryTypeEl.addEventListener('change', function(){
+    const isVisitor = sgrEntryTypeEl.value === 'visitor';
+    sgrVehicleFields.style.display = isVisitor ? 'none' : '';
+    sgrVisitorFields.style.display = isVisitor ? '' : 'none';
+  });
+}
+
+function renderSecurityGateRegister(){
+  const tbody = document.getElementById('sgr-tbody');
+  const colRef = db.collection('securityGateRegisterT1');
+  colRef.orderBy('createdAt', 'desc').get().then(function(snap){
+    if(snap.empty){
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);">এখনো কোনো এন্ট্রি নেই</td></tr>';
+      return;
+    }
+    tbody.innerHTML = '';
+    snap.forEach(function(doc){
+      const d = doc.data();
+      const tr = document.createElement('tr');
+      tr.dataset.docId = doc.id;
+      const timeStr = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate().toLocaleString('bn-BD') : '—';
+      const isVisitor = d.entryType === 'visitor';
+      const typeLabel = isVisitor ? 'ভিজিটর' : 'গাড়ি/মালামাল';
+      const nameCol = isVisitor ? (d.visitorName||'—') : (d.vehicleNo||'—');
+      const companyCol = isVisitor ? (d.visitorCompany||'—') : (d.driverName||'—');
+      const purposeCol = isVisitor ? (d.visitorPurpose||'—') : (d.purpose||'—');
+      const refCol = isVisitor ? ('আইডি: '+(d.visitorId||'—')+' · সাক্ষাৎ: '+(d.meetingWith||'—')) : (d.refNo||'—');
+      let storeStatusHtml = '<span class="meta">প্রযোজ্য নয়</span>';
+      if(!isVisitor){
+        const storeStatus = d.storeStatus || 'Pending Match';
+        storeStatusHtml = storeStatus === 'Matched'
+          ? '<span class="pill ok">Matched</span>'
+          : '<span class="pill mid">Pending Match</span> · <span class="link-action sgr-match">GRN-এর সাথে মিলিয়ে নিন</span>';
+      }
+      tr.innerHTML = '<td>'+timeStr+'</td><td>'+typeLabel+'</td><td>'+nameCol+'</td><td>'+companyCol+'</td><td>'+(d.direction||'—')+'</td><td>'+purposeCol+'</td><td>'+refCol+'</td><td>'+storeStatusHtml+'</td>';
+      tbody.appendChild(tr);
+    });
+  }).catch(function(err){
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: ' + err.message + '</td></tr>';
+  });
+}
+document.getElementById('sgr-tbody').addEventListener('click', function(e){
+  const matchLink = e.target.closest('.sgr-match');
+  if(matchLink){
+    e.stopPropagation();
+    const tr = e.target.closest('tr');
+    if(!tr || !tr.dataset.docId) return;
+    db.collection('securityGateRegisterT1').doc(tr.dataset.docId).update({ storeStatus:'Matched' }).then(function(){
+      fbToast('✓ GRN-এর সাথে মিলিয়ে নেওয়া হয়েছে');
+      renderSecurityGateRegister();
+      if(typeof finSecLogAudit === 'function') finSecLogAudit('Gate Register Matched', 'securityGateRegisterT1', 'Document ID: ' + tr.dataset.docId);
+    }).catch(function(err){ fbToast('⚠ ব্যর্থ: ' + err.message, true); });
+    return;
+  }
+  const tr = e.target.closest('tr');
+  if(!tr || !tr.dataset.docId) return;
+  if(window.confirm('এই এন্ট্রিটি মুছে ফেলতে চান?')){
+    db.collection('securityGateRegisterT1').doc(tr.dataset.docId).delete().then(function(){
+      fbToast('✓ মুছে ফেলা হয়েছে');
+      renderSecurityGateRegister();
+    }).catch(function(err){ fbToast('⚠ মুছতে ব্যর্থ: ' + err.message, true); });
+  }
+});
+const btnAddSgr = document.getElementById('btn-add-sgr');
+if(btnAddSgr){
+  btnAddSgr.addEventListener('click', function(){
+    const entryType = sgrEntryTypeEl ? sgrEntryTypeEl.value : 'vehicle';
+    const direction = document.getElementById('sgr-direction').value;
+    if(entryType === 'visitor'){
+      const visitorName = document.getElementById('sgr-visitorname').value.trim();
+      if(!visitorName){ fbToast('⚠ ভিজিটরের নাম আবশ্যক', true); return; }
+      db.collection('securityGateRegisterT1').add({
+        entryType: 'visitor',
+        direction: direction,
+        visitorName: visitorName,
+        visitorCompany: document.getElementById('sgr-visitorcompany').value.trim(),
+        visitorPurpose: document.getElementById('sgr-visitorpurpose').value,
+        meetingWith: document.getElementById('sgr-meetingwith').value.trim(),
+        visitorId: document.getElementById('sgr-visitorid').value.trim(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(function(){
+        fbToast('✓ ভিজিটর এন্ট্রি সংরক্ষণ হয়েছে');
+        ['sgr-visitorname','sgr-visitorcompany','sgr-meetingwith','sgr-visitorid'].forEach(function(id){ document.getElementById(id).value=''; });
+        renderSecurityGateRegister();
+      }).catch(function(err){ fbToast('⚠ সেভ ব্যর্থ: ' + err.message, true); });
+    } else {
+      const vehicleNo = document.getElementById('sgr-vehicleno').value.trim();
+      if(!vehicleNo){ fbToast('⚠ Vehicle No. আবশ্যক', true); return; }
+      db.collection('securityGateRegisterT1').add({
+        entryType: 'vehicle',
+        direction: direction,
+        vehicleNo: vehicleNo,
+        driverName: document.getElementById('sgr-drivername').value.trim(),
+        purpose: document.getElementById('sgr-purpose').value,
+        refNo: document.getElementById('sgr-refno').value.trim(),
+        approvedBy: document.getElementById('sgr-approvedby').value.trim(),
+        storeStatus: 'Pending Match',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(function(){
+        fbToast('✓ গেট এন্ট্রি সংরক্ষণ হয়েছে');
+        ['sgr-vehicleno','sgr-drivername','sgr-refno','sgr-approvedby'].forEach(function(id){ document.getElementById(id).value=''; });
+        renderSecurityGateRegister();
+      }).catch(function(err){ fbToast('⚠ সেভ ব্যর্থ: ' + err.message, true); });
+    }
+  });
+}
+function loadSecurityGateRegister(){ renderSecurityGateRegister(); }
+
 
 // ==================== SYSTEM SETTINGS ====================
 function getSSInputs(){
@@ -20285,6 +20447,7 @@ const titles = {
   'inv-reports':'Inventory Reports',
   'inv-workflow':'Inventory Approval Workflow',
   'inv-integration':'Inventory Integration',
+  'security-gateregister':'Gate Register',
   'sysadmin-user-management':'User Management',
   'sysadmin-role-management':'Role Management',
   'sysadmin-permission-management':'Permission Management',
@@ -20639,6 +20802,7 @@ const paths = {
   'inv-reports':'Inventory',
   'inv-workflow':'Inventory',
   'inv-integration':'Inventory',
+  'security-gateregister':'Factory Security',
   'sysadmin-user-management':'User Management',
   'sysadmin-role-management':'Role Management',
   'sysadmin-permission-management':'Permission Management',
@@ -26976,6 +27140,7 @@ function navigateToView(viewKey){
   if(viewKey === 'inv-reports' && typeof loadInventoryReports === 'function') loadInventoryReports();
   if(viewKey === 'inv-workflow' && typeof loadInventoryWorkflow === 'function') loadInventoryWorkflow();
   if(viewKey === 'inv-integration' && typeof loadInventoryIntegration === 'function') loadInventoryIntegration();
+  if(viewKey === 'security-gateregister' && typeof loadSecurityGateRegister === 'function') loadSecurityGateRegister();
   if(viewKey === 'hrms-dashboard' && typeof loadHrmsDashboard === 'function') loadHrmsDashboard();
   if(viewKey === 'inv-dashboard' && typeof loadInvDashboard === 'function') loadInvDashboard();
   if(viewKey === 'merch-dashboard' && typeof loadMerchDashboard === 'function') loadMerchDashboard();
