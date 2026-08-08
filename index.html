@@ -7636,6 +7636,7 @@
           <tr><td>JV-08801</td><td>০২ আগস্ট ২০২৬</td><td>জুলাই ২০২৬</td><td>General JV</td><td>USD</td><td>১১৯.৮০</td></tr>
         </tbody>
       </table>
+      <div class="form-actions"><button class="btn-primary" id="btn-add-fin-gl-jv-2" data-fb-wired="true">নতুন ভাউচার তথ্য যোগ করুন</button></div>
     </div>
 
     <div class="section-divider">Journal Details</div>
@@ -17262,6 +17263,10 @@ function openFbAddModal(opts){
 function wireFlatCollectionTable(opts){
   // opts: { collectionName, tbodyId, addBtnId, colCount, fields, rowRenderer, onAdd }
   const tbody = document.getElementById(opts.tbodyId);
+  if(!tbody){
+    console.warn('wireFlatCollectionTable: tbodyId "' + opts.tbodyId + '" not found in DOM for collection "' + opts.collectionName + '" — এই টেবিলের CRUD স্কিপ করা হলো।');
+    return function(){};
+  }
   tbody.dataset.fbWired = 'true';
   const colRef = db.collection(opts.collectionName);
 
@@ -17297,6 +17302,9 @@ function wireFlatCollectionTable(opts){
   });
 
   const addBtnEl1 = document.getElementById(opts.addBtnId);
+  if(!addBtnEl1){
+    console.warn('wireFlatCollectionTable: addBtnId "' + opts.addBtnId + '" not found in DOM for collection "' + opts.collectionName + '" — add button নেই HTML-এ, তাই স্কিপ করা হলো।');
+  } else {
   addBtnEl1.addEventListener('click', function(e){
     e.stopPropagation();
     if(opts.onAdd){ opts.onAdd(colRef, render); return; }
@@ -17313,6 +17321,7 @@ function wireFlatCollectionTable(opts){
       }
     });
   });
+  }
 
   render.colRef = colRef;
   return render;
