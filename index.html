@@ -22702,7 +22702,7 @@ function loadTexKnitting(){ renderTexKnittingT1(); renderTexKnittingT2(); }
 function loadTexGreyfabric(){ renderTexGreyfabricT1(); }
 
 // ---- Subcontract Challan + Gate Pass (Knitting — Returnable) — প্রিন্ট (কালার ফরম্যাট) ----
-function printSubcontractChallan(){
+async function printSubcontractChallan(){
   const val = function(id, fallback){ const el = document.getElementById(id); const v = el ? el.value.trim() : ''; return v || (fallback || '—'); };
   const rows = Array.from(document.querySelectorAll('#sccp-items-tbody tr')).map(function(tr){
     return Array.from(tr.children).map(function(td){ return td.textContent.trim(); });
@@ -22711,11 +22711,20 @@ function printSubcontractChallan(){
   const now = new Date();
   const genStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
 
+  // ---- সফটওয়্যার ব্যবহারকারী কোম্পানির প্রোফাইল থেকে নাম/ঠিকানা আনা হচ্ছে ----
+  let company = { legalName: 'গার্মেন্টস ERP লিমিটেড', registeredAddress: '' };
+  try{
+    const cp = await db.collection('companyProfile').doc('main').get();
+    if(cp.exists){ company = Object.assign(company, cp.data()); }
+  }catch(e){}
+  const companyDisplayName = company.legalName || company.companyName || 'গার্মেন্টস ERP লিমিটেড';
+  const companyAddress = company.registeredAddress || company.address || '';
+
   let html = '<div class="gfc-wrap">';
 
   // ---- Header: company + document title/badge ----
   html += '<div class="gfc-topbar">'
-    + '<div class="gfc-brand"><h1>TRICOT FASHION LTD.</h1><div class="gfc-addr">Fatullah, Narayanganj, Bangladesh &nbsp;|&nbsp; Grey Fabric Store</div></div>'
+    + '<div class="gfc-brand"><h1>'+companyDisplayName+'</h1><div class="gfc-addr">'+(companyAddress ? (companyAddress+' &nbsp;|&nbsp; ') : '')+'Grey Fabric Store</div></div>'
     + '<div class="gfc-right"><div class="gfc-badge">RETURNABLE</div>'
     + '<div class="gfc-doctitle">Grey Fabric Issue Challan</div>'
     + '<div class="gfc-docsub">+ Gate Pass — Knitting Subcontract</div></div>'
