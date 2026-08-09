@@ -5997,6 +5997,53 @@
       </table>
     </div>
 
+    <div class="section-divider">Subcontract Challan + Gate Pass (Knitting — Returnable)</div>
+    <div class="panel">
+      <div class="panel-title">চালান তথ্য</div>
+      <div class="form-grid">
+        <div class="form-field"><label>Challan No.</label><input type="text" id="sccp-challanno" placeholder="যেমন: GFA/STORE-26-118"></div>
+        <div class="form-field"><label>Date</label><input type="text" id="sccp-date" placeholder="যেমন: ৯ আগস্ট, ২০২৬"></div>
+        <div class="form-field"><label>D.O. No.</label><input type="text" id="sccp-dono" placeholder="যেমন: OTHERS-26-1042"></div>
+        <div class="form-field"><label>Bulk Fabrics Booking Ref.</label><input type="text" id="sccp-bookingref" placeholder="বুকিং সিট রেফারেন্স নং"></div>
+        <div class="form-field"><label>Vehicle No.</label><input type="text" id="sccp-vehicleno" placeholder="যেমন: ঢাকা মেট্রো-খ-XXXX"></div>
+        <div class="form-field"><label>Expected Return Date</label><input type="text" id="sccp-returndate" placeholder="যেমন: ২০ আগস্ট, ২০২৬"></div>
+        <div class="form-field"><label>From (Own Store)</label><input type="text" id="sccp-fromname" value="Grey Fabric Store"></div>
+        <div class="form-field"><label>To (Knitting Subcontractor)</label><input type="text" id="sccp-toname" placeholder="যেমন: Vibgyor Knit Composite Ltd."></div>
+        <div class="form-field"><label>To Address</label><input type="text" id="sccp-toaddress" placeholder="যেমন: Jalkuri, Shiddirganj, Narayanganj"></div>
+        <div class="form-field"><label>Purpose</label><input type="text" id="sccp-purpose" value="Knitting Job Work — Returnable, Not a Sale"></div>
+      </div>
+
+      <div class="panel-title" style="margin-top:16px;">ফেব্রিক ডিটেইলস</div>
+      <table>
+        <thead><tr><th>SL</th><th>Description</th><th>Dia</th><th>F. Dia</th><th>Roll</th><th>Grey Qty (KG)</th><th>Remarks</th><th>Return Status</th><th>Return Date</th></tr></thead>
+        <tbody id="sccp-items-tbody">
+          <tr><td>১</td><td>Grey Fabric — Single Jersey, 30/1, 160 GSM</td><td>৩০"</td><td>৬০"</td><td>১৩</td><td>১৭১.০</td><td>—</td><td>Pending</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <div class="form-actions"><button class="btn-primary" id="btn-add-sccp-item">নতুন আইটেম যোগ করুন</button></div>
+      <div class="placeholder-note">রো-তে ক্লিক করলে মুছে ফেলা যাবে।</div>
+
+      <div class="panel-title" style="margin-top:16px;">Gate Pass (Store থেকেই তৈরি করুন)</div>
+      <div class="form-grid">
+        <div class="form-field"><label>Gate Pass No.</label><input type="text" id="sccp-gpno" placeholder="যেমন: GP-0142"></div>
+        <div class="form-field"><label>Gate Pass Date</label><input type="text" id="sccp-gpdate" placeholder="যেমন: ৯ আগস্ট, ২০২৬"></div>
+        <div class="form-field"><label>Driver Name</label><input type="text" id="sccp-drivername" placeholder="ড্রাইভারের নাম"></div>
+        <div class="form-field"><label>Driver License No.</label><input type="text" id="sccp-driverlicense" placeholder="লাইসেন্স নং"></div>
+        <div class="form-field"><label>Mobile No.</label><input type="text" id="sccp-mobileno" placeholder="ড্রাইভার মোবাইল নং"></div>
+        <div class="form-field"><label>Out Time</label><input type="text" id="sccp-outtime" placeholder="যেমন: ১১:৩০ AM"></div>
+        <div class="form-field"><label>Security Lock No.</label><input type="text" id="sccp-securitylock" placeholder="সিকিউরিটি লক নং (থাকলে)"></div>
+        <div class="form-field"><label>Returnable</label><select id="sccp-returnable"><option>Yes</option><option>No</option></select></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" id="btn-save-sccp">চালান + গেট পাস সংরক্ষণ করুন</button>
+        <button class="btn-primary" id="btn-print-sccp" data-fb-wired="true" onclick="printSubcontractChallan()" style="background:var(--ink-soft);">🖨 চালান + গেট পাস প্রিন্ট করুন</button>
+        <button class="btn-primary" id="btn-goto-gateregister" data-fb-wired="true" onclick="navigateToView('security-gateregister')" style="background:#fff;color:var(--ink);border:1px solid var(--g3);">🚪 Security-তে গিয়ে ভেরিফাই করুন</button>
+      </div>
+      <div class="placeholder-note">
+        <b>প্রসেস:</b> Store পুরো Challan + Gate Pass একসাথে তৈরি করে (এই পেজেই — গাড়ি, ড্রাইভার, সবকিছুসহ)। গাড়ি গেটে গেলে গেট কিপার শুধু এই Gate Pass নং মিলিয়ে <b>"Security-তে গিয়ে ভেরিফাই করুন"</b> বাটনে গিয়ে Gate Register-এ Confirm/Log করবে — নতুন করে ডেটা টাইপ করবে না, শুধু যাচাই করে গাড়ি ছাড়বে। নিটিং শেষে ফেরত আসলে ওপরের আইটেম টেবিলে Return Status ও Return Date আপডেট করুন।
+    </div>
+    </div>
+
     <div class="section-divider">Grey Fabric Tracking</div>
     <div class="panel">
       <table>
@@ -22606,6 +22653,49 @@ const renderQmLabT1 = wireFlatCollectionTable({
 function loadTexYarnstore(){ renderTexYarnstoreT1(); renderTexYarnstoreT2(); }
 function loadTexKnitting(){ renderTexKnittingT1(); renderTexKnittingT2(); }
 function loadTexGreyfabric(){ renderTexGreyfabricT1(); }
+
+// ---- Subcontract Challan + Gate Pass (Knitting — Returnable) — প্রিন্ট ----
+function printSubcontractChallan(){
+  const val = function(id){ const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  const rows = Array.from(document.querySelectorAll('#sccp-items-tbody tr')).map(function(tr){
+    return Array.from(tr.children).map(function(td){ return td.textContent.trim(); });
+  });
+
+  let html = '<div class="bsp-wrap">';
+  html += '<div class="bsp-head"><h1>গার্মেন্টস ERP লিমিটেড</h1><div class="bsp-addr">Grey Fabric Store</div>'
+    + '<div class="bsp-title">GREY FABRIC ISSUE CHALLAN + GATE PASS (KNITTING SUBCONTRACT — RETURNABLE)</div></div>';
+
+  html += '<table class="bsp-meta">'
+    + '<tr><td class="k">Challan No</td><td class="v">'+(val('sccp-challanno')||'—')+'</td><td class="k">Date</td><td class="v">'+(val('sccp-date')||'—')+'</td></tr>'
+    + '<tr><td class="k">D.O. No</td><td class="v">'+(val('sccp-dono')||'—')+'</td><td class="k">Booking Ref</td><td class="v">'+(val('sccp-bookingref')||'—')+'</td></tr>'
+    + '<tr><td class="k">Vehicle No</td><td class="v">'+(val('sccp-vehicleno')||'—')+'</td><td class="k">Expected Return</td><td class="v">'+(val('sccp-returndate')||'—')+'</td></tr>'
+    + '<tr><td class="k">From</td><td class="v">'+(val('sccp-fromname')||'—')+'</td><td class="k">To</td><td class="v">'+(val('sccp-toname')||'—')+'</td></tr>'
+    + '<tr><td class="k">To Address</td><td class="v" colspan="3">'+(val('sccp-toaddress')||'—')+'</td></tr>'
+    + '<tr><td class="k">Purpose</td><td class="v" colspan="3">'+(val('sccp-purpose')||'Knitting Job Work — Returnable, Not a Sale')+'</td></tr>'
+    + '</table>';
+
+  html += '<div class="bsp-section">FABRIC DETAILS</div>';
+  html += '<table class="bsp-table"><thead><tr><th>SL</th><th>Description</th><th>Dia</th><th>F. Dia</th><th>Roll</th><th>Grey Qty (KG)</th><th>Remarks</th><th>Return Status</th><th>Return Date</th></tr></thead><tbody>';
+  if(rows.length === 0){ html += '<tr><td colspan="9">—</td></tr>'; }
+  else {
+    rows.forEach(function(r){ html += '<tr>' + r.map(function(c){ return '<td>'+(c||'—')+'</td>'; }).join('') + '</tr>'; });
+  }
+  html += '</tbody></table>';
+
+  html += '<div class="bsp-section">GATE PASS (RETURNABLE: '+(val('sccp-returnable')||'Yes')+')</div>';
+  html += '<table class="bsp-meta">'
+    + '<tr><td class="k">Gate Pass No</td><td class="v">'+(val('sccp-gpno')||'—')+'</td><td class="k">Gate Pass Date</td><td class="v">'+(val('sccp-gpdate')||'—')+'</td></tr>'
+    + '<tr><td class="k">Driver Name</td><td class="v">'+(val('sccp-drivername')||'—')+'</td><td class="k">License No</td><td class="v">'+(val('sccp-driverlicense')||'—')+'</td></tr>'
+    + '<tr><td class="k">Mobile No</td><td class="v">'+(val('sccp-mobileno')||'—')+'</td><td class="k">Out Time</td><td class="v">'+(val('sccp-outtime')||'—')+'</td></tr>'
+    + '<tr><td class="k">Security Lock No</td><td class="v" colspan="3">'+(val('sccp-securitylock')||'—')+'</td></tr>'
+    + '</table>';
+
+  html += '<div class="bsp-sign"><div>Head of Department</div><div>Approved By</div><div>Security / Gate Keeper</div><div>Received By (Subcontractor)</div></div>';
+  html += '</div>';
+
+  document.getElementById('bs-print-area').innerHTML = html;
+  setTimeout(function(){ window.print(); }, 80);
+}
 function loadTexDyeing(){ renderTexDyeingT1(); }
 function loadTexFinishing(){ renderTexFinishingT1(); }
 function loadTexInspection(){ renderTexInspectionT1(); }
