@@ -278,6 +278,53 @@
   table.bsp-table th{ background:#f2f2f2; }
   .bsp-sign{ display:flex; justify-content:space-between; margin-top:34px; }
   .bsp-sign div{ text-align:center; font-size:11.5px; width:22%; border-top:1px solid #000; padding-top:4px; }
+
+  /* ===== Grey Fabric Issue Challan + Gate Pass — কালার প্রিন্ট ফরম্যাট (শুধু এই ডকুমেন্টের জন্য) ===== */
+  .gfc-wrap{ font-family:var(--font-body); color:#141414; font-size:12px; }
+  .gfc-topbar{ display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid #141414; padding-bottom:10px; margin-bottom:12px; }
+  .gfc-brand h1{ font-family:var(--font-display); font-size:18px; font-weight:700; letter-spacing:.3px; }
+  .gfc-brand .gfc-addr{ font-size:10.5px; color:#5b5b5b; margin-top:2px; }
+  .gfc-right{ text-align:right; }
+  .gfc-badge{ display:inline-block; border:1.5px solid #8b2323; color:#8b2323; font-size:10px; font-weight:700; letter-spacing:.5px; padding:2px 10px; border-radius:3px; margin-bottom:6px; }
+  .gfc-doctitle{ font-family:var(--font-display); font-size:15px; font-weight:700; }
+  .gfc-docsub{ font-size:10.5px; color:#5b5b5b; margin-top:2px; }
+
+  .gfc-metabox{ border:1px solid #141414; border-radius:4px 4px 0 0; }
+  .gfc-metagrid{ display:grid; grid-template-columns:repeat(3,1fr); }
+  .gfc-metacell{ padding:6px 10px; border-right:1px solid #ddd; border-bottom:1px solid #ddd; }
+  .gfc-metagrid .gfc-metacell:nth-child(3n){ border-right:none; }
+  .gfc-metacell .k{ font-size:9.5px; text-transform:uppercase; color:#5b5b5b; letter-spacing:.4px; }
+  .gfc-metacell .v{ font-size:12.5px; font-weight:700; margin-top:2px; }
+
+  .gfc-fromto{ display:grid; grid-template-columns:1fr 1fr; }
+  .gfc-fromto .gfc-metacell{ border-bottom:none; }
+
+  .gfc-purpose{ background:#f6f6f6; border:1px solid #141414; border-top:none; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; padding:6px 10px; font-size:11.5px; margin-bottom:14px; border-radius:0 0 4px 4px; }
+  .gfc-purpose b{ color:#8b2323; }
+
+  table.gfc-table{ width:100%; border-collapse:collapse; margin-bottom:6px; }
+  table.gfc-table th{ background:#141414; color:#fff; font-size:10.5px; text-transform:uppercase; padding:5px 4px; border:1px solid #141414; }
+  table.gfc-table td{ border:1px solid #ccc; padding:4px 5px; font-size:11px; text-align:center; }
+  table.gfc-table tr.gfc-total td{ font-weight:700; background:#f6f6f6; }
+
+  .gfc-words{ font-size:11px; font-style:italic; color:#333; margin-bottom:16px; }
+
+  .gfc-gatepass{ border:2px solid #8b2323; border-radius:6px; margin-bottom:24px; overflow:hidden; }
+  .gfc-gp-head{ background:#8b2323; color:#fff; display:flex; justify-content:space-between; align-items:center; padding:6px 12px; }
+  .gfc-gp-head .t{ font-weight:700; font-size:12.5px; letter-spacing:.3px; }
+  .gfc-gp-head .pill{ background:#fff; color:#8b2323; font-size:10px; font-weight:700; padding:2px 10px; border-radius:20px; }
+  .gfc-gp-body{ display:grid; grid-template-columns:1fr 1fr; gap:0 24px; padding:12px 16px; }
+  .gfc-gp-field{ display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px dotted #999; padding:5px 0; font-size:11.5px; }
+  .gfc-gp-field .lbl{ color:#5b5b5b; }
+  .gfc-gp-field .val{ font-weight:700; }
+
+  .gfc-sign{ display:flex; justify-content:space-between; margin-top:30px; gap:6px; }
+  .gfc-sign div{ text-align:center; font-size:10px; width:19%; border-top:1px solid #141414; padding-top:4px; color:#333; }
+
+  .gfc-footer{ display:flex; justify-content:space-between; margin-top:14px; font-size:9px; color:#888; border-top:1px solid #eee; padding-top:6px; gap:10px; }
+  @media print{
+    .gfc-gatepass, table.gfc-table th{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
 </style>
 </head>
 <body>
@@ -22654,43 +22701,82 @@ function loadTexYarnstore(){ renderTexYarnstoreT1(); renderTexYarnstoreT2(); }
 function loadTexKnitting(){ renderTexKnittingT1(); renderTexKnittingT2(); }
 function loadTexGreyfabric(){ renderTexGreyfabricT1(); }
 
-// ---- Subcontract Challan + Gate Pass (Knitting — Returnable) — প্রিন্ট ----
+// ---- Subcontract Challan + Gate Pass (Knitting — Returnable) — প্রিন্ট (কালার ফরম্যাট) ----
 function printSubcontractChallan(){
-  const val = function(id){ const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  const val = function(id, fallback){ const el = document.getElementById(id); const v = el ? el.value.trim() : ''; return v || (fallback || '—'); };
   const rows = Array.from(document.querySelectorAll('#sccp-items-tbody tr')).map(function(tr){
     return Array.from(tr.children).map(function(td){ return td.textContent.trim(); });
   });
+  const returnable = val('sccp-returnable', 'Yes');
+  const now = new Date();
+  const genStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
 
-  let html = '<div class="bsp-wrap">';
-  html += '<div class="bsp-head"><h1>গার্মেন্টস ERP লিমিটেড</h1><div class="bsp-addr">Grey Fabric Store</div>'
-    + '<div class="bsp-title">GREY FABRIC ISSUE CHALLAN + GATE PASS (KNITTING SUBCONTRACT — RETURNABLE)</div></div>';
+  let html = '<div class="gfc-wrap">';
 
-  html += '<table class="bsp-meta">'
-    + '<tr><td class="k">Challan No</td><td class="v">'+(val('sccp-challanno')||'—')+'</td><td class="k">Date</td><td class="v">'+(val('sccp-date')||'—')+'</td></tr>'
-    + '<tr><td class="k">D.O. No</td><td class="v">'+(val('sccp-dono')||'—')+'</td><td class="k">Booking Ref</td><td class="v">'+(val('sccp-bookingref')||'—')+'</td></tr>'
-    + '<tr><td class="k">Vehicle No</td><td class="v">'+(val('sccp-vehicleno')||'—')+'</td><td class="k">Expected Return</td><td class="v">'+(val('sccp-returndate')||'—')+'</td></tr>'
-    + '<tr><td class="k">From</td><td class="v">'+(val('sccp-fromname')||'—')+'</td><td class="k">To</td><td class="v">'+(val('sccp-toname')||'—')+'</td></tr>'
-    + '<tr><td class="k">To Address</td><td class="v" colspan="3">'+(val('sccp-toaddress')||'—')+'</td></tr>'
-    + '<tr><td class="k">Purpose</td><td class="v" colspan="3">'+(val('sccp-purpose')||'Knitting Job Work — Returnable, Not a Sale')+'</td></tr>'
-    + '</table>';
+  // ---- Header: company + document title/badge ----
+  html += '<div class="gfc-topbar">'
+    + '<div class="gfc-brand"><h1>TRICOT FASHION LTD.</h1><div class="gfc-addr">Fatullah, Narayanganj, Bangladesh &nbsp;|&nbsp; Grey Fabric Store</div></div>'
+    + '<div class="gfc-right"><div class="gfc-badge">RETURNABLE</div>'
+    + '<div class="gfc-doctitle">Grey Fabric Issue Challan</div>'
+    + '<div class="gfc-docsub">+ Gate Pass — Knitting Subcontract</div></div>'
+    + '</div>';
 
-  html += '<div class="bsp-section">FABRIC DETAILS</div>';
-  html += '<table class="bsp-table"><thead><tr><th>SL</th><th>Description</th><th>Dia</th><th>F. Dia</th><th>Roll</th><th>Grey Qty (KG)</th><th>Remarks</th><th>Return Status</th><th>Return Date</th></tr></thead><tbody>';
+  // ---- Meta grid ----
+  html += '<div class="gfc-metabox"><div class="gfc-metagrid">'
+    + '<div class="gfc-metacell"><div class="k">Challan No.</div><div class="v">'+val('sccp-challanno')+'</div></div>'
+    + '<div class="gfc-metacell"><div class="k">Date</div><div class="v">'+val('sccp-date')+'</div></div>'
+    + '<div class="gfc-metacell"><div class="k">D.O. No.</div><div class="v">'+val('sccp-dono')+'</div></div>'
+    + '<div class="gfc-metacell"><div class="k">Bulk Fabrics Booking Ref.</div><div class="v">'+val('sccp-bookingref')+'</div></div>'
+    + '<div class="gfc-metacell"><div class="k">Vehicle No.</div><div class="v">'+val('sccp-vehicleno')+'</div></div>'
+    + '<div class="gfc-metacell"><div class="k">Expected Return Date</div><div class="v">'+val('sccp-returndate')+'</div></div>'
+    + '</div>'
+    + '<div class="gfc-fromto">'
+    + '<div class="gfc-metacell"><div class="k">From (Own Company / Store)</div><div class="v">'+val('sccp-fromname', 'Grey Fabric Store')+'</div></div>'
+    + '<div class="gfc-metacell"><div class="k">To (Knitting Subcontractor)</div><div class="v">'+val('sccp-toname')+'<br><span style="font-weight:400;font-size:10.5px;color:#5b5b5b;">'+val('sccp-toaddress', '')+'</span></div></div>'
+    + '</div></div>';
+  html += '<div class="gfc-purpose"><span>Purpose: <b>'+val('sccp-purpose', 'Knitting Job Work — Returnable, Not a Sale')+'</b></span>'
+    + '<span>Returnable: <b>'+returnable+'</b></span></div>';
+
+  // ---- Fabric details table ----
+  html += '<table class="gfc-table"><thead><tr><th>SL</th><th>Description (Quality / Composition / Lot)</th><th>Dia</th><th>F. Dia</th><th>Roll</th><th>Grey Qty (KG)</th><th>Remarks</th><th>Return Status</th><th>Return Date</th></tr></thead><tbody>';
+  let totalRoll = 0, totalKg = 0;
   if(rows.length === 0){ html += '<tr><td colspan="9">—</td></tr>'; }
   else {
-    rows.forEach(function(r){ html += '<tr>' + r.map(function(c){ return '<td>'+(c||'—')+'</td>'; }).join('') + '</tr>'; });
+    rows.forEach(function(r){
+      const roll = parseFloat((r[4]||'').replace(/[^\d.]/g,'')) || 0;
+      const kg = parseFloat((r[5]||'').replace(/[^\d.]/g,'')) || 0;
+      totalRoll += roll; totalKg += kg;
+      html += '<tr>' + r.map(function(c){ return '<td>'+(c||'—')+'</td>'; }).join('') + '</tr>';
+    });
+    html += '<tr class="gfc-total"><td colspan="4">Total</td><td>'+totalRoll+' Roll</td><td>'+totalKg.toFixed(1)+' KG</td><td colspan="3"></td></tr>';
   }
   html += '</tbody></table>';
+  html += '<div class="gfc-words">In Words: '+val('sccp-inwords', totalKg ? (totalKg.toFixed(1)+' kg only') : '—')+'</div>';
 
-  html += '<div class="bsp-section">GATE PASS (RETURNABLE: '+(val('sccp-returnable')||'Yes')+')</div>';
-  html += '<table class="bsp-meta">'
-    + '<tr><td class="k">Gate Pass No</td><td class="v">'+(val('sccp-gpno')||'—')+'</td><td class="k">Gate Pass Date</td><td class="v">'+(val('sccp-gpdate')||'—')+'</td></tr>'
-    + '<tr><td class="k">Driver Name</td><td class="v">'+(val('sccp-drivername')||'—')+'</td><td class="k">License No</td><td class="v">'+(val('sccp-driverlicense')||'—')+'</td></tr>'
-    + '<tr><td class="k">Mobile No</td><td class="v">'+(val('sccp-mobileno')||'—')+'</td><td class="k">Out Time</td><td class="v">'+(val('sccp-outtime')||'—')+'</td></tr>'
-    + '<tr><td class="k">Security Lock No</td><td class="v" colspan="3">'+(val('sccp-securitylock')||'—')+'</td></tr>'
-    + '</table>';
+  // ---- Gate pass box ----
+  html += '<div class="gfc-gatepass">'
+    + '<div class="gfc-gp-head"><span class="t">GATE PASS</span><span class="pill">RETURNABLE — '+returnable.toUpperCase()+'</span></div>'
+    + '<div class="gfc-gp-body">'
+    + '<div><div class="gfc-gp-field"><span class="lbl">Gate Pass No.</span><span class="val">'+val('sccp-gpno')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">Gate Pass Date</span><span class="val">'+val('sccp-gpdate')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">Linked Challan No.</span><span class="val">'+val('sccp-challanno')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">From Location</span><span class="val">'+val('sccp-fromname', 'Grey Fabric Store')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">To Location</span><span class="val">'+val('sccp-toname')+'</span></div>'
+    + '<div class="gfc-gp-field" style="border-bottom:none;"><span class="lbl">Returnable</span><span class="val">'+returnable+'</span></div></div>'
+    + '<div><div class="gfc-gp-field"><span class="lbl">Vehicle No.</span><span class="val">'+val('sccp-vehicleno')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">Driver Name</span><span class="val">'+val('sccp-drivername')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">Driver License No.</span><span class="val">'+val('sccp-driverlicense')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">Mobile No.</span><span class="val">'+val('sccp-mobileno')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">Out Time</span><span class="val">'+val('sccp-outtime')+'</span></div>'
+    + '<div class="gfc-gp-field" style="border-bottom:none;"><span class="lbl">Security Lock No.</span><span class="val">'+val('sccp-securitylock')+'</span></div></div>'
+    + '</div></div>';
 
-  html += '<div class="bsp-sign"><div>Head of Department</div><div>Approved By</div><div>Security / Gate Keeper</div><div>Received By (Subcontractor)</div></div>';
+  // ---- Signatures ----
+  html += '<div class="gfc-sign"><div>Head of Department</div><div>Approved By (DGM/Store Head)</div><div>Tally Pass — Inventory</div><div>Security / Gate Keeper</div><div>Received By (Subcontractor)</div></div>';
+
+  // ---- Footer note ----
+  html += '<div class="gfc-footer"><span>Note: এই চালান-গুজ ফেব্রিক নিটিং সাবকন্ট্রাক্ট কাজের জন্য ইস্যুকৃত — বিক্রয় নয়, ফেরতযোগ্য মাল হিসেবে গণ্য।</span><span>Generated: '+genStamp+'</span></div>';
+
   html += '</div>';
 
   document.getElementById('bs-print-area').innerHTML = html;
