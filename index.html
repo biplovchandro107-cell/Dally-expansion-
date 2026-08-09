@@ -251,6 +251,33 @@
 
   .role-card{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
   .role-badge{ width:44px; height:44px; border-radius:10px; background:var(--ink); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0;}
+  /* ===== Booking Sheet — Print (Fabric Booking Sheet + Bulk Fabrics Booking) ===== */
+  #bs-print-area{ display:none; }
+  @media print{
+    body *{ visibility:hidden; }
+    #bs-print-area, #bs-print-area *{ visibility:visible; }
+    #bs-print-area{ display:block; position:absolute; left:0; top:0; width:100%; padding:14px; }
+  }
+  .bsp-wrap{ font-family:var(--font-body); color:#000; font-size:12px; }
+  .bsp-head{ text-align:center; border-bottom:2px solid #000; padding-bottom:8px; margin-bottom:10px; }
+  .bsp-head h1{ font-family:var(--font-display); font-size:20px; letter-spacing:.5px; }
+  .bsp-head .bsp-addr{ font-size:11px; margin-top:2px; }
+  .bsp-head .bsp-title{ font-weight:700; text-decoration:underline; margin-top:6px; font-size:13px; }
+  .bsp-meta{ width:100%; border-collapse:collapse; margin-bottom:10px; }
+  .bsp-meta td{ font-size:12px; padding:2px 4px; vertical-align:top; }
+  .bsp-meta td.k{ color:#333; width:38%; text-transform:uppercase; }
+  .bsp-meta td.v{ font-weight:700; }
+  .bsp-top{ width:100%; border-collapse:collapse; }
+  .bsp-top-left{ vertical-align:top; width:60%; padding-right:14px; }
+  .bsp-top-right{ vertical-align:top; width:40%; }
+  .bsp-photo{ max-width:110px; max-height:110px; border:1px solid #000; display:block; margin:0 0 4px auto; }
+  .bsp-photo-placeholder{ width:100px; height:80px; border:1px dashed #000; margin:0 0 4px auto; display:flex; align-items:center; justify-content:center; font-size:10px; color:#777; }
+  .bsp-section{ font-weight:700; background:#eee; border:1px solid #000; padding:3px 6px; margin-top:12px; }
+  table.bsp-table{ width:100%; border-collapse:collapse; margin-top:0; }
+  table.bsp-table th, table.bsp-table td{ border:1px solid #000; padding:3px 5px; font-size:11.5px; text-align:center; }
+  table.bsp-table th{ background:#f2f2f2; }
+  .bsp-sign{ display:flex; justify-content:space-between; margin-top:34px; }
+  .bsp-sign div{ text-align:center; font-size:11.5px; width:22%; border-top:1px solid #000; padding-top:4px; }
 </style>
 </head>
 <body>
@@ -546,7 +573,7 @@
         <div class="nav-item group-link" data-view="merch-strikeoff"><span>11. Strike Off</span></div>
         <div class="nav-item group-link" data-view="merch-order"><span>12. Order Management</span></div>
         <div class="nav-item group-link" data-view="merch-tna"><span>13. Time &amp; Action (TNA)</span></div>
-        <div class="nav-item group-link" data-view="merch-bookingsheet"><span>14. Booking Sheet (Fabric + Trim)</span></div>
+        <div class="nav-item group-link" data-view="merch-bookingsheet"><span>14. Fabrics Booking Sheet (+ Trim)</span></div>
         <div class="nav-item group-link" data-view="merch-shipment"><span>15. Shipment Planning</span></div>
         <div class="nav-item group-link" data-view="merch-handover"><span>16. Commercial Handover</span></div>
         <div class="nav-item group-link" data-view="merch-documents"><span>17. Merchandising Documents</span></div>
@@ -5575,27 +5602,76 @@
     </div>
   </div>
 
-  <!-- ===== MERCHANDISING: 14. BOOKING SHEET (Fabric + Trim, combined — Knitting/Dyeing/Cutting/Sewing এ পাঠানোর জন্য একই শীট) ===== -->
+  <!-- ===== MERCHANDISING: 14. BOOKING SHEET (Fabric Booking Sheet + Bulk Fabrics Booking — একটাই প্রিন্টযোগ্য শীট, প্লাস Trim + ডিপার্টমেন্ট স্ট্যাটাস) ===== -->
   <div class="view" id="view-merch-bookingsheet">
-    <div class="view-head"><h1>Booking Sheet</h1><div class="meta">অর্ডার কনফার্ম হওয়ার পর একটাই বুকিং সিট — ফেব্রিক + ট্রিম + ডিপার্টমেন্ট স্ট্যাটাস একসাথে, Knitting / Dyeing / Cutting / Sewing সবার জন্য</div></div>
+    <div class="view-head"><h1>Booking Sheet</h1><div class="meta">Fabric Booking Sheet (কোন ফেব্রিক লাগবে) + Bulk Fabrics Booking (কালার/সাইজ ভিত্তিক অর্ডার কোয়ান্টিটি ও ফিনিশড ফেব্রিক রিকোয়্যারমেন্ট) — একটাই ফর্মে, ফ্যাক্টরির কাগজের মতো প্রিন্ট করা যাবে</div></div>
 
-    <div class="section-divider">নতুন Booking Sheet</div>
+    <div class="section-divider">১. অর্ডার তথ্য</div>
     <div class="panel">
       <div class="form-grid">
         <div class="form-field"><label>Order No.</label><select id="bs-add-order"><option value="">লোড হচ্ছে...</option></select></div>
         <div class="form-field"><label>Style No.</label><input type="text" id="bs-style" placeholder="অর্ডার সিলেক্ট করলে অটো আসবে"></div>
         <div class="form-field"><label>Buyer</label><input type="text" id="bs-buyer" placeholder="অর্ডার সিলেক্ট করলে অটো আসবে" readonly></div>
+        <div class="form-field"><label>Booking Date</label><input type="date" id="bs-booking-date"></div>
+        <div class="form-field"><label>Customer</label><input type="text" id="bs-customer" placeholder="যেমন: CN0625-0564"></div>
+        <div class="form-field"><label>Item Description</label><input type="text" id="bs-item-desc" placeholder="যেমন: SWEAT SHIRT"></div>
+        <div class="form-field"><label>Brand</label><input type="text" id="bs-brand" placeholder="যেমন: WATSON"></div>
+        <div class="form-field"><label>Job No.</label><input type="text" id="bs-job-no" placeholder="যেমন: TFL-799"></div>
+        <div class="form-field full">
+          <label>Style Photo (গেঞ্জি/পোশাকের স্যাম্পল ছবি — প্রিন্টে দেখাবে)</label>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <img id="bs-photo-preview" src="" style="display:none;width:72px;height:72px;object-fit:cover;border:1px solid var(--g2);border-radius:6px;">
+            <div id="bs-photo-empty" style="width:72px;height:72px;border:1px dashed var(--g3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--g4);text-align:center;">No Photo</div>
+            <input type="file" id="bs-photo-file" accept="image/*" style="display:none;">
+            <button type="button" class="btn-secondary" id="btn-bs-pickphoto">ছবি আপলোড করুন</button>
+            <span class="link-action" id="btn-bs-clearphoto" style="color:#a4342a;">মুছুন</span>
+          </div>
+          <div class="placeholder-note" style="margin:8px 0 4px;">অথবা সরাসরি ছবির লিংক দিন (Google Drive, Imgur ইত্যাদি) —</div>
+          <input type="text" id="bs-photo-url" placeholder="ছবির লিংক (আপলোড করলে এটা লাগবে না)">
+        </div>
       </div>
+    </div>
 
-      <div class="panel-title" style="margin-top:16px;">Fabric</div>
+    <div class="section-divider">২. ফেব্রিক বুকিং শীট — কোন কোন ফেব্রিক লাগবে (Fabric Spec)</div>
+    <div class="panel">
+      <table>
+        <thead>
+          <tr><th style="width:9%;">Label</th><th>Composition</th><th>Construction</th><th style="width:8%;">GSM</th><th>Color / Shade</th><th style="width:11%;">Consumption (Kg/Dozen)</th><th style="width:6%;"></th></tr>
+        </thead>
+        <tbody id="bs-fabric-tbody"></tbody>
+      </table>
+      <div class="form-actions"><button type="button" class="btn-secondary" id="btn-bs-addfabricrow">+ ফেব্রিক যোগ করুন</button></div>
+    </div>
+
+    <div class="section-divider">৩. বাল্ক বুকিং — সাইজ সেটআপ ও কালার ভিত্তিক GMT Order Qty</div>
+    <div class="panel">
       <div class="form-grid">
-        <div class="form-field"><label>Fabric Requirement</label><input type="text" id="bs-fab-req" placeholder="যেমন: ৮,৬৪০ কেজি"></div>
-        <div class="form-field"><label>Fabric Booking Request</label><input type="text" id="bs-fab-request" placeholder="যেমন: ৮,৬৪০ কেজি"></div>
-        <div class="form-field"><label>Fabric Purchase Plan</label><input type="text" id="bs-fab-plan" placeholder="যেমন: ২ ধাপে"></div>
-        <div class="form-field"><label>Fabric Arrival Status</label><select id="bs-fab-status"><option>Pending</option><option>Partial</option><option>Arrived</option></select></div>
+        <div class="form-field full"><label>সাইজসমূহ (কমা দিয়ে আলাদা)</label><input type="text" id="bs-sizes-input" value="M,L,XL" placeholder="যেমন: S,M,L,XL"></div>
       </div>
+      <div class="form-actions" style="margin-top:0;"><button type="button" class="btn-secondary" id="btn-bs-setsizes">সাইজ কলাম সেট করুন</button></div>
 
-      <div class="panel-title" style="margin-top:16px;">Trim</div>
+      <div class="panel-title" style="margin-top:16px;">Colour Wise GMT Order Qty</div>
+      <table>
+        <thead><tr id="bs-color-thead"><th>Colour</th><th>Total Pcs</th><th style="width:6%;"></th></tr></thead>
+        <tbody id="bs-color-tbody"></tbody>
+        <tfoot><tr id="bs-color-tfoot" style="font-weight:700;background:var(--g1);"></tr></tfoot>
+      </table>
+      <div class="form-actions"><button type="button" class="btn-secondary" id="btn-bs-addcolorrow">+ কালার যোগ করুন</button></div>
+    </div>
+
+    <div class="section-divider">৪. অটো হিসাব — Finished Fabric Requirement (Colour &amp; Size Wise Fabrics Booking)</div>
+    <div class="panel">
+      <table>
+        <thead><tr id="bs-fabreq-thead"><th>Fabric</th></tr></thead>
+        <tbody id="bs-fabreq-tbody"><tr><td style="text-align:center;color:var(--muted);">ফেব্রিক ও কালার/সাইজ কোয়ান্টিটি দিলে এখানে অটো হিসাব হবে</td></tr></tbody>
+        <tfoot><tr id="bs-fabreq-tfoot" style="font-weight:700;background:var(--g1);"></tr></tfoot>
+      </table>
+      <div class="placeholder-note">সূত্র: প্রতি সাইজে ফিনিশড ফেব্রিক (Kg) = (ঐ সাইজের মোট Pcs ÷ 12) × Consumption (Kg/Dozen)। ফেব্রিক রো বা কালার/কোয়ান্টিটি বদলালে এখানে সাথে সাথে আপডেট হবে।</div>
+    </div>
+
+    <div class="section-divider">৫. Trim &amp; ডিপার্টমেন্ট স্ট্যাটাস</div>
+    <div class="panel">
+      <div class="panel-title">Trim</div>
       <div class="form-grid">
         <div class="form-field"><label>Trim Requirement</label><input type="text" id="bs-trim-req" placeholder="যেমন: USD ৬,৯১২"></div>
         <div class="form-field"><label>Trim Booking</label><input type="text" id="bs-trim-booking" placeholder="যেমন: USD ৬,৯১২"></div>
@@ -5605,6 +5681,7 @@
 
       <div class="panel-title" style="margin-top:16px;">Department Status (Knitting → Dyeing → Cutting → Sewing)</div>
       <div class="form-grid">
+        <div class="form-field"><label>Fabric Arrival</label><select id="bs-fab-status"><option>Pending</option><option>Partial</option><option>Arrived</option></select></div>
         <div class="form-field"><label>Knitting</label><select id="bs-dept-knitting"><option>Pending</option><option>Running</option><option>Completed</option></select></div>
         <div class="form-field"><label>Dyeing</label><select id="bs-dept-dyeing"><option>Pending</option><option>Running</option><option>Completed</option></select></div>
         <div class="form-field"><label>Cutting</label><select id="bs-dept-cutting"><option>Pending</option><option>Running</option><option>Completed</option></select></div>
@@ -5614,22 +5691,25 @@
       <div class="form-actions"><button class="btn-primary" id="btn-add-bookingsheet" data-fb-wired="true">Booking Sheet সেভ করুন</button></div>
     </div>
 
-    <div class="section-divider">Booking Sheet Status — সব ডিপার্টমেন্ট একই ভিউতে</div>
+    <div class="section-divider">সেভ করা Booking Sheet সমূহ</div>
     <div class="panel">
       <table>
         <thead>
           <tr>
-            <th>Style / Order</th><th>Buyer</th>
-            <th>Fabric Req.</th><th>Fabric Booking</th><th>Fabric Arrival</th>
-            <th>Trim Req.</th><th>Trim Booking</th><th>Trim Arrival</th><th>Trim Balance</th>
-            <th>Knitting</th><th>Dyeing</th><th>Cutting</th><th>Sewing</th>
+            <th>Style / Order</th><th>Buyer</th><th>Job No.</th><th>Booking Date</th>
+            <th>Total Fabric Req.</th><th>Fabric Arrival</th>
+            <th>Trim Req.</th><th>Trim Arrival</th>
+            <th>Knitting</th><th>Dyeing</th><th>Cutting</th><th>Sewing</th><th>Action</th>
           </tr>
         </thead>
         <tbody id="bs-tbody" data-fb-wired="true"><tr><td colspan="13" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
       </table>
-      <div class="placeholder-note">রো-তে ক্লিক করলে মুছে ফেলা যাবে। এই টেবিলটাই প্রিন্ট করে Knitting, Dyeing, Garments Cutting ও Sewing — সব ডিপার্টমেন্টে একইসাথে পাঠানো যাবে। আপনি মার্চেন্ডাইজার হিসেবে লগইন করা থাকলে শুধু আপনার নিজের বায়ারের বুকিং সিটই দেখা যাবে।</div>
+      <div class="placeholder-note">"প্রিন্ট" চাপলে ফ্যাক্টরির কাগজের ফরম্যাটে (Fabric Requirement + Colour Wise Order Qty + Colour &amp; Size Wise Fabrics Booking) সরাসরি প্রিন্ট প্রিভিউ খুলবে — এই একই প্রিন্ট Knitting, Dyeing, Cutting ও Sewing সব ডিপার্টমেন্টে পাঠানো যাবে। আপনি মার্চেন্ডাইজার হিসেবে লগইন করা থাকলে শুধু আপনার নিজের বায়ারের বুকিং সিটই দেখা যাবে।</div>
     </div>
   </div>
+
+  <!-- ===== Booking Sheet — Print Area (শুধু প্রিন্টের সময় দেখা যাবে) ===== -->
+  <div id="bs-print-area"></div>
 
   <!-- ===== MERCHANDISING: 16. SHIPMENT PLANNING ===== -->
   <div class="view" id="view-merch-shipment">
@@ -18665,7 +18745,51 @@ function loadTNA(){
   renderTNATasks();
 }
 
-// ---- BOOKING SHEET (Fabric + Trim + Department status, combined — একটাই কালেকশন 'bookingSheet') ----
+// ---- Style Photo: ফাইল থেকে ছবি নিয়ে base64 লিংক বানানো (কোম্পানি লোগোর মতোই প্যাটার্ন), Booking Sheet সেভ হওয়ার সময় photoUrl হিসেবে যাবে ----
+window.bsPhotoDataUrl = null;
+const bsPhotoFile = document.getElementById('bs-photo-file');
+function bsPhotoShowPreview(src){
+  const img = document.getElementById('bs-photo-preview');
+  const empty = document.getElementById('bs-photo-empty');
+  if(src){ img.src = src; img.style.display = 'block'; empty.style.display = 'none'; }
+  else { img.src = ''; img.style.display = 'none'; empty.style.display = 'flex'; }
+}
+document.getElementById('btn-bs-pickphoto').addEventListener('click', function(e){
+  e.stopPropagation();
+  bsPhotoFile.click();
+});
+bsPhotoFile.addEventListener('change', function(){
+  const file = bsPhotoFile.files[0];
+  if(!file) return;
+  if(file.size > 700 * 1024){
+    fbToast('⚠ ছবিটা ৭০০ KB-এর বেশি — ছোট ছবি দিন বা নিচে লিংক ব্যবহার করুন', true);
+    bsPhotoFile.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(){
+    window.bsPhotoDataUrl = reader.result;
+    document.getElementById('bs-photo-url').value = '';
+    bsPhotoShowPreview(window.bsPhotoDataUrl);
+    fbToast('✓ ছবি যোগ হয়েছে — এখন Booking Sheet সেভ করুন');
+  };
+  reader.onerror = function(){ fbToast('⚠ ছবি পড়তে ব্যর্থ হয়েছে', true); };
+  reader.readAsDataURL(file);
+  bsPhotoFile.value = '';
+});
+document.getElementById('btn-bs-clearphoto').addEventListener('click', function(){
+  window.bsPhotoDataUrl = null;
+  document.getElementById('bs-photo-url').value = '';
+  bsPhotoShowPreview(null);
+});
+document.getElementById('bs-photo-url').addEventListener('input', function(){
+  if(this.value.trim()){ window.bsPhotoDataUrl = null; bsPhotoShowPreview(this.value.trim()); }
+  else if(!window.bsPhotoDataUrl){ bsPhotoShowPreview(null); }
+});
+
+// ---- BOOKING SHEET (Fabric Booking Sheet + Bulk Fabrics Booking + Trim + Department status, combined — একটাই কালেকশন 'bookingSheet') ----
+window.bsCurrentSizes = ['M','L','XL'];
+
 async function populateBookingSheetOrderDropdown(){
   await window.currentMerchReady;
   const sel = document.getElementById('bs-add-order');
@@ -18696,6 +18820,148 @@ function bookingSheetDeptPill(status){
   return '<span class="pill warn">Pending</span>';
 }
 
+// ---- ২. Fabric spec rows (label/composition/construction/gsm/color/kgPerDozen) ----
+function bsFabricRowHtml(d){
+  d = d || {};
+  return '<td><input type="text" class="bs-fab-label" value="'+(d.label||('FAB-0'+((document.querySelectorAll('#bs-fabric-tbody tr').length||0)+1)))+'" placeholder="FAB-01"></td>'
+    + '<td><input type="text" class="bs-fab-composition" value="'+(d.composition||'')+'" placeholder="যেমন: 60% Polyester 40% Cotton BCI fleece 290 gsm"></td>'
+    + '<td><input type="text" class="bs-fab-construction" value="'+(d.construction||'')+'" placeholder="যেমন: Fleece / Rib / Terry"></td>'
+    + '<td><input type="text" class="bs-fab-gsm" value="'+(d.gsm||'')+'" placeholder="290"></td>'
+    + '<td><input type="text" class="bs-fab-color" value="'+(d.color||'')+'" placeholder="যেমন: Navy"></td>'
+    + '<td><input type="number" step="0.001" class="bs-fab-kgdz" value="'+(d.kgPerDozen!=null?d.kgPerDozen:'')+'" placeholder="যেমন: 49.32"></td>'
+    + '<td><span class="link-action bs-fab-remove">✕</span></td>';
+}
+function addFabricRow(d){
+  const tr = document.createElement('tr');
+  tr.innerHTML = bsFabricRowHtml(d);
+  document.getElementById('bs-fabric-tbody').appendChild(tr);
+}
+document.getElementById('btn-bs-addfabricrow').addEventListener('click', function(){ addFabricRow(); recomputeBsLive(); });
+document.getElementById('bs-fabric-tbody').addEventListener('click', function(e){
+  if(e.target.classList.contains('bs-fab-remove')){ e.target.closest('tr').remove(); recomputeBsLive(); }
+});
+document.getElementById('bs-fabric-tbody').addEventListener('input', recomputeBsLive);
+
+// ---- ৩. সাইজ সেটআপ + কালার/কোয়ান্টিটি রো ----
+function bsColorRowQtyCellsHtml(qtyObj){
+  qtyObj = qtyObj || {};
+  return window.bsCurrentSizes.map(function(sz){
+    return '<td><input type="number" min="0" class="bs-color-qty" data-size="'+sz+'" value="'+(qtyObj[sz]!=null?qtyObj[sz]:'')+'" placeholder="0"></td>';
+  }).join('');
+}
+function bsColorRowHtml(color, qtyObj){
+  return '<td><input type="text" class="bs-color-name" value="'+(color||'')+'" placeholder="যেমন: Brown 19-1419TCX"></td>'
+    + bsColorRowQtyCellsHtml(qtyObj)
+    + '<td class="bs-color-total">0</td>'
+    + '<td><span class="link-action bs-color-remove">✕</span></td>';
+}
+function renderBsColorThead(){
+  document.getElementById('bs-color-thead').innerHTML = '<th>Colour</th>' + window.bsCurrentSizes.map(function(sz){ return '<th>'+sz+'</th>'; }).join('') + '<th>Total Pcs</th><th style="width:6%;"></th>';
+}
+function addColorRow(color, qtyObj){
+  const tr = document.createElement('tr');
+  tr.innerHTML = bsColorRowHtml(color, qtyObj);
+  document.getElementById('bs-color-tbody').appendChild(tr);
+}
+function applyBsSizes(preserve){
+  const raw = document.getElementById('bs-sizes-input').value || '';
+  const sizes = raw.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+  window.bsCurrentSizes = sizes.length ? sizes : ['M','L','XL'];
+  renderBsColorThead();
+  // পুরনো কালার রো-গুলো নতুন সাইজ কলাম অনুযায়ী রিবিল্ড, আগের ডেটা সাইজ-কি অনুযায়ী প্রিজার্ভ করে
+  const oldRows = Array.prototype.slice.call(document.querySelectorAll('#bs-color-tbody tr'));
+  const preserved = oldRows.map(function(tr){
+    const qty = {};
+    tr.querySelectorAll('.bs-color-qty').forEach(function(inp){ qty[inp.dataset.size] = inp.value; });
+    return { color: tr.querySelector('.bs-color-name').value, qty: qty };
+  });
+  document.getElementById('bs-color-tbody').innerHTML = '';
+  preserved.forEach(function(r){ addColorRow(r.color, r.qty); });
+  recomputeBsLive();
+}
+document.getElementById('btn-bs-setsizes').addEventListener('click', function(){ applyBsSizes(); });
+document.getElementById('btn-bs-addcolorrow').addEventListener('click', function(){ addColorRow(); recomputeBsLive(); });
+document.getElementById('bs-color-tbody').addEventListener('click', function(e){
+  if(e.target.classList.contains('bs-color-remove')){ e.target.closest('tr').remove(); recomputeBsLive(); }
+});
+document.getElementById('bs-color-tbody').addEventListener('input', recomputeBsLive);
+
+// ---- ডেটা কালেক্ট করা (ফর্ম থেকে) ----
+function collectBsFabricRows(){
+  return Array.prototype.map.call(document.querySelectorAll('#bs-fabric-tbody tr'), function(tr){
+    return {
+      label: tr.querySelector('.bs-fab-label').value.trim(),
+      composition: tr.querySelector('.bs-fab-composition').value.trim(),
+      construction: tr.querySelector('.bs-fab-construction').value.trim(),
+      gsm: tr.querySelector('.bs-fab-gsm').value.trim(),
+      color: tr.querySelector('.bs-fab-color').value.trim(),
+      kgPerDozen: parseFloat(tr.querySelector('.bs-fab-kgdz').value) || 0
+    };
+  }).filter(function(r){ return r.label || r.composition; });
+}
+function collectBsColorRows(){
+  return Array.prototype.map.call(document.querySelectorAll('#bs-color-tbody tr'), function(tr){
+    const qty = {};
+    tr.querySelectorAll('.bs-color-qty').forEach(function(inp){ qty[inp.dataset.size] = parseFloat(inp.value) || 0; });
+    return { color: tr.querySelector('.bs-color-name').value.trim(), qty: qty };
+  }).filter(function(r){ return r.color; });
+}
+
+// ---- অটো হিসাব — কালার/সাইজ কোয়ান্টিটি + ফেব্রিক কনজাম্পশন থেকে Finished Fabric Requirement ----
+function computeBookingSheetTotals(sizes, fabricRows, colorRows){
+  const sizeTotals = {};
+  sizes.forEach(function(sz){ sizeTotals[sz] = 0; });
+  colorRows.forEach(function(row){
+    sizes.forEach(function(sz){ sizeTotals[sz] += (row.qty[sz] || 0); });
+    row._total = sizes.reduce(function(sum, sz){ return sum + (row.qty[sz]||0); }, 0);
+  });
+  const grandPcs = sizes.reduce(function(sum, sz){ return sum + sizeTotals[sz]; }, 0);
+  const fabricCalc = fabricRows.map(function(fr){
+    const sizeKg = {};
+    let rowTotal = 0;
+    sizes.forEach(function(sz){
+      const kg = (sizeTotals[sz] / 12) * (fr.kgPerDozen || 0);
+      sizeKg[sz] = kg;
+      rowTotal += kg;
+    });
+    return { fabric: fr, sizeKg: sizeKg, rowTotal: rowTotal };
+  });
+  const grandKg = fabricCalc.reduce(function(sum, f){ return sum + f.rowTotal; }, 0);
+  return { sizeTotals: sizeTotals, grandPcs: grandPcs, fabricCalc: fabricCalc, grandKg: grandKg };
+}
+
+function fmtKg(n){ return (Math.round(n*100)/100).toLocaleString('en-US'); }
+
+function recomputeBsLive(){
+  const sizes = window.bsCurrentSizes;
+  const fabricRows = collectBsFabricRows();
+  const colorRows = collectBsColorRows();
+
+  // কালার টেবিলের row total ও footer
+  Array.prototype.forEach.call(document.querySelectorAll('#bs-color-tbody tr'), function(tr){
+    let total = 0;
+    tr.querySelectorAll('.bs-color-qty').forEach(function(inp){ total += (parseFloat(inp.value)||0); });
+    tr.querySelector('.bs-color-total').textContent = total.toLocaleString('en-US');
+  });
+  const totals = computeBookingSheetTotals(sizes, fabricRows, colorRows);
+  document.getElementById('bs-color-tfoot').innerHTML = '<td>Total</td>'
+    + sizes.map(function(sz){ return '<td>'+totals.sizeTotals[sz].toLocaleString('en-US')+'</td>'; }).join('')
+    + '<td>'+totals.grandPcs.toLocaleString('en-US')+'</td><td></td>';
+
+  // Fabric requirement প্রিভিউ টেবিল
+  document.getElementById('bs-fabreq-thead').innerHTML = '<th>Fabric</th>' + sizes.map(function(sz){ return '<th>'+sz+' (Kg)</th>'; }).join('') + '<th>Total (Kg)</th>';
+  if(totals.fabricCalc.length === 0){
+    document.getElementById('bs-fabreq-tbody').innerHTML = '<tr><td colspan="'+(sizes.length+2)+'" style="text-align:center;color:var(--muted);">ফেব্রিক রো যোগ করুন</td></tr>';
+  } else {
+    document.getElementById('bs-fabreq-tbody').innerHTML = totals.fabricCalc.map(function(fc){
+      return '<tr><td>'+(fc.fabric.label||'—')+'</td>' + sizes.map(function(sz){ return '<td>'+fmtKg(fc.sizeKg[sz])+'</td>'; }).join('') + '<td><b>'+fmtKg(fc.rowTotal)+'</b></td></tr>';
+    }).join('');
+  }
+  document.getElementById('bs-fabreq-tfoot').innerHTML = '<td>Grand Total</td>' + sizes.map(function(){ return '<td></td>'; }).join('') + '<td>'+fmtKg(totals.grandKg)+' Kg</td>';
+
+  window.bsLastTotals = totals;
+}
+
 const bsTbody = document.getElementById('bs-tbody');
 async function renderBookingSheet(){
   await window.currentMerchReady;
@@ -18714,9 +18980,13 @@ async function renderBookingSheet(){
       tr.dataset.docId = doc.id;
       tr.innerHTML = '<td>'+(d.style||'—')+' <span style="color:var(--g4);">/ '+(d.orderNo||'—')+'</span></td>'
         + '<td>'+(d.buyer||'—')+'</td>'
-        + '<td>'+(d.fabricRequirement||'—')+'</td><td>'+(d.fabricBookingRequest||'—')+'</td><td>'+samplePillHtml(d.fabricArrival)+'</td>'
-        + '<td>'+(d.trimRequirement||'—')+'</td><td>'+(d.trimBooking||'—')+'</td><td>'+samplePillHtml(d.trimArrival)+'</td><td>'+(d.trimBalance||'—')+'</td>'
-        + '<td>'+bookingSheetDeptPill(d.deptKnitting)+'</td><td>'+bookingSheetDeptPill(d.deptDyeing)+'</td><td>'+bookingSheetDeptPill(d.deptCutting)+'</td><td>'+bookingSheetDeptPill(d.deptSewing)+'</td>';
+        + '<td>'+(d.jobNo||'—')+'</td>'
+        + '<td>'+(d.bookingDate||'—')+'</td>'
+        + '<td>'+(d.totalFabricReqKg!=null ? fmtKg(d.totalFabricReqKg)+' Kg' : '—')+'</td>'
+        + '<td>'+samplePillHtml(d.fabricArrival)+'</td>'
+        + '<td>'+(d.trimRequirement||'—')+'</td><td>'+samplePillHtml(d.trimArrival)+'</td>'
+        + '<td>'+bookingSheetDeptPill(d.deptKnitting)+'</td><td>'+bookingSheetDeptPill(d.deptDyeing)+'</td><td>'+bookingSheetDeptPill(d.deptCutting)+'</td><td>'+bookingSheetDeptPill(d.deptSewing)+'</td>'
+        + '<td><span class="link-action bs-print-btn">প্রিন্ট</span> &nbsp;|&nbsp; <span class="link-action bs-delete-btn" style="color:#a4342a;">মুছুন</span></td>';
       bsTbody.appendChild(tr);
     });
   }).catch(function(err){
@@ -18727,11 +18997,17 @@ async function renderBookingSheet(){
 bsTbody.addEventListener('click', function(e){
   const tr = e.target.closest('tr');
   if(!tr || !tr.dataset.docId) return;
-  if(window.confirm('এই Booking Sheet এন্ট্রিটি মুছে ফেলতে চান?')){
-    db.collection('bookingSheet').doc(tr.dataset.docId).delete().then(function(){
-      fbToast('✓ মুছে ফেলা হয়েছে');
-      renderBookingSheet();
-    }).catch(function(err){ fbToast('⚠ মুছতে ব্যর্থ: ' + err.message, true); });
+  if(e.target.classList.contains('bs-print-btn')){
+    printBookingSheet(tr.dataset.docId);
+    return;
+  }
+  if(e.target.classList.contains('bs-delete-btn')){
+    if(window.confirm('এই Booking Sheet এন্ট্রিটি মুছে ফেলতে চান?')){
+      db.collection('bookingSheet').doc(tr.dataset.docId).delete().then(function(){
+        fbToast('✓ মুছে ফেলা হয়েছে');
+        renderBookingSheet();
+      }).catch(function(err){ fbToast('⚠ মুছতে ব্যর্থ: ' + err.message, true); });
+    }
   }
 });
 
@@ -18747,14 +19023,27 @@ document.getElementById('btn-add-bookingsheet').addEventListener('click', async 
   try{
     const buyerName = opt.dataset.buyer || '';
     const merch = await assignedMerchForBuyerName(buyerName);
+    recomputeBsLive();
+    const sizes = window.bsCurrentSizes;
+    const fabricRows = collectBsFabricRows();
+    const colorRows = collectBsColorRows();
+    const totals = computeBookingSheetTotals(sizes, fabricRows, colorRows);
     await db.collection('bookingSheet').add({
       orderId: orderSel.value,
       orderNo: opt.dataset.order || '',
       style: style,
       buyer: buyerName,
-      fabricRequirement: document.getElementById('bs-fab-req').value.trim(),
-      fabricBookingRequest: document.getElementById('bs-fab-request').value.trim(),
-      fabricPurchasePlan: document.getElementById('bs-fab-plan').value.trim(),
+      bookingDate: document.getElementById('bs-booking-date').value,
+      customer: document.getElementById('bs-customer').value.trim(),
+      itemDescription: document.getElementById('bs-item-desc').value.trim(),
+      brand: document.getElementById('bs-brand').value.trim(),
+      jobNo: document.getElementById('bs-job-no').value.trim(),
+      photoUrl: window.bsPhotoDataUrl || document.getElementById('bs-photo-url').value.trim(),
+      sizes: sizes,
+      fabricRows: fabricRows,
+      colorRows: colorRows,
+      totalFabricReqKg: totals.grandKg,
+      totalOrderQtyPcs: totals.grandPcs,
       fabricArrival: document.getElementById('bs-fab-status').value,
       trimRequirement: document.getElementById('bs-trim-req').value.trim(),
       trimBooking: document.getElementById('bs-trim-booking').value.trim(),
@@ -18769,8 +19058,13 @@ document.getElementById('btn-add-bookingsheet').addEventListener('click', async 
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     fbToast('✓ Booking Sheet Firebase-এ সেভ হয়েছে');
-    ['bs-fab-req','bs-fab-request','bs-fab-plan','bs-trim-req','bs-trim-booking'].forEach(function(id){ document.getElementById(id).value=''; });
+    ['bs-customer','bs-item-desc','bs-brand','bs-job-no','bs-photo-url','bs-trim-req','bs-trim-booking'].forEach(function(id){ document.getElementById(id).value=''; });
+    window.bsPhotoDataUrl = null;
+    bsPhotoShowPreview(null);
     document.getElementById('bs-trim-balance').value = '0';
+    document.getElementById('bs-fabric-tbody').innerHTML = '';
+    document.getElementById('bs-color-tbody').innerHTML = '';
+    recomputeBsLive();
     renderBookingSheet();
   } catch(err){
     fbToast('⚠ সেভ ব্যর্থ: ' + err.message, true);
@@ -18779,8 +19073,120 @@ document.getElementById('btn-add-bookingsheet').addEventListener('click', async 
   }
 });
 
+// ---- প্রিন্ট — ফ্যাক্টরির কাগজের ফরম্যাটে (Fabric Requirement + Colour Wise Order Qty + Colour & Size Wise Fabrics Booking) ----
+// প্রতি কালার × প্রতি ফেব্রিক × প্রতি সাইজ — ফিনিশড কেজি ম্যাট্রিক্স (Colour & Size Wise Fabrics Booking টেবিলের জন্য)
+function computeBsColorFabricMatrix(sizes, fabricRows, colorRows){
+  const rows = colorRows.map(function(cr){
+    const cells = fabricRows.map(function(fr){
+      const sizeKg = {};
+      sizes.forEach(function(sz){ sizeKg[sz] = ((cr.qty[sz]||0) / 12) * (fr.kgPerDozen || 0); });
+      return sizeKg;
+    });
+    const rowTotal = cells.reduce(function(sum, sizeKg){ return sum + sizes.reduce(function(s,sz){ return s + sizeKg[sz]; }, 0); }, 0);
+    return { color: cr.color, cells: cells, rowTotal: rowTotal };
+  });
+  return rows;
+}
+
+async function printBookingSheet(docId){
+  try{
+    const doc = await db.collection('bookingSheet').doc(docId).get();
+    if(!doc.exists){ fbToast('⚠ ডেটা পাওয়া যায়নি', true); return; }
+    const d = doc.data();
+    let company = { companyName: 'গার্মেন্টস ERP লিমিটেড', address: '' };
+    try{
+      const cp = await db.collection('companyProfile').doc('main').get();
+      if(cp.exists){ company = Object.assign(company, cp.data()); }
+    }catch(e){}
+
+    const sizes = d.sizes && d.sizes.length ? d.sizes : ['M','L','XL'];
+    const fabricRows = d.fabricRows || [];
+    const colorRows = d.colorRows || [];
+    const totals = computeBookingSheetTotals(sizes, fabricRows, colorRows);
+    const matrix = computeBsColorFabricMatrix(sizes, fabricRows, colorRows);
+
+    let html = '<div class="bsp-wrap">';
+    html += '<div class="bsp-head"><h1>'+(company.companyName||'—')+'</h1>'
+      + '<div class="bsp-addr">'+(company.address||'')+'</div>'
+      + '<div class="bsp-title">BULK FABRICS BOOKING</div></div>';
+
+    // উপরের অংশ — বামে অর্ডার তথ্য, ডানে Finished Fabric Requirement সারাংশ
+    html += '<table class="bsp-top"><tr><td class="bsp-top-left">';
+    html += '<table class="bsp-meta">'
+      + '<tr><td class="k">Booking Date</td><td class="v">'+(d.bookingDate||'—')+'</td></tr>'
+      + '<tr><td class="k">Buyer</td><td class="v">'+(d.buyer||'—')+'</td></tr>'
+      + '<tr><td class="k">Customer</td><td class="v">'+(d.customer||'—')+'</td></tr>'
+      + '<tr><td class="k">Order No</td><td class="v">'+(d.orderNo||'—')+'</td></tr>'
+      + '<tr><td class="k">Style Name</td><td class="v">'+(d.style||'—')+'</td></tr>'
+      + '<tr><td class="k">Item Description</td><td class="v">'+(d.itemDescription||'—')+'</td></tr>'
+      + '<tr><td class="k">Brand</td><td class="v">'+(d.brand||'—')+'</td></tr>'
+      + '<tr><td class="k">Job No</td><td class="v">'+(d.jobNo||'—')+'</td></tr>'
+      + '</table>';
+    html += '</td><td class="bsp-top-right">';
+    if(d.photoUrl){ html += '<img src="'+d.photoUrl+'" class="bsp-photo">'; }
+    else { html += '<div class="bsp-photo-placeholder">PICTURE</div>'; }
+    html += '<table class="bsp-table" style="margin-top:8px;"><thead><tr><th>Fabric</th><th>Finished Fabric<br>Requirement (Kg)</th></tr></thead><tbody>';
+    totals.fabricCalc.forEach(function(fc){
+      html += '<tr><td>'+(fc.fabric.label||'—')+'</td><td>'+fmtKg(fc.rowTotal)+' Kgs</td></tr>';
+    });
+    html += '<tr style="font-weight:700;background:#f2f2f2;"><td>GRAND TOTAL</td><td>'+fmtKg(totals.grandKg)+' Kgs</td></tr>';
+    html += '</tbody></table>';
+    html += '</td></tr></table>';
+
+    // Colour wise GMT order qty
+    html += '<div class="bsp-section">COLOUR WISE GMT ORDER QTY</div>';
+    html += '<table class="bsp-table"><thead><tr><th>Colour</th>' + sizes.map(function(sz){ return '<th>'+sz+'</th>'; }).join('') + '<th>Total Pcs</th></tr></thead><tbody>';
+    colorRows.forEach(function(cr){
+      const rowTotal = sizes.reduce(function(s,sz){ return s+(cr.qty[sz]||0); }, 0);
+      html += '<tr><td style="text-align:left;">'+(cr.color||'—')+'</td>' + sizes.map(function(sz){ return '<td>'+(cr.qty[sz]||0).toLocaleString('en-US')+'</td>'; }).join('') + '<td><b>'+rowTotal.toLocaleString('en-US')+'</b></td></tr>';
+    });
+    html += '<tr style="font-weight:700;background:#f2f2f2;"><td>Total Pcs</td>' + sizes.map(function(sz){ return '<td>'+totals.sizeTotals[sz].toLocaleString('en-US')+'</td>'; }).join('') + '<td>'+totals.grandPcs.toLocaleString('en-US')+'</td></tr>';
+    html += '</tbody></table>';
+
+    // Colour & size wise fabrics booking — নেস্টেড হেডার: প্রতি ফেব্রিকের নিচে প্রতি সাইজ, রো = কালার
+    html += '<div class="bsp-section">COLOUR &amp; SIZE WISE FABRICS BOOKING</div>';
+    html += '<table class="bsp-table"><thead>';
+    html += '<tr><th rowspan="2" style="vertical-align:middle;">Colour</th>'
+      + fabricRows.map(function(fr){ return '<th colspan="'+sizes.length+'">'+(fr.label||'FAB')+'<br><span style="font-weight:400;font-size:10px;">'+(fr.composition||'')+(fr.gsm?(' · '+fr.gsm+' GSM'):'')+'</span></th>'; }).join('')
+      + '<th rowspan="2" style="vertical-align:middle;">Total Finish<br>Fabrics (Kg)</th></tr>';
+    html += '<tr>' + fabricRows.map(function(){ return sizes.map(function(sz){ return '<th>'+sz+'</th>'; }).join(''); }).join('') + '</tr>';
+    html += '</thead><tbody>';
+    if(fabricRows.length === 0 || colorRows.length === 0){
+      html += '<tr><td colspan="'+(1+fabricRows.length*sizes.length+1)+'">—</td></tr>';
+    } else {
+      matrix.forEach(function(mr){
+        html += '<tr><td style="text-align:left;">'+(mr.color||'—')+'</td>'
+          + mr.cells.map(function(sizeKg){ return sizes.map(function(sz){ return '<td>'+fmtKg(sizeKg[sz])+'</td>'; }).join(''); }).join('')
+          + '<td><b>'+fmtKg(mr.rowTotal)+'</b></td></tr>';
+      });
+      html += '<tr style="font-weight:700;background:#f2f2f2;"><td>Total</td>'
+        + totals.fabricCalc.map(function(fc){ return sizes.map(function(sz){ return '<td>'+fmtKg(fc.sizeKg[sz])+'</td>'; }).join(''); }).join('')
+        + '<td>'+fmtKg(totals.grandKg)+'</td></tr>';
+    }
+    html += '</tbody></table>';
+
+    html += '<div class="bsp-sign"><div>Merchandiser</div><div>CAD Manager</div><div>General Manager</div></div>';
+    html += '</div>';
+
+    document.getElementById('bs-print-area').innerHTML = html;
+    setTimeout(function(){ window.print(); }, 80);
+  }catch(err){
+    fbToast('⚠ প্রিন্ট লোড ব্যর্থ: ' + err.message, true);
+  }
+}
+
 function loadBookingSheet(){
   populateBookingSheetOrderDropdown();
+  document.getElementById('bs-fabric-tbody').innerHTML = '';
+  document.getElementById('bs-color-tbody').innerHTML = '';
+  document.getElementById('bs-sizes-input').value = 'M,L,XL';
+  document.getElementById('bs-photo-url').value = '';
+  window.bsPhotoDataUrl = null;
+  bsPhotoShowPreview(null);
+  applyBsSizes();
+  addFabricRow();
+  addColorRow();
+  recomputeBsLive();
   renderBookingSheet();
 }
 
