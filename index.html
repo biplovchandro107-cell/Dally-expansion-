@@ -14755,12 +14755,24 @@ const DEPT_GROUPS = {
   'Factory Security': ['factorysecurity'],
   'Sales': ['commercial'],
   'IT / System Administration': [
-    'sysadmin','multicompany','multifactory','multibranch','multitenant',
+    'dashboard','sysadmin','multicompany','multifactory','multibranch','multitenant',
     'sec','saas','intg','devops','aa','sup','mob'
   ]
 };
-// সব ইউজারের জন্য সবসময় দৃশ্যমান — ড্যাশবোর্ড ও কমন মাস্টার ডেটা
-const ALWAYS_VISIBLE_GROUPS = ['dashboard', 'masterdata'];
+// সব ইউজারের জন্য সবসময় দৃশ্যমান — শুধু কমন মাস্টার ডেটা।
+// লক্ষ্য করুন: "1. Dashboard" (CEO/MD/Director Dashboard, Business Overview, KPI) এখানে নেই —
+// ওগুলো এক্সিকিউটিভ-লেভেল তথ্য, তাই এটা শুধু Company Admin ও IT/System Administration-এর জন্য।
+// প্রতিটা department-এর নিজস্ব ড্যাশবোর্ড তাদের নিজের group-এর ভেতরেই আছে (যেমন merch-dashboard)।
+const ALWAYS_VISIBLE_GROUPS = ['masterdata'];
+
+// ইউজারের department group-এর ভেতরে প্রথম যে nav-item পাওয়া যায় সেটার data-view রিটার্ন করে —
+// এটাই হবে তার লগইনের পর ডিফল্ট ল্যান্ডিং পেজ (সাধারণত সেই department-এরই Dashboard)
+function getFirstNavViewInGroup(groupKey){
+  const groupEl = document.querySelector('.menu-group[data-group="' + groupKey + '"]');
+  if(!groupEl) return null;
+  const item = groupEl.querySelector('.nav-item[data-view]');
+  return item ? item.getAttribute('data-view') : null;
+}
 
 // লক্ষ্য করুন: এটা শুধু UI-লেভেল সুবিধা (কোন মেনু দেখাবে তা ঠিক করে), আসল ডেটা-সুরক্ষা
 // Firestore Security Rules-এই থাকা উচিত — ঠিক merch-scope ফিচারের মতোই। কেউ যদি devtools দিয়ে
@@ -14777,7 +14789,8 @@ function applyDepartmentAccess(profile){
     return;
   }
 
-  const allowed = new Set(ALWAYS_VISIBLE_GROUPS.concat(DEPT_GROUPS[profile.department] || []));
+  const deptGroupKeys = DEPT_GROUPS[profile.department] || [];
+  const allowed = new Set(ALWAYS_VISIBLE_GROUPS.concat(deptGroupKeys));
   allGroups.forEach(function(g){
     const key = g.getAttribute('data-group');
     g.style.display = allowed.has(key) ? '' : 'none';
@@ -14792,6 +14805,16 @@ function applyDepartmentAccess(profile){
     }
     label.style.display = anyVisible ? '' : 'none';
   });
+
+  // ডিফল্ট ল্যান্ডিং ভিউ (CEO Dashboard) এখন এই ইউজারের জন্য লুকানো গ্রুপে থাকতে পারে,
+  // তাই তাকে তার নিজের department-এর প্রথম পেজে (সাধারণত তাদের Dashboard) সরাসরি পাঠানো হয়
+  for (let i = 0; i < deptGroupKeys.length; i++){
+    const landingView = getFirstNavViewInGroup(deptGroupKeys[i]);
+    if(landingView && typeof navigateToView === 'function'){
+      navigateToView(landingView);
+      break;
+    }
+  }
 }
 
 window.currentUserProfile = null;
