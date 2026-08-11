@@ -14765,6 +14765,36 @@ const DEPT_GROUPS = {
 // প্রতিটা department-এর নিজস্ব ড্যাশবোর্ড তাদের নিজের group-এর ভেতরেই আছে (যেমন merch-dashboard)।
 const ALWAYS_VISIBLE_GROUPS = ['masterdata'];
 
+// Master Data গ্রুপটা সবার জন্য দৃশ্যমান থাকে, কিন্তু ভেতরে শুধু সেই department-এর প্রাসঙ্গিক
+// আইটেমগুলোই দেখানো হয় — যেমন Merchandiser শুধু Buyer/Style/Fabric/Color/Size দেখবে,
+// কিন্তু Employee Master বা Machine Master দেখবে না (ওগুলো HR/Production-এর জিনিস)।
+// value: null মানে এই department-এর জন্য পুরো Master Data-ই খোলা (IT/System Administration)।
+const MASTER_DATA_BY_DEPT = {
+  'Merchandising': ['master-buyer','master-customer','master-product','master-style','master-fabric','master-trim','master-color','master-size','master-unitcurrency'],
+  'Production': ['master-product','master-style','master-fabric','master-trim','master-color','master-size','master-machine','master-warehouse','master-unitcurrency'],
+  'Quality': ['master-product','master-style','master-fabric','master-trim','master-color','master-size','master-unitcurrency'],
+  'Textile': ['master-fabric','master-trim','master-color','master-machine','master-warehouse','master-unitcurrency'],
+  'Finance': ['master-company','master-supplier','master-customer','master-department','master-designation','master-unitcurrency'],
+  'HR': ['master-employee','master-department','master-designation'],
+  'Inventory': ['master-product','master-fabric','master-trim','master-warehouse','master-machine','master-unitcurrency'],
+  'Factory Security': ['master-employee','master-department','master-designation'],
+  'Sales': ['master-buyer','master-customer','master-product','master-style','master-unitcurrency'],
+  'IT / System Administration': null
+};
+
+function applyMasterDataItemFilter(profile){
+  const masterGroupEl = document.querySelector('.menu-group[data-group="masterdata"]');
+  if(!masterGroupEl) return;
+  const items = masterGroupEl.querySelectorAll('.nav-item[data-view]');
+  const showAll = !profile || profile.role === 'Company Admin' || MASTER_DATA_BY_DEPT[profile.department] === null;
+  const allowedItems = showAll ? null : (MASTER_DATA_BY_DEPT[profile.department] || []);
+  items.forEach(function(item){
+    const view = item.getAttribute('data-view');
+    const show = showAll || allowedItems.indexOf(view) !== -1;
+    item.style.display = show ? '' : 'none';
+  });
+}
+
 // ইউজারের department group-এর ভেতরে প্রথম যে nav-item পাওয়া যায় সেটার data-view রিটার্ন করে —
 // এটাই হবে তার লগইনের পর ডিফল্ট ল্যান্ডিং পেজ (সাধারণত সেই department-এরই Dashboard)
 function getFirstNavViewInGroup(groupKey){
@@ -14786,6 +14816,7 @@ function applyDepartmentAccess(profile){
   if(!profile || profile.role === 'Company Admin'){
     allGroups.forEach(function(g){ g.style.display = ''; });
     allLabels.forEach(function(l){ l.style.display = ''; });
+    applyMasterDataItemFilter(profile);
     return;
   }
 
@@ -14795,6 +14826,7 @@ function applyDepartmentAccess(profile){
     const key = g.getAttribute('data-group');
     g.style.display = allowed.has(key) ? '' : 'none';
   });
+  applyMasterDataItemFilter(profile);
   // যে section-label-এর নিচে সবগুলো group লুকানো, সেই label-টাও লুকানো হয় (খালি হেডার এড়াতে)
   allLabels.forEach(function(label){
     let node = label.nextElementSibling;
