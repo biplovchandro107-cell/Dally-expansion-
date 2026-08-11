@@ -26258,14 +26258,28 @@ function handleCreateUser(btn){
   const originalLabel = btn.textContent;
   btn.textContent = 'সংরক্ষণ হচ্ছে...';
 
-  const profile = {
+  const payload = {
     name: name, employeeId: empId, email: email, phone: phone,
     designation: designation, department: department, role: role,
-    factory: factory, status: status, tempPassword: tempPass,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    factory: factory, status: status, tempPassword: tempPass
   };
 
-  db.collection('users').add(profile).then(function(){
+  // এখন সার্ভার-সাইড /api/create-user এন্ডপয়েন্ট কল করা হচ্ছে, যেটা
+  // Firebase Admin SDK দিয়ে আসল লগইন-যোগ্য Auth অ্যাকাউন্ট তৈরি করে
+  // (আগে শুধু Firestore-এ প্রোফাইল সেভ হতো, Auth অ্যাকাউন্ট তৈরি হতো না,
+  // তাই নতুন ইউজার লগইন করতে পারতেন না)
+  fetch('/api/create-user', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function(response){
+    return response.json().then(function(data){
+      if(!response.ok){ throw new Error(data.error || 'সংরক্ষণ ব্যর্থ'); }
+      return data;
+    });
+  })
+  .then(function(data){
     const editInfo = cuTableKey('tbody-edit-user');
     const deleteInfo = cuTableKey('tbody-delete-user');
     const editCells = [name, role, department, status, '—'];
@@ -26278,13 +26292,14 @@ function handleCreateUser(btn){
     ]).then(function(results){
       cuAppendRow(editInfo.tbody, results[0].id, editCells);
       cuAppendRow(deleteInfo.tbody, results[1].id, deleteCells);
+      cuToast('✓ ইউজার তৈরি হয়েছে (লগইন-যোগ্য) — অস্থায়ী পাসওয়ার্ড: ' + data.tempPassword);
+      document.querySelectorAll('#view-sysadmin-user-management .form-grid input[type="text"]').forEach(function(i){ i.value=''; });
     });
-  }).then(function(){
-    cuToast('✓ ইউজার তৈরি হয়েছে — অস্থায়ী পাসওয়ার্ড: ' + tempPass);
-    document.querySelectorAll('#view-sysadmin-user-management .form-grid input[type="text"]').forEach(function(i){ i.value=''; });
-  }).catch(function(err){
+  })
+  .catch(function(err){
     cuToast('⚠ সংরক্ষণ ব্যর্থ: ' + err.message, true);
-  }).finally(function(){
+  })
+  .finally(function(){
     btn.disabled = false;
     btn.textContent = originalLabel;
   });
