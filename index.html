@@ -1733,17 +1733,17 @@
         <div class="form-field"><label>Temporary Password</label><input type="text" id="cu-temppass" placeholder="স্বয়ংক্রিয়ভাবে তৈরি হবে"></div>
         <div class="form-field"><label>Status</label><select id="cu-status"><option>Active</option><option>Inactive</option></select></div>
       </div>
-      <div class="form-actions"><button class="btn-primary" id="btn-create-user" data-fb-wired onclick="handleCreateUser(this)">User তৈরি করুন</button><button class="btn-secondary" onclick="document.getElementById('cu-name').closest('.panel').querySelectorAll('input').forEach(i=>i.value='');">বাতিল</button></div>
+      <div class="form-actions"><button class="btn-primary" id="btn-create-user" data-fb-wired onclick="handleCreateUser(this)">User তৈরি করুন</button><button class="btn-secondary" onclick="cuResetFormToCreateMode();">বাতিল</button></div>
     </div>
 <div class="panel-title" style="font-size:15px;margin:22px 0 10px;padding-top:14px;border-top:1px solid var(--g2);">Edit User</div>
 <div class="panel">
       <table><thead><tr><th>Name</th><th>Role</th><th>Department</th><th>Status</th><th></th></tr></thead>
-      <tbody id="tbody-edit-user"><tr><td colspan="5" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody></table>
+      <tbody id="tbody-edit-user" data-fb-wired><tr><td colspan="5" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody></table>
     </div>
 <div class="panel-title" style="font-size:15px;margin:22px 0 10px;padding-top:14px;border-top:1px solid var(--g2);">Delete User</div>
 <div class="panel">
       <table><thead><tr><th>Name</th><th>Email</th><th>Last Login</th><th></th></tr></thead>
-      <tbody id="tbody-delete-user"><tr><td colspan="4" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody></table>
+      <tbody id="tbody-delete-user" data-fb-wired><tr><td colspan="4" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody></table>
       <div class="placeholder-note">নোট: ডিলিট করার আগে কনফার্মেশন ডায়ালগ দেখানো হবে। ব্যবহারকারীর তথ্য ৩০ দিন Recycle Bin-এ সংরক্ষিত থাকবে।</div>
     </div>
 <div class="panel-title" style="font-size:15px;margin:22px 0 10px;padding-top:14px;border-top:1px solid var(--g2);">Lock User</div>
@@ -14740,15 +14740,82 @@ function resolveMerchScope(user){
   });
 }
 
+// ---- Department-based sidebar access control ----
+// প্রতিটা department কোন কোন sidebar মেনু-গ্রুপ (data-group) দেখতে পাবে তার ম্যাপিং।
+// এখানে যেসব key ব্যবহার হয়েছে তা "Create User" ফর্মের Department ড্রপডাউনের অপশনগুলোর
+// সাথে হুবহু মিলিয়ে রাখা হয়েছে — নতুন department অপশন যোগ করলে এখানেও যোগ করতে হবে।
+const DEPT_GROUPS = {
+  'Merchandising': ['merchandising'],
+  'Production': ['production'],
+  'Quality': ['quality'],
+  'Textile': ['textile'],
+  'Finance': ['finance'],
+  'HR': ['hrms'],
+  'Inventory': ['inventory'],
+  'Factory Security': ['factorysecurity'],
+  'Sales': ['commercial'],
+  'IT / System Administration': [
+    'sysadmin','multicompany','multifactory','multibranch','multitenant',
+    'sec','saas','intg','devops','aa','sup','mob'
+  ]
+};
+// সব ইউজারের জন্য সবসময় দৃশ্যমান — ড্যাশবোর্ড ও কমন মাস্টার ডেটা
+const ALWAYS_VISIBLE_GROUPS = ['dashboard', 'masterdata'];
+
+// লক্ষ্য করুন: এটা শুধু UI-লেভেল সুবিধা (কোন মেনু দেখাবে তা ঠিক করে), আসল ডেটা-সুরক্ষা
+// Firestore Security Rules-এই থাকা উচিত — ঠিক merch-scope ফিচারের মতোই। কেউ যদি devtools দিয়ে
+// hidden view-এর URL/hash জোর করে খোলে, সার্ভার-সাইড rules ছাড়া সেই ডেটা আসলে সুরক্ষিত না।
+function applyDepartmentAccess(profile){
+  const allGroups = document.querySelectorAll('.menu-group');
+  const allLabels = document.querySelectorAll('.menu-section-label');
+
+  // প্রোফাইল না পাওয়া গেলে (যেমন পুরনো/ম্যানুয়াল অ্যাকাউন্ট) বা role = Company Admin হলে —
+  // নিরাপদ ডিফল্ট হিসেবে সব মেনু দেখানো হয়, যাতে ভুল করে কাউকে পুরো সিস্টেম থেকে লক-আউট না করে ফেলি
+  if(!profile || profile.role === 'Company Admin'){
+    allGroups.forEach(function(g){ g.style.display = ''; });
+    allLabels.forEach(function(l){ l.style.display = ''; });
+    return;
+  }
+
+  const allowed = new Set(ALWAYS_VISIBLE_GROUPS.concat(DEPT_GROUPS[profile.department] || []));
+  allGroups.forEach(function(g){
+    const key = g.getAttribute('data-group');
+    g.style.display = allowed.has(key) ? '' : 'none';
+  });
+  // যে section-label-এর নিচে সবগুলো group লুকানো, সেই label-টাও লুকানো হয় (খালি হেডার এড়াতে)
+  allLabels.forEach(function(label){
+    let node = label.nextElementSibling;
+    let anyVisible = false;
+    while(node && !node.classList.contains('menu-section-label')){
+      if(node.classList.contains('menu-group') && node.style.display !== 'none') anyVisible = true;
+      node = node.nextElementSibling;
+    }
+    label.style.display = anyVisible ? '' : 'none';
+  });
+}
+
+window.currentUserProfile = null;
+function loadUserProfileAndApplyAccess(user){
+  db.collection('users').doc(user.uid).get().then(function(doc){
+    window.currentUserProfile = doc.exists ? doc.data() : null;
+    applyDepartmentAccess(window.currentUserProfile);
+  }).catch(function(){
+    window.currentUserProfile = null;
+    applyDepartmentAccess(null);
+  });
+}
+
 auth.onAuthStateChanged(function(user){
   if(user){
     loginOverlay.style.display = 'none';
     const av = document.querySelector('.avatar');
     if(av) av.title = 'লগআউট করতে ট্যাপ করুন — ' + user.email;
     resolveMerchScope(user);
+    loadUserProfileAndApplyAccess(user);
   } else {
     loginOverlay.style.display = 'flex';
     window.currentMerch = null;
+    window.currentUserProfile = null;
   }
 });
 
@@ -25535,6 +25602,7 @@ function navigateToView(viewKey){
   if(viewKey === 'dms-dashboard' && typeof loadDmsDashboard === 'function') loadDmsDashboard();
   if(viewKey === 'director' && typeof loadDirectorDashboard === 'function') loadDirectorDashboard();
   if(viewKey === 'hr' && typeof loadHrOverviewDashboard === 'function') loadHrOverviewDashboard();
+  if(viewKey === 'sysadmin-user-management' && typeof loadRealUsersTable === 'function') loadRealUsersTable();
   if(viewKey === 'sysadmin-system-settings' && typeof loadSystemSettings === 'function') loadSystemSettings();
   if(viewKey === 'sysadmin-backup' && typeof loadBackup === 'function') loadBackup();
   if(viewKey === 'multicompany-settings' && typeof loadCompanySettings === 'function') loadCompanySettings();
@@ -26221,6 +26289,75 @@ function cuTableKey(tbodyId){
   return { key: viewEl.id + '__t' + idx, tbody: tbodyEl };
 }
 
+// window.cuEditingUid: null মানে "Create" মোডে আছি; কোনো uid থাকলে সেই ইউজারকে "Edit" করছি
+window.cuEditingUid = null;
+
+function cuResetFormToCreateMode(){
+  window.cuEditingUid = null;
+  const btn = document.getElementById('btn-create-user');
+  if(btn) btn.textContent = 'User তৈরি করুন';
+  const titleEl = document.querySelector('#view-sysadmin-user-management .panel-title');
+  if(titleEl) titleEl.textContent = 'Create User';
+  const emailEl = document.getElementById('cu-email');
+  if(emailEl) emailEl.disabled = false; // এডিট মোডে ইমেইল বদলানো যায় না (Auth uid ইমেইলের সাথে বাঁধা), তাই বাতিল করলে আবার চালু করা হয়
+  document.querySelectorAll('#view-sysadmin-user-management .form-grid input[type="text"]').forEach(function(i){ i.value=''; });
+}
+
+// Edit User টেবিলের সারিতে ক্লিক করলে এই ফাংশন কল হয় — উপরের Create User ফর্মটাই পুনরায় ব্যবহার করে,
+// শুধু "Update" মোডে পাঠায়
+function handleEditUserRow(uid){
+  db.collection('users').doc(uid).get().then(function(doc){
+    if(!doc.exists){ cuToast('⚠ ইউজার খুঁজে পাওয়া যায়নি', true); return; }
+    const d = doc.data();
+    window.cuEditingUid = uid;
+    document.getElementById('cu-name').value = d.name || '';
+    document.getElementById('cu-empid').value = d.employeeId || '';
+    document.getElementById('cu-email').value = d.email || '';
+    document.getElementById('cu-email').disabled = true; // Firebase Auth-এ ইমেইল বদলাতে হলে আলাদা ফ্লো লাগে, তাই এখানে লক করা থাকলো
+    document.getElementById('cu-phone').value = d.phone || '';
+    document.getElementById('cu-designation').value = d.designation || '';
+    if(d.department) document.getElementById('cu-department').value = d.department;
+    if(d.role) document.getElementById('cu-role').value = d.role;
+    if(d.factory) document.getElementById('cu-factory').value = d.factory;
+    if(d.status) document.getElementById('cu-status').value = d.status;
+    document.getElementById('cu-temppass').value = '';
+    const btn = document.getElementById('btn-create-user');
+    if(btn) btn.textContent = 'Update User';
+    const titleEl = document.querySelector('#view-sysadmin-user-management .panel-title');
+    if(titleEl) titleEl.textContent = 'Edit User — ' + (d.name || d.email);
+    document.getElementById('cu-name').scrollIntoView({ behavior:'smooth', block:'center' });
+    cuToast('এডিট মোড চালু — পরিবর্তন করে "Update User" চাপুন');
+  }).catch(function(err){
+    cuToast('⚠ লোড ব্যর্থ: ' + err.message, true);
+  });
+}
+
+// Delete User টেবিলের সারিতে ক্লিক করলে এই ফাংশন কল হয় — আসল Firebase Auth অ্যাকাউন্ট +
+// Firestore প্রোফাইল দুটোই মুছে দেয় (/api/users এন্ডপয়েন্টে action:'delete' পাঠিয়ে, কারণ
+// Auth ইউজার ডিলিট করা ক্লায়েন্ট-সাইড থেকে সম্ভব না)
+function handleDeleteUserRow(uid, name){
+  if(!confirm('আপনি কি নিশ্চিত "' + name + '" ইউজারকে ডিলিট করতে চান? এই কাজটি সাথে সাথেই লগইন অ্যাক্সেস বন্ধ করে দেবে।')) return;
+  fetch('/api/users', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'delete', uid: uid })
+  })
+  .then(function(response){
+    return response.json().then(function(data){
+      if(!response.ok){ throw new Error(data.error || 'ডিলিট ব্যর্থ'); }
+      return data;
+    });
+  })
+  .then(function(){
+    cuToast('✓ ইউজার ডিলিট হয়েছে');
+    if(window.cuEditingUid === uid) cuResetFormToCreateMode();
+    // লাইভ লিসেনার (loadRealUsersTable) নিজে থেকেই টেবিল থেকে সারিটা সরিয়ে দেবে
+  })
+  .catch(function(err){
+    cuToast('⚠ ডিলিট ব্যর্থ: ' + err.message, true);
+  });
+}
+
 function handleCreateUser(btn){
   const nameEl = document.getElementById('cu-name');
   const empIdEl = document.getElementById('cu-empid');
@@ -26235,6 +26372,7 @@ function handleCreateUser(btn){
   const factory = document.getElementById('cu-factory').value;
   const tempPassEl = document.getElementById('cu-temppass');
   const status = document.getElementById('cu-status').value;
+  const isEditing = !!window.cuEditingUid;
 
   [nameEl, empIdEl, emailEl].forEach(function(i){ i.style.borderColor = ''; });
   const required = [nameEl, empIdEl, emailEl];
@@ -26256,19 +26394,28 @@ function handleCreateUser(btn){
 
   btn.disabled = true;
   const originalLabel = btn.textContent;
-  btn.textContent = 'সংরক্ষণ হচ্ছে...';
+  btn.textContent = isEditing ? 'আপডেট হচ্ছে...' : 'সংরক্ষণ হচ্ছে...';
 
-  const payload = {
-    name: name, employeeId: empId, email: email, phone: phone,
-    designation: designation, department: department, role: role,
-    factory: factory, status: status, tempPassword: tempPass
-  };
+  const payload = isEditing
+    ? {
+        action: 'update',
+        uid: window.cuEditingUid,
+        name: name, employeeId: empId, phone: phone,
+        designation: designation, department: department, role: role,
+        factory: factory, status: status
+      }
+    : {
+        action: 'create',
+        name: name, employeeId: empId, email: email, phone: phone,
+        designation: designation, department: department, role: role,
+        factory: factory, status: status, tempPassword: tempPass
+      };
 
-  // এখন সার্ভার-সাইড /api/create-user এন্ডপয়েন্ট কল করা হচ্ছে, যেটা
-  // Firebase Admin SDK দিয়ে আসল লগইন-যোগ্য Auth অ্যাকাউন্ট তৈরি করে
-  // (আগে শুধু Firestore-এ প্রোফাইল সেভ হতো, Auth অ্যাকাউন্ট তৈরি হতো না,
-  // তাই নতুন ইউজার লগইন করতে পারতেন না)
-  fetch('/api/create-user', {
+  // একই /api/users এন্ডপয়েন্ট create ও update দুটো কাজই করে, payload.action দিয়ে বোঝা যায়
+  // কোনটা করতে হবে। দুটোই সরাসরি 'users' কালেকশনে লেখে — আলাদা কোনো genericTables ডুপ্লিকেট
+  // রাখা হচ্ছে না, তাই Edit/Delete User টেবিল সবসময় আসল ডেটার সাথে সিঙ্কড থাকবে
+  // (loadRealUsersTable-এর লাইভ লিসেনার এই একই 'users' কালেকশন থেকে রিড করে)।
+  fetch('/api/users', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -26280,28 +26427,72 @@ function handleCreateUser(btn){
     });
   })
   .then(function(data){
-    const editInfo = cuTableKey('tbody-edit-user');
-    const deleteInfo = cuTableKey('tbody-delete-user');
-    const editCells = [name, role, department, status, '—'];
-    const deleteCells = [name, email, 'এইমাত্র', '—'];
-    const editColRef = db.collection('genericTables').doc(editInfo.key).collection('rows');
-    const deleteColRef = db.collection('genericTables').doc(deleteInfo.key).collection('rows');
-    return Promise.all([
-      editColRef.add({ cells: editCells, createdAt: firebase.firestore.FieldValue.serverTimestamp() }),
-      deleteColRef.add({ cells: deleteCells, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
-    ]).then(function(results){
-      cuAppendRow(editInfo.tbody, results[0].id, editCells);
-      cuAppendRow(deleteInfo.tbody, results[1].id, deleteCells);
+    if(isEditing){
+      cuToast('✓ ইউজারের তথ্য আপডেট হয়েছে');
+    } else {
       cuToast('✓ ইউজার তৈরি হয়েছে (লগইন-যোগ্য) — অস্থায়ী পাসওয়ার্ড: ' + data.tempPassword);
-      document.querySelectorAll('#view-sysadmin-user-management .form-grid input[type="text"]').forEach(function(i){ i.value=''; });
-    });
+    }
+    cuResetFormToCreateMode();
   })
   .catch(function(err){
     cuToast('⚠ সংরক্ষণ ব্যর্থ: ' + err.message, true);
+    btn.textContent = originalLabel; // ব্যর্থ হলে আগের লেবেলে (Update User / User তৈরি করুন) ফিরিয়ে দেওয়া হয়
   })
   .finally(function(){
     btn.disabled = false;
-    btn.textContent = originalLabel;
+  });
+}
+
+// ---- Edit User / Delete User টেবিল: সরাসরি আসল 'users' কালেকশন থেকে লাইভ লোড ----
+// এটাই মূল ফিক্স: আগে এই দুটো টেবিল একটা ডিসকানেক্টেড "genericTables" জেনেরিক মেকানিজম
+// দিয়ে চলতো, যেটা আসল Firebase Auth ইউজারদের সাথে যুক্ত ছিল না — তাই টেবিলের পজিশন/ইনডেক্স
+// বদলালে বা পেজ রিলোড হলে এন্ট্রি "হারিয়ে যাওয়ার" মতো দেখাতো। এখন সরাসরি onSnapshot দিয়ে
+// 'users' কালেকশন লাইভ শোনা হয়, তাই টেবিল সবসময় বাস্তব ডেটার সাথে মিলবে।
+window._usersUnsub = null;
+function escapeHtml(s){
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function loadRealUsersTable(){
+  const editTbody = document.getElementById('tbody-edit-user');
+  const deleteTbody = document.getElementById('tbody-delete-user');
+  if(!editTbody || !deleteTbody) return;
+  if(window._usersUnsub){ window._usersUnsub(); window._usersUnsub = null; }
+
+  window._usersUnsub = db.collection('users').orderBy('createdAt', 'desc').onSnapshot(function(snap){
+    if(snap.empty){
+      editTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);">কোনো ইউজার নেই</td></tr>';
+      deleteTbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);">কোনো ইউজার নেই</td></tr>';
+      return;
+    }
+    const editRows = [];
+    const deleteRows = [];
+    snap.forEach(function(doc){
+      const d = doc.data();
+      const uid = doc.id;
+      const name = escapeHtml(d.name);
+      editRows.push(
+        '<tr data-uid="' + uid + '">' +
+          '<td>' + name + '</td>' +
+          '<td>' + escapeHtml(d.role) + '</td>' +
+          '<td>' + escapeHtml(d.department) + '</td>' +
+          '<td>' + escapeHtml(d.status) + '</td>' +
+          '<td><button type="button" class="btn-secondary" style="padding:4px 10px;font-size:12px;" onclick="handleEditUserRow(\'' + uid + '\')">Edit</button></td>' +
+        '</tr>'
+      );
+      deleteRows.push(
+        '<tr data-uid="' + uid + '">' +
+          '<td>' + name + '</td>' +
+          '<td>' + escapeHtml(d.email) + '</td>' +
+          '<td>—</td>' +
+          '<td><button type="button" class="btn-secondary" style="padding:4px 10px;font-size:12px;color:#a4342a;" onclick="handleDeleteUserRow(\'' + uid + '\', \'' + name.replace(/'/g,"\\'") + '\')">Delete</button></td>' +
+        '</tr>'
+      );
+    });
+    editTbody.innerHTML = editRows.join('');
+    deleteTbody.innerHTML = deleteRows.join('');
+  }, function(err){
+    editTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);">⚠ লোড ব্যর্থ: ' + escapeHtml(err.message) + '</td></tr>';
+    deleteTbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);">⚠ লোড ব্যর্থ: ' + escapeHtml(err.message) + '</td></tr>';
   });
 }
 
