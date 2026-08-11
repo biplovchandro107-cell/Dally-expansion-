@@ -1722,28 +1722,28 @@
 <div class="panel-title" style="font-size:15px;margin:0 0 10px;">Create User</div>
 <div class="panel">
       <div class="form-grid">
-        <div class="form-field"><label>Full Name</label><input type="text" placeholder="যেমন: Rahim Uddin"></div>
-        <div class="form-field"><label>Employee ID</label><input type="text" placeholder="EMP-00482"></div>
-        <div class="form-field"><label>Email</label><input type="text" placeholder="name@company.com"></div>
-        <div class="form-field"><label>Phone</label><input type="text" placeholder="+৮৮০ ১XXX-XXXXXX"></div>
-        <div class="form-field"><label>Designation</label><input type="text" placeholder="যেমন: Line Supervisor"></div>
-        <div class="form-field"><label>Department</label><select><option>Production</option><option>Merchandising</option><option>Finance</option><option>HR</option></select></div>
-        <div class="form-field"><label>Assign Role</label><select><option>Employee Role</option><option>Department Admin</option><option>Branch Admin</option><option>Factory Admin</option><option>Company Admin</option></select></div>
-        <div class="form-field"><label>Factory / Branch</label><select><option>গাজীপুর ১</option><option>গাজীপুর ২</option><option>চট্টগ্রাম</option><option>সাভার</option></select></div>
-        <div class="form-field"><label>Temporary Password</label><input type="text" placeholder="স্বয়ংক্রিয়ভাবে তৈরি হবে"></div>
-        <div class="form-field"><label>Status</label><select><option>Active</option><option>Inactive</option></select></div>
+        <div class="form-field"><label>Full Name</label><input type="text" id="cu-name" placeholder="যেমন: Rahim Uddin"></div>
+        <div class="form-field"><label>Employee ID</label><input type="text" id="cu-empid" placeholder="EMP-00482"></div>
+        <div class="form-field"><label>Email</label><input type="text" id="cu-email" placeholder="name@company.com"></div>
+        <div class="form-field"><label>Phone</label><input type="text" id="cu-phone" placeholder="+৮৮০ ১XXX-XXXXXX"></div>
+        <div class="form-field"><label>Designation</label><input type="text" id="cu-designation" placeholder="যেমন: Line Supervisor"></div>
+        <div class="form-field"><label>Department</label><select id="cu-department"><option>Merchandising</option><option>Production</option><option>Quality</option><option>Textile</option><option>Finance</option><option>HR</option><option>Inventory</option><option>Factory Security</option><option>IT / System Administration</option><option>Sales</option></select></div>
+        <div class="form-field"><label>Assign Role</label><select id="cu-role"><option>Employee Role</option><option>Department Admin</option><option>Branch Admin</option><option>Factory Admin</option><option>Company Admin</option></select></div>
+        <div class="form-field"><label>Factory / Branch</label><select id="cu-factory"><option>গাজীপুর ১</option><option>গাজীপুর ২</option><option>চট্টগ্রাম</option><option>সাভার</option></select></div>
+        <div class="form-field"><label>Temporary Password</label><input type="text" id="cu-temppass" placeholder="স্বয়ংক্রিয়ভাবে তৈরি হবে"></div>
+        <div class="form-field"><label>Status</label><select id="cu-status"><option>Active</option><option>Inactive</option></select></div>
       </div>
-      <div class="form-actions"><button class="btn-primary">User তৈরি করুন</button><button class="btn-secondary">বাতিল</button></div>
+      <div class="form-actions"><button class="btn-primary" id="btn-create-user" data-fb-wired onclick="handleCreateUser(this)">User তৈরি করুন</button><button class="btn-secondary" onclick="document.getElementById('cu-name').closest('.panel').querySelectorAll('input').forEach(i=>i.value='');">বাতিল</button></div>
     </div>
 <div class="panel-title" style="font-size:15px;margin:22px 0 10px;padding-top:14px;border-top:1px solid var(--g2);">Edit User</div>
 <div class="panel">
       <table><thead><tr><th>Name</th><th>Role</th><th>Department</th><th>Status</th><th></th></tr></thead>
-      <tbody><tr><td colspan="5" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody></table>
+      <tbody id="tbody-edit-user"><tr><td colspan="5" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody></table>
     </div>
 <div class="panel-title" style="font-size:15px;margin:22px 0 10px;padding-top:14px;border-top:1px solid var(--g2);">Delete User</div>
 <div class="panel">
       <table><thead><tr><th>Name</th><th>Email</th><th>Last Login</th><th></th></tr></thead>
-      <tbody><tr><td colspan="4" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody></table>
+      <tbody id="tbody-delete-user"><tr><td colspan="4" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody></table>
       <div class="placeholder-note">নোট: ডিলিট করার আগে কনফার্মেশন ডায়ালগ দেখানো হবে। ব্যবহারকারীর তথ্য ৩০ দিন Recycle Bin-এ সংরক্ষিত থাকবে।</div>
     </div>
 <div class="panel-title" style="font-size:15px;margin:22px 0 10px;padding-top:14px;border-top:1px solid var(--g2);">Lock User</div>
@@ -26168,6 +26168,127 @@ if('ResizeObserver' in window){
   });
 
 })();
+
+// =====================================================================
+// USER MANAGEMENT — "Create User" আসল Firebase persistence
+// (আগে এটা শুধু ডেমো টোস্ট দেখাত, কোথাও সেভ হতো না)
+// নোট: এটা শুধু ইউজারের প্রোফাইল তথ্য Firestore-এ সংরক্ষণ করে। প্রকৃত
+// লগইন-যোগ্য Firebase Auth অ্যাকাউন্ট তৈরি করতে হলে server-side Cloud
+// Function (Admin SDK) দরকার — ক্লায়েন্ট থেকে নিরাপদে করা সম্ভব না,
+// কারণ এতে বর্তমান অ্যাডমিনের সেশন বদলে যাওয়ার ঝুঁকি থাকে।
+// =====================================================================
+function cuToast(msg, isWarn){
+  let box = document.getElementById('cu-toast');
+  if(!box){
+    box = document.createElement('div');
+    box.id = 'cu-toast';
+    box.style.cssText = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);'
+      +'background:#141414;color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;'
+      +'box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999;opacity:0;transition:opacity .25s,transform .25s;'
+      +'pointer-events:none;max-width:80vw;text-align:center;';
+    document.body.appendChild(box);
+  }
+  box.textContent = msg;
+  box.style.background = isWarn ? '#a4342a' : '#141414';
+  box.style.opacity = '1';
+  box.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(box._t);
+  box._t = setTimeout(function(){
+    box.style.opacity = '0';
+    box.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 3200);
+}
+
+function cuAppendRow(tbody, docId, cells){
+  const rawRow = tbody.querySelector('tr');
+  const isPlaceholder = rawRow && rawRow.children.length === 1 && rawRow.children[0].hasAttribute('colspan');
+  if(isPlaceholder) tbody.innerHTML = '';
+  const tr = document.createElement('tr');
+  tr.dataset.docId = docId;
+  tr.dataset.generic = 'true';
+  tr.innerHTML = cells.map(function(v){
+    const s = String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return '<td>' + s + '</td>';
+  }).join('');
+  tbody.appendChild(tr);
+}
+
+function cuTableKey(tbodyId){
+  const tbodyEl = document.getElementById(tbodyId);
+  const table = tbodyEl.closest('table');
+  const viewEl = table.closest('.view');
+  const idx = Array.from(viewEl.querySelectorAll('table')).indexOf(table);
+  return { key: viewEl.id + '__t' + idx, tbody: tbodyEl };
+}
+
+function handleCreateUser(btn){
+  const nameEl = document.getElementById('cu-name');
+  const empIdEl = document.getElementById('cu-empid');
+  const emailEl = document.getElementById('cu-email');
+  const name = nameEl.value.trim();
+  const empId = empIdEl.value.trim();
+  const email = emailEl.value.trim();
+  const phone = document.getElementById('cu-phone').value.trim();
+  const designation = document.getElementById('cu-designation').value.trim();
+  const department = document.getElementById('cu-department').value;
+  const role = document.getElementById('cu-role').value;
+  const factory = document.getElementById('cu-factory').value;
+  const tempPassEl = document.getElementById('cu-temppass');
+  const status = document.getElementById('cu-status').value;
+
+  [nameEl, empIdEl, emailEl].forEach(function(i){ i.style.borderColor = ''; });
+  const required = [nameEl, empIdEl, emailEl];
+  const firstEmpty = required.find(function(el){ return !el.value.trim(); });
+  if(firstEmpty){
+    firstEmpty.style.borderColor = '#a4342a';
+    firstEmpty.focus();
+    cuToast('⚠ নাম, Employee ID ও Email আবশ্যক', true);
+    return;
+  }
+  if(!/^\S+@\S+\.\S+$/.test(email)){
+    emailEl.style.borderColor = '#a4342a';
+    emailEl.focus();
+    cuToast('⚠ সঠিক Email দিন', true);
+    return;
+  }
+
+  const tempPass = tempPassEl.value.trim() || Math.random().toString(36).slice(-8);
+
+  btn.disabled = true;
+  const originalLabel = btn.textContent;
+  btn.textContent = 'সংরক্ষণ হচ্ছে...';
+
+  const profile = {
+    name: name, employeeId: empId, email: email, phone: phone,
+    designation: designation, department: department, role: role,
+    factory: factory, status: status, tempPassword: tempPass,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  db.collection('users').add(profile).then(function(){
+    const editInfo = cuTableKey('tbody-edit-user');
+    const deleteInfo = cuTableKey('tbody-delete-user');
+    const editCells = [name, role, department, status, '—'];
+    const deleteCells = [name, email, 'এইমাত্র', '—'];
+    const editColRef = db.collection('genericTables').doc(editInfo.key).collection('rows');
+    const deleteColRef = db.collection('genericTables').doc(deleteInfo.key).collection('rows');
+    return Promise.all([
+      editColRef.add({ cells: editCells, createdAt: firebase.firestore.FieldValue.serverTimestamp() }),
+      deleteColRef.add({ cells: deleteCells, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
+    ]).then(function(results){
+      cuAppendRow(editInfo.tbody, results[0].id, editCells);
+      cuAppendRow(deleteInfo.tbody, results[1].id, deleteCells);
+    });
+  }).then(function(){
+    cuToast('✓ ইউজার তৈরি হয়েছে — অস্থায়ী পাসওয়ার্ড: ' + tempPass);
+    document.querySelectorAll('#view-sysadmin-user-management .form-grid input[type="text"]').forEach(function(i){ i.value=''; });
+  }).catch(function(err){
+    cuToast('⚠ সংরক্ষণ ব্যর্থ: ' + err.message, true);
+  }).finally(function(){
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  });
+}
 
 // ==================== DASHBOARD LIVE KPI BINDING ====================
 // শুধুমাত্র সরাসরি ও সৎভাবে গণনাযোগ্য KPI (ডকুমেন্ট কাউন্ট) লাইভ করা হয়েছে।
