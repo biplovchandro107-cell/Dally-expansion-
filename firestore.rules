@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---- Helper: এই লগইন ইমেইল কি Merchandiser Directory-তে আছে? ----
+    // merchandisers/{email} ডকুমেন্ট থাকলে সে "scoped merchandiser"।
+    // ⚠️ Merchandiser Directory-তে ইমেইল অবশ্যই lowercase-এ সেভ করতে হবে,
+    // কারণ Firebase Auth-এর ইমেইলও সবসময় lowercase-এ থাকে।
+    function isMerchandiser() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/merchandisers/$(request.auth.token.email));
+    }
+
+    // FIX: আগে "merchandiser না হলেই Admin" ধরা হতো — অচেনা/নতুন ইউজারও তাহলে
+    // ডিফল্টভাবে ফুল-অ্যাক্সেস পেয়ে যেত। এখন Admin হতে হলে users/{uid} ডকুমেন্টে
+    // স্পষ্টভাবে role: 'Admin' থাকতে হবে (এই ডকুমেন্ট শুধু /api/users সার্ভার
+    // ফাংশনই লিখতে পারে, নিচে দেখুন — তাই ইউজার নিজে এটা বদলাতে পারবে না)।
+    function isAdmin() {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Admin';
+    }
+
+    function isOwnAssignedDoc() {
+      return request.auth != null
+        && resource.data.assignedMerchandiserId == request.auth.token.email;
+    }
+    function isOwnAssignedOnCreate() {
+      return request.auth != null
+        && request.resource.data.assignedMerchandiserId == request.auth.token.email;
+    }
+
+    // ---- User নিজের প্রোফাইল ----
+    // FIX: read নিজের প্রোফাইলে থাকলো, কিন্তু write সম্পূর্ণ বন্ধ — কারণ write খোলা
+    // থাকলে যেকোনো ইউজার নিজের role ফিল্ড বদলে নিজেকে Admin বানিয়ে ফেলতে পারতো।
+    // create/update/delete সব এখন থেকে শুধুমাত্র /api/users সার্ভারলেস ফাংশনের
+    // মাধ্যমে হবে, যেটা Admin SDK দিয়ে চলে (এই rules বাইপাস করে) এবং কল করার আগে
+    // নিজে থেকে caller-এর role: 'Admin' কিনা যাচাই করে।
+    match /users/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow write: if false;
+    }
+
+    // ---- Merchandiser Directory ----
+    match /merchandisers/{email} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // ---- Buyer Master: assignedMerchandiserId (ইমেইল) দিয়ে স্কোপড ----
+    match /buyers/{buyerId} {
+      allow read: if isAdmin() || isOwnAssignedDoc();
+      allow create: if isAdmin() || isOwnAssignedOnCreate();
+      allow update, delete: if isAdmin() || isOwnAssignedDoc();
+    }
+
+    // ---- Order Management: assignedMerchandiserId (ইমেইল) দিয়ে স্কোপড ----
+    match /orders/{orderId} {
+      allow read: if isAdmin() || isOwnAssignedDoc();
+      allow create: if isAdmin() || isOwnAssignedOnCreate();
+      allow update, delete: if isAdmin() || isOwnAssignedDoc();
+    }
+
+    // ---- Booking Sheet (Fabric + Trim + Dept, combined): assignedMerchandiserId দিয়ে স্কোপড ----
+    match /bookingSheet/{sheetId} {
+      allow read: if isAdmin() || isOwnAssignedDoc();
+      allow create: if isAdmin() || isOwnAssignedOnCreate();
+      allow update, delete: if isAdmin() || isOwnAssignedDoc();
+    }
+
+    // ---- companies: শুধু লগইন করা ইউজার ----
+    match /companies/{companyId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // ---- বাকি সব কালেকশন (Tech Pack, BOM, Costing, HRMS, Inventory, Production,
+    // QM, Commercial ইত্যাদি): এগুলোতে এখনো merchandiser-ভিত্তিক ওনারশিপ নেই,
+    // তাই যেকোনো লগইন করা ইউজার অ্যাক্সেস পাবে। ভবিষ্যতে দরকার হলে এগুলোও
+    // buyers/orders-এর মতো assignedMerchandiserId দিয়ে আলাদা করে স্কোপ করা যাবে।
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

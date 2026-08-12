@@ -4562,6 +4562,15 @@
   <div class="view" id="view-merch-techpack">
     <div class="view-head"><h1>Tech Pack</h1><div class="meta">টেক প্যাক ও গার্মেন্ট স্পেসিফিকেশন — সব একই পেজে</div></div>
 
+    <div class="section-divider">🔍 Style Master — Tech Pack + BOM + Costing একসাথে দেখুন</div>
+    <div class="panel">
+      <div class="form-grid">
+        <div class="form-field"><label>Style No. দিয়ে খুঁজুন</label><input type="text" id="sm-search-style" placeholder="যেমন: STY-3301"></div>
+      </div>
+      <div class="form-actions"><button class="btn-primary" id="btn-style-master-search">খুঁজুন</button></div>
+      <div id="sm-result-area" style="margin-top:16px;"></div>
+    </div>
+
     <div class="section-divider">নতুন টেক প্যাক</div>
     <div class="panel">
       <div class="form-grid">
@@ -15833,6 +15842,62 @@ function loadOrderManagement(){
   renderOrders();
 }
 
+// ---- STYLE MASTER (Tech Pack + BOM + Costing একসাথে, একই Style No. দিয়ে) ----
+// তিনটা মডিউল আলাদা Firestore কালেকশনে থাকে (techPacks, boms, costSheets) কিন্তু
+// সবগুলোতে কমন 'style' ফিল্ড থাকে বলে সেটা দিয়ে একসাথে খোঁজা যায়।
+function wireStyleMasterSearch(){
+  const btn = document.getElementById('btn-style-master-search');
+  if(!btn || btn.dataset.wired) return;
+  btn.dataset.wired = 'true';
+  btn.addEventListener('click', runStyleMasterSearch);
+  const input = document.getElementById('sm-search-style');
+  if(input) input.addEventListener('keydown', function(e){ if(e.key === 'Enter') runStyleMasterSearch(); });
+}
+
+function runStyleMasterSearch(){
+  const styleInput = document.getElementById('sm-search-style');
+  const resultArea = document.getElementById('sm-result-area');
+  const style = (styleInput.value || '').trim();
+  if(!style){ resultArea.innerHTML = '<div class="placeholder-note">⚠ Style No. লিখুন</div>'; return; }
+  resultArea.innerHTML = '<div class="placeholder-note">খোঁজা হচ্ছে...</div>';
+
+  Promise.all([
+    db.collection('techPacks').where('style', '==', style).get(),
+    db.collection('boms').where('style', '==', style).get(),
+    db.collection('costSheets').where('style', '==', style).get()
+  ]).then(function(results){
+    const tpDocs = results[0].docs, bomDocs = results[1].docs, csDocs = results[2].docs;
+    if(!tpDocs.length && !bomDocs.length && !csDocs.length){
+      resultArea.innerHTML = '<div class="placeholder-note">⚠ "' + style.replace(/</g,'&lt;') + '" নামে কোনো Tech Pack, BOM বা Costing পাওয়া যায়নি। উপরের ফর্ম থেকে প্রথমে ডেটা যোগ করুন।</div>';
+      return;
+    }
+    let html = '<div class="section-divider">Tech Pack (' + tpDocs.length + ')</div>';
+    html += renderStyleMasterTable(tpDocs, ['style','buyer','version','uploader','status'], ['Style No.','Buyer','Version','Uploaded By','Status']);
+    html += '<div class="section-divider">BOM (' + bomDocs.length + ')</div>';
+    html += renderStyleMasterTable(bomDocs, ['style','fabMain','trimButton','ctrlStatus'], ['Style No.','Main Fabric','Button','Status']);
+    html += '<div class="section-divider">Costing (' + csDocs.length + ')</div>';
+    html += renderStyleMasterTable(csDocs, ['style','sumFob','sumCif','sumMargin'], ['Style No.','FOB Cost','CIF Cost','Profit Margin']);
+    resultArea.innerHTML = html;
+  }).catch(function(err){
+    resultArea.innerHTML = '<div class="placeholder-note">⚠ খোঁজা ব্যর্থ: ' + err.message + '</div>';
+  });
+}
+
+function renderStyleMasterTable(docs, fields, headers){
+  if(!docs.length) return '<div class="placeholder-note" style="margin-bottom:12px;">কোনো রেকর্ড নেই</div>';
+  let html = '<div class="panel"><table><thead><tr>';
+  headers.forEach(function(h){ html += '<th>' + h + '</th>'; });
+  html += '</tr></thead><tbody>';
+  docs.forEach(function(doc){
+    const d = doc.data();
+    html += '<tr>';
+    fields.forEach(function(f){ html += '<td>' + (d[f] != null ? String(d[f]).replace(/</g,'&lt;') : '—') + '</td>'; });
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  return html;
+}
+
 // ---- TECH PACK ----
 function pillFor(val){ return val === 'Attached' || val === 'Latest' ? 'pill ok' : 'pill mid'; }
 
@@ -15912,6 +15977,7 @@ document.getElementById('btn-add-techpack').addEventListener('click', function(e
 function loadTechPack(){
   populateBuyerDropdown('tp-add-buyer');
   renderTechPacks();
+  wireStyleMasterSearch();
 }
 
 // ---- COSTING ----
@@ -26392,10 +26458,12 @@ function handleEditUserRow(uid){
 // Auth ইউজার ডিলিট করা ক্লায়েন্ট-সাইড থেকে সম্ভব না)
 function handleDeleteUserRow(uid, name){
   if(!confirm('আপনি কি নিশ্চিত "' + name + '" ইউজারকে ডিলিট করতে চান? এই কাজটি সাথে সাথেই লগইন অ্যাক্সেস বন্ধ করে দেবে।')) return;
-  fetch('/api/users', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'delete', uid: uid })
+  firebase.auth().currentUser.getIdToken().then(function(idToken){
+    return fetch('/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify({ action: 'delete', uid: uid })
+    });
   })
   .then(function(response){
     return response.json().then(function(data){
@@ -26470,10 +26538,14 @@ function handleCreateUser(btn){
   // কোনটা করতে হবে। দুটোই সরাসরি 'users' কালেকশনে লেখে — আলাদা কোনো genericTables ডুপ্লিকেট
   // রাখা হচ্ছে না, তাই Edit/Delete User টেবিল সবসময় আসল ডেটার সাথে সিঙ্কড থাকবে
   // (loadRealUsersTable-এর লাইভ লিসেনার এই একই 'users' কালেকশন থেকে রিড করে)।
-  fetch('/api/users', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+  // অ্যাডমিন-অনলি এন্ডপয়েন্ট — বর্তমানে লগইন করা ইউজারের Firebase ID token পাঠানো হচ্ছে,
+  // যাতে সার্ভার সাইডে (api/users.js) যাচাই করা যায় সে সত্যিই Admin কিনা
+  firebase.auth().currentUser.getIdToken().then(function(idToken){
+    return fetch('/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify(payload)
+    });
   })
   .then(function(response){
     return response.json().then(function(data){
