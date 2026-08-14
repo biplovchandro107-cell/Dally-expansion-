@@ -3246,10 +3246,15 @@
       <div class="kpi-card"><div class="kpi-label">Active Employees</div><div class="kpi-value">১,২০৫</div><div class="kpi-delta flat">অপরিবর্তিত</div></div>
     </div>
     <div class="panel">
+      <div class="form-field" style="max-width:340px;margin-bottom:14px;">
+        <label>এমপ্লয়ি খুঁজুন</label>
+        <input type="text" id="emp-search-input" placeholder="Employee ID, Code, নাম বা ডিপার্টমেন্ট দিয়ে সার্চ করুন">
+      </div>
       <table>
         <thead><tr><th>Employee ID</th><th>Employee Code</th><th>Employee Name</th><th>Photo</th><th>Father Name</th><th>Mother Name</th><th>Gender</th><th>Marital Status</th><th>Religion</th><th>Blood Group</th><th>Nationality</th></tr></thead>
         <tbody id="emp-tbody" data-fb-wired="true"><tr><td colspan="11" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
       </table>
+      <div class="meta" id="emp-search-nomatch" style="display:none;margin-top:8px;">এই সার্চের সাথে মিলে এমন কোনো এমপ্লয়ি নেই।</div>
       <div class="form-actions"><button class="btn-primary" id="btn-add-emp" data-fb-wired="true">নতুন এমপ্লয়ি যোগ করুন</button></div>
     </div>
 
@@ -14839,7 +14844,7 @@ const MASTER_DATA_BY_DEPT = {
   'Finance': ['master-company','master-supplier','master-customer','master-department','master-designation','master-unitcurrency'],
   'HR': ['master-employee','master-department','master-designation'],
   'Inventory': ['master-product','master-fabric','master-trim','master-warehouse','master-machine','master-unitcurrency'],
-  'Factory Security': ['master-employee','master-department','master-designation'],
+  'Factory Security': ['master-employee','master-department'],
   'Sales': ['master-buyer','master-customer','master-product','master-style','master-unitcurrency'],
   'IT / System Administration': null
 };
@@ -14882,7 +14887,15 @@ function applyMasterDataEditRestriction(profile){
   const targets = [
     { btnId: 'btn-add-emp', tbodyId: 'emp-tbody' },
     { btnId: 'btn-add-dept', tbodyId: 'dept-tbody' },
-    { btnId: 'btn-add-desig', tbodyId: 'desig-tbody' }
+    { btnId: 'btn-add-desig', tbodyId: 'desig-tbody' },
+    // Employee Master-এর সাব-সেকশনগুলো (Personal/Contact/Employment/Salary/Documents) —
+    // আগে এই ৫টা এই লিস্টে ছিল না, ফলে HR/IT ছাড়া অন্য ডিপার্টমেন্ট (যেমন Factory Security)
+    // এখানে ডেটা যোগ/এডিট করতে পারতো। এখন মূল Employee Profile-এর মতোই read-only করা হলো।
+    { btnId: 'btn-add-emp-personal', tbodyId: 'emp-personal-tbody' },
+    { btnId: 'btn-add-emp-contact', tbodyId: 'emp-contact-tbody' },
+    { btnId: 'btn-add-emp-employment', tbodyId: 'emp-employment-tbody' },
+    { btnId: 'btn-add-emp-salary', tbodyId: 'emp-salary-tbody' },
+    { btnId: 'btn-add-emp-doc', tbodyId: 'emp-doc-tbody' }
   ];
   targets.forEach(function(t){
     const btn = document.getElementById(t.btnId);
@@ -15367,6 +15380,19 @@ function buildFbModal(){
 function closeFbModal(){ if(fbModalBackdrop) fbModalBackdrop.classList.remove('show'); }
 
 // opts: { title, subtitle, fields:[{label,key}], onSave: function(data) -> Promise }
+// Employee Master থেকে লাইভ "ID — Name" লিস্ট আনে — Attendance/Biometric-এর মতো
+// জায়গায় ফ্রি-টেক্সট এমপ্লয়ি নাম টাইপ করার বদলে এখান থেকে বেছে নেওয়ার জন্য।
+function employeeDynamicOptions(){
+  return db.collection('masterEmployees').orderBy('createdAt','desc').get().then(function(snap){
+    return snap.docs.map(function(doc){
+      const d = doc.data();
+      const id = d.employeeId || doc.id;
+      const name = d.employeeName || 'নাম নেই';
+      return id + ' — ' + name;
+    });
+  });
+}
+
 function openFbAddModal(opts){
   const modal = buildFbModal();
   const grid = modal.querySelector('.gen-modal-grid');
@@ -15377,6 +15403,27 @@ function openFbAddModal(opts){
   opts.fields.forEach(function(f){
     const field = document.createElement('div');
     field.className = 'form-field';
+    if(f.dynamicOptions){
+      // মাস্টার ডেটা (যেমন Employee Master) থেকে লাইভ অপশন লোড করা ড্রপডাউন —
+      // ফ্রি-টেক্সট টাইপ করার বদলে এখান থেকে বেছে নিলে ID/নাম বানান ভুল বা
+      // ভিন্ন এন্ট্রি হওয়ার সুযোগ থাকে না, তাই Attendance/Biometric-এর সাথে
+      // Employee Master-এর ID সবসময় মিলবে।
+      field.innerHTML = '<label>' + f.label + '</label><select data-key="' + f.key + '"><option value="">লোড হচ্ছে...</option></select>';
+      grid.appendChild(field);
+      const selectEl = field.querySelector('select');
+      Promise.resolve(f.dynamicOptions()).then(function(list){
+        if(!list.length){
+          selectEl.innerHTML = '<option value="">এখনো কোনো এমপ্লয়ি যোগ করা হয়নি — আগে Employee Master-এ যোগ করুন</option>';
+          return;
+        }
+        selectEl.innerHTML = '<option value="">— বেছে নিন —</option>' + list.map(function(o){
+          return '<option value="' + String(o).replace(/"/g,'&quot;') + '">' + o + '</option>';
+        }).join('');
+      }).catch(function(){
+        selectEl.innerHTML = '<option value="">⚠ এমপ্লয়ি লিস্ট লোড ব্যর্থ</option>';
+      });
+      return;
+    }
     if(f.options){
       const optsHtml = '<option value="">— বেছে নিন —</option>' + f.options.map(function(o){
         return '<option value="' + o + '">' + o + '</option>';
@@ -15542,6 +15589,34 @@ const renderEmpMaster = wireFlatCollectionTable({
   }
 });
 renderEmpMaster();
+
+// ---- Employee Master সার্চ বক্স ----
+// গেট সিকিউরিটি সহ যেকোনো ভিউয়ার এখানে Employee ID/Code/নাম/ডিপার্টমেন্ট ইত্যাদি দিয়ে
+// লাইভ ফিল্টার করতে পারবে (টেবিলের row-এর পুরো টেক্সট মিলিয়ে)। ডেটা এডিট করে না, শুধু
+// দেখা রো-গুলো show/hide করে — তাই এডিট-পারমিশন সিস্টেমের সাথে কোনো সংঘাত নেই।
+(function(){
+  const searchInput = document.getElementById('emp-search-input');
+  const tbody = document.getElementById('emp-tbody');
+  const noMatchEl = document.getElementById('emp-search-nomatch');
+  if(!searchInput || !tbody) return;
+  function applyEmpSearchFilter(){
+    const q = searchInput.value.trim().toLowerCase();
+    const rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
+    let visibleCount = 0;
+    rows.forEach(function(tr){
+      if(!q){ tr.style.display = ''; visibleCount++; return; }
+      const match = tr.textContent.toLowerCase().indexOf(q) !== -1;
+      tr.style.display = match ? '' : 'none';
+      if(match) visibleCount++;
+    });
+    if(noMatchEl) noMatchEl.style.display = (q && visibleCount === 0) ? '' : 'none';
+  }
+  searchInput.addEventListener('input', applyEmpSearchFilter);
+  // emp-tbody লাইভ Firestore onSnapshot দিয়ে re-render হয়, তাই প্রতিবার নতুন ডেটা এলে
+  // সার্চ ফিল্টার আবার প্রয়োগ করতে MutationObserver ব্যবহার করা হলো।
+  const observer = new MutationObserver(applyEmpSearchFilter);
+  observer.observe(tbody, { childList: true });
+})();
 
 // ---- SUPPLIER MASTER (Profile) ----
 const renderSupMaster = wireFlatCollectionTable({
@@ -25200,7 +25275,7 @@ const renderHrmsEmployeeT1 = wireFlatCollectionTable({
 const renderHrmsAttendanceT2 = wireFlatCollectionTable({
   collectionName: 'hrmsAttendanceT2', tbodyId: 'hrms-attendance-2-tbody', addBtnId: 'btn-add-hrms-attendance-2', colCount: 4,
   fields: [
-    { label: 'Employee', key: 'employee' },
+    { label: 'Employee', key: 'employee', dynamicOptions: employeeDynamicOptions },
     { label: 'Adjustment Request', key: 'adjustmentRequest' },
     { label: 'Approval Workflow', key: 'approvalWorkflow' },
     { label: 'Attendance Lock', key: 'attendanceLock' }
@@ -25212,7 +25287,7 @@ const renderHrmsAttendanceT2 = wireFlatCollectionTable({
 const renderHrmsAttendanceDaily = wireFlatCollectionTable({
   collectionName: 'hrmsAttendanceDaily', tbodyId: 'hrms-attendance-daily-tbody', addBtnId: 'btn-add-hrms-attendance-daily', colCount: 6,
   fields: [
-    { label: 'Employee', key: 'employee' },
+    { label: 'Employee', key: 'employee', dynamicOptions: employeeDynamicOptions },
     { label: 'Date', key: 'date', type: 'date' },
     { label: 'In-Time', key: 'inTime' },
     { label: 'Out-Time', key: 'outTime' },
