@@ -14869,6 +14869,58 @@ function getFirstNavViewInGroup(groupKey){
 // লক্ষ্য করুন: এটা শুধু UI-লেভেল সুবিধা (কোন মেনু দেখাবে তা ঠিক করে), আসল ডেটা-সুরক্ষা
 // Firestore Security Rules-এই থাকা উচিত — ঠিক merch-scope ফিচারের মতোই। কেউ যদি devtools দিয়ে
 // hidden view-এর URL/hash জোর করে খোলে, সার্ভার-সাইড rules ছাড়া সেই ডেটা আসলে সুরক্ষিত না।
+// Employee/Department/Designation — এই তিনটা HR-sensitive Master Data, তাই শুধু HR ও
+// IT/System Administration department, অথবা Company Admin রোল-এর ইউজাররাই এখানে
+// যোগ/মোছার (Add/Delete) অধিকার পাবেন। বাকি সবাই (যেমন Factory Security) শুধু দেখতে পারবেন —
+// "নতুন যোগ করুন" বাটন লুকানো থাকবে, আর রো-তে ক্লিক করলে ডিলিট কনফার্মেশন আসবে না।
+// লক্ষ্য করুন: এটা শুধু UI-লেভেল সুরক্ষা — প্রকৃত ডেটা-সুরক্ষার জন্য Firestore Security Rules-এও
+// একই নিয়ম বসানো উচিত, কারণ UI বাটন লুকানো থাকলেও কেউ চাইলে সরাসরি Firestore API কল করে
+// ডেটা বদলাতে/মুছতে পারবে যদি rules-এ আটকানো না থাকে।
+const MASTER_DATA_EDIT_ALLOWED_DEPTS = ['HR', 'IT / System Administration'];
+function applyMasterDataEditRestriction(profile){
+  const canEdit = !profile || profile.role === 'Company Admin' || MASTER_DATA_EDIT_ALLOWED_DEPTS.indexOf(profile.department) !== -1;
+  const targets = [
+    { btnId: 'btn-add-emp', tbodyId: 'emp-tbody' },
+    { btnId: 'btn-add-dept', tbodyId: 'dept-tbody' },
+    { btnId: 'btn-add-desig', tbodyId: 'desig-tbody' }
+  ];
+  targets.forEach(function(t){
+    const btn = document.getElementById(t.btnId);
+    if(btn){
+      btn.style.display = canEdit ? '' : 'none';
+    }
+    const tbody = document.getElementById(t.tbodyId);
+    if(tbody){
+      // আগে যোগ করা read-only নোটিশ থাকলে সরিয়ে নতুন করে বসানো হয় (state বদলালে ডুপ্লিকেট না হয়)
+      const existingNote = tbody.parentElement ? tbody.parentElement.querySelector('.readonly-note') : null;
+      if(existingNote) existingNote.remove();
+      if(!canEdit){
+        tbody.dataset.readonly = 'true';
+        if(tbody.parentElement){
+          const note = document.createElement('div');
+          note.className = 'readonly-note';
+          note.style.cssText = 'font-size:12.5px;color:var(--muted);margin-top:8px;';
+          note.textContent = 'শুধু দেখার অনুমতি — এখানে যোগ/মোছার অধিকার শুধু HR ও IT/System Administration-এর';
+          tbody.parentElement.appendChild(note);
+        }
+      } else {
+        delete tbody.dataset.readonly;
+      }
+    }
+  });
+}
+// tbody-তে ক্লিক করলে wireFlatCollectionTable-এর ডিলিট-লিসেনার bubble-phase-এ চলে —
+// তাই capture-phase-এ আগেই আটকে দেওয়া হচ্ছে যদি readonly flag সেট থাকে
+document.addEventListener('click', function(e){
+  const tr = e.target.closest('tr');
+  if(!tr) return;
+  const tbody = tr.closest('tbody');
+  if(tbody && tbody.dataset.readonly === 'true'){
+    e.stopPropagation();
+    e.preventDefault();
+  }
+}, true);
+
 function applyDepartmentAccess(profile){
   const allGroups = document.querySelectorAll('.menu-group');
   const allLabels = document.querySelectorAll('.menu-section-label');
@@ -14879,6 +14931,7 @@ function applyDepartmentAccess(profile){
     allGroups.forEach(function(g){ g.style.display = ''; });
     allLabels.forEach(function(l){ l.style.display = ''; });
     applyMasterDataItemFilter(profile);
+    applyMasterDataEditRestriction(profile);
     return;
   }
 
@@ -14889,6 +14942,7 @@ function applyDepartmentAccess(profile){
     g.style.display = allowed.has(key) ? '' : 'none';
   });
   applyMasterDataItemFilter(profile);
+  applyMasterDataEditRestriction(profile);
   // যে section-label-এর নিচে সবগুলো group লুকানো, সেই label-টাও লুকানো হয় (খালি হেডার এড়াতে)
   allLabels.forEach(function(label){
     let node = label.nextElementSibling;
