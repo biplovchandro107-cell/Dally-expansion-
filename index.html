@@ -3711,7 +3711,18 @@
         <div class="form-field"><label>Dyeing ইউনিট</label><select id="knt-cd-unit"><option value="">লোড হচ্ছে...</option></select></div>
         <div class="form-field"><label>Challan No</label><input type="text" id="knt-cd-no" autocomplete="off"></div>
         <div class="form-field"><label>Delivery Date</label><input type="date" id="knt-cd-date"></div>
-        <div class="form-field"><label>Vehicle / Driver (ঐচ্ছিক)</label><input type="text" id="knt-cd-vehicle" autocomplete="off"></div>
+        <div class="form-field"><label>D.O. No. (ঐচ্ছিক)</label><input type="text" id="knt-cd-dono" autocomplete="off"></div>
+      </div>
+
+      <div class="section-divider" style="margin-top:16px;">Gate Pass তথ্য</div>
+      <div class="form-grid">
+        <div class="form-field"><label>Gate Pass No.</label><input type="text" id="knt-cd-gpno" autocomplete="off"></div>
+        <div class="form-field"><label>Vehicle No.</label><input type="text" id="knt-cd-vehicle" autocomplete="off"></div>
+        <div class="form-field"><label>Driver Name</label><input type="text" id="knt-cd-drivername" autocomplete="off"></div>
+        <div class="form-field"><label>Driver License No.</label><input type="text" id="knt-cd-driverlicense" autocomplete="off"></div>
+        <div class="form-field"><label>Mobile No.</label><input type="text" id="knt-cd-mobileno" autocomplete="off"></div>
+        <div class="form-field"><label>Out Time</label><input type="text" id="knt-cd-outtime" placeholder="যেমন: 4:40 PM" autocomplete="off"></div>
+        <div class="form-field"><label>Security Lock No.</label><input type="text" id="knt-cd-securitylock" autocomplete="off"></div>
       </div>
 
       <div class="section-divider" style="margin-top:18px;">মোড বাছাই করুন</div>
@@ -16832,7 +16843,14 @@ document.getElementById('btn-create-knt-challan').addEventListener('click', func
   const unit = document.getElementById('knt-cd-unit').value;
   const challanNo = document.getElementById('knt-cd-no').value.trim();
   const date = document.getElementById('knt-cd-date').value;
+  const dono = document.getElementById('knt-cd-dono').value.trim();
+  const gpno = document.getElementById('knt-cd-gpno').value.trim();
   const vehicle = document.getElementById('knt-cd-vehicle').value.trim();
+  const driverName = document.getElementById('knt-cd-drivername').value.trim();
+  const driverLicense = document.getElementById('knt-cd-driverlicense').value.trim();
+  const mobileNo = document.getElementById('knt-cd-mobileno').value.trim();
+  const outTime = document.getElementById('knt-cd-outtime').value.trim();
+  const securityLock = document.getElementById('knt-cd-securitylock').value.trim();
   const checked = Array.from(document.querySelectorAll('.knt-cd-roll-cb:checked'));
   if(!unit){ fbToast('⚠ Dyeing ইউনিট বেছে নিন', true); return; }
   if(!challanNo){ fbToast('⚠ Challan No দিন', true); return; }
@@ -16846,7 +16864,9 @@ document.getElementById('btn-create-knt-challan').addEventListener('click', func
   btn.disabled = true; btn.textContent = 'তৈরি হচ্ছে...';
 
   db.collection('knitDyeingChallan').add({
-    challanNo: challanNo, dyeingUnit: unit, deliveryDate: date, vehicle: vehicle,
+    challanNo: challanNo, dyeingUnit: unit, deliveryDate: date, dono: dono, gpno: gpno,
+    vehicle: vehicle, driverName: driverName, driverLicense: driverLicense,
+    mobileNo: mobileNo, outTime: outTime, securityLock: securityLock,
     rolls: selectedRolls, totalWeight: totalWeight, status: 'Delivered',
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   }).then(function(challanRef){
@@ -16860,7 +16880,14 @@ document.getElementById('btn-create-knt-challan').addEventListener('click', func
   }).then(function(){
     fbToast('✓ চালান তৈরি হয়েছে, Grey Stock অটো আপডেট হয়েছে');
     document.getElementById('knt-cd-no').value = 'CH-' + Date.now().toString().slice(-6);
+    document.getElementById('knt-cd-gpno').value = 'GP-' + Date.now().toString().slice(-4);
+    document.getElementById('knt-cd-dono').value = '';
     document.getElementById('knt-cd-vehicle').value = '';
+    document.getElementById('knt-cd-drivername').value = '';
+    document.getElementById('knt-cd-driverlicense').value = '';
+    document.getElementById('knt-cd-mobileno').value = '';
+    document.getElementById('knt-cd-outtime').value = '';
+    document.getElementById('knt-cd-securitylock').value = '';
     kntCdRenderRollsList();
     kntLoadGreyStore();
     kntLoadChallanHistory();
@@ -16873,25 +16900,82 @@ document.getElementById('btn-create-knt-challan').addEventListener('click', func
   });
 });
 
-function kntPrintChallan(challan){
-  const w = window.open('', '_blank');
-  const rollsHtml = (challan.rolls||[]).map(function(r,i){
-    return '<tr><td>'+(i+1)+'</td><td>'+r.rollNo+'</td><td>'+r.orderNo+'</td><td>'+r.weight+' KG</td></tr>';
+// ---- Dyeing Delivery Challan + Gate Pass — প্রিন্ট (Grey Fabric Issue Challan-এর মতোই কালার ফরম্যাট, কোম্পানি লোগো সহ) ----
+async function kntPrintChallan(challan){
+  let company = { legalName: 'গার্মেন্টস ERP লিমিটেড', registeredAddress: '', logoUrl: '' };
+  try{
+    const cp = await db.collection('companyProfile').doc('main').get();
+    if(cp.exists){ company = Object.assign(company, cp.data()); }
+  }catch(e){}
+  const companyDisplayName = company.legalName || company.companyName || 'গার্মেন্টস ERP লিমিটেড';
+  const companyAddress = company.registeredAddress || company.address || '';
+  const logoHtml = company.logoUrl ? '<img src="'+company.logoUrl+'" style="height:38px;border-radius:4px;margin-right:10px;vertical-align:middle;">' : '';
+
+  const now = new Date();
+  const genStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
+  const rolls = challan.rolls || [];
+  const rollsRows = rolls.map(function(r, i){
+    return '<tr><td>'+(i+1)+'</td><td>'+r.rollNo+'</td><td>'+r.orderNo+'</td><td>'+r.weight+'</td></tr>';
   }).join('');
-  w.document.write(
-    '<html><head><title>Gate Pass — '+challan.challanNo+'</title>' +
-    '<style>body{font-family:Arial,sans-serif;padding:30px;} h1{font-size:20px;} table{width:100%;border-collapse:collapse;margin-top:16px;} th,td{border:1px solid #999;padding:6px 10px;font-size:13px;text-align:left;} .meta{margin-top:10px;font-size:13px;} .sign{margin-top:60px;display:flex;justify-content:space-between;font-size:13px;}</style>' +
-    '</head><body>' +
-    '<h1>Dyeing Delivery Challan / Gate Pass</h1>' +
-    '<div class="meta"><b>Challan No:</b> '+challan.challanNo+' &nbsp;&nbsp; <b>Date:</b> '+challan.deliveryDate+'</div>' +
-    '<div class="meta"><b>Dyeing Unit:</b> '+challan.dyeingUnit+' &nbsp;&nbsp; <b>Vehicle/Driver:</b> '+(challan.vehicle||'—')+'</div>' +
-    '<table><thead><tr><th>#</th><th>Roll No</th><th>Order No</th><th>Weight</th></tr></thead><tbody>'+rollsHtml+'</tbody>' +
-    '<tfoot><tr><td colspan="3" style="text-align:right;"><b>Total</b></td><td><b>'+challan.totalWeight+' KG</b></td></tr></tfoot></table>' +
-    '<div class="sign"><div>Delivered By: ____________________</div><div>Received By: ____________________</div></div>' +
-    '</body></html>'
-  );
-  w.document.close();
-  w.print();
+
+  let html = '<div class="gfc-wrap">';
+
+  // ---- Header: logo + company + document title/badge ----
+  html += '<div class="gfc-topbar">'
+    + '<div class="gfc-brand" style="display:flex; align-items:center;">'+logoHtml+'<div><h1>'+companyDisplayName+'</h1><div class="gfc-addr">'+(companyAddress ? (companyAddress+' &nbsp;|&nbsp; ') : '')+'Knitting Section</div></div></div>'
+    + '<div class="gfc-right"><div class="gfc-badge">FABRIC DELIVERY</div>'
+    + '<div class="gfc-doctitle">Dyeing Delivery Challan</div>'
+    + '<div class="gfc-docsub">+ Gate Pass — Knitting → Dyeing</div></div>'
+    + '</div>';
+
+  // ---- Meta grid ----
+  html += '<div class="gfc-metabox"><div class="gfc-metagrid">'
+    + '<div class="gfc-metacell"><div class="k">Challan No.</div><div class="v">'+(challan.challanNo||'—')+'</div></div>'
+    + '<div class="gfc-metacell"><div class="k">Date</div><div class="v">'+(challan.deliveryDate||'—')+'</div></div>'
+    + '<div class="gfc-metacell"><div class="k">D.O. No.</div><div class="v">'+(challan.dono||'—')+'</div></div>'
+    + '<div class="gfc-metacell"><div class="k">Total Weight</div><div class="v">'+(challan.totalWeight!=null?challan.totalWeight:'—')+' KG</div></div>'
+    + '<div class="gfc-metacell"><div class="k">Vehicle No.</div><div class="v">'+(challan.vehicle||'—')+'</div></div>'
+    + '<div class="gfc-metacell"><div class="k">Total Rolls</div><div class="v">'+rolls.length+'</div></div>'
+    + '</div>'
+    + '<div class="gfc-fromto">'
+    + '<div class="gfc-metacell"><div class="k">From (Own Company / Knitting)</div><div class="v">'+companyDisplayName+' — Knitting Section</div></div>'
+    + '<div class="gfc-metacell"><div class="k">To (Dyeing Unit)</div><div class="v">'+(challan.dyeingUnit||'—')+'</div></div>'
+    + '</div></div>';
+  html += '<div class="gfc-purpose"><span>Purpose: <b>Fabric Delivery for Dyeing Processing</b></span>'
+    + '<span>Status: <b>'+(challan.status||'Delivered')+'</b></span></div>';
+
+  // ---- Roll details table ----
+  html += '<table class="gfc-table"><thead><tr><th>SL</th><th>Roll No</th><th>Order No</th><th>Weight (KG)</th></tr></thead><tbody>'
+    + (rollsRows || '<tr><td colspan="4" style="text-align:center;color:#999;">কোনো রোল নেই</td></tr>')
+    + '</tbody><tfoot><tr class="gfc-total"><td colspan="3" style="text-align:right;">Total</td><td>'+(challan.totalWeight!=null?challan.totalWeight:'—')+' KG</td></tr></tfoot></table>';
+
+  // ---- Gate pass box ----
+  html += '<div class="gfc-gatepass">'
+    + '<div class="gfc-gp-head"><span class="t">GATE PASS</span><span class="pill">STATUS — DELIVERED</span></div>'
+    + '<div class="gfc-gp-body">'
+    + '<div><div class="gfc-gp-field"><span class="lbl">Gate Pass No.</span><span class="val">'+(challan.gpno||'—')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">Gate Pass Date</span><span class="val">'+(challan.deliveryDate||'—')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">Linked Challan No.</span><span class="val">'+(challan.challanNo||'—')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">From Location</span><span class="val">Knitting Section</span></div>'
+    + '<div class="gfc-gp-field" style="border-bottom:none;"><span class="lbl">To Location</span><span class="val">'+(challan.dyeingUnit||'—')+'</span></div></div>'
+    + '<div><div class="gfc-gp-field"><span class="lbl">Vehicle No.</span><span class="val">'+(challan.vehicle||'—')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">Driver Name</span><span class="val">'+(challan.driverName||'—')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">Driver License No.</span><span class="val">'+(challan.driverLicense||'—')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">Mobile No.</span><span class="val">'+(challan.mobileNo||'—')+'</span></div>'
+    + '<div class="gfc-gp-field"><span class="lbl">Out Time</span><span class="val">'+(challan.outTime||'—')+'</span></div>'
+    + '<div class="gfc-gp-field" style="border-bottom:none;"><span class="lbl">Security Lock No.</span><span class="val">'+(challan.securityLock||'—')+'</span></div></div>'
+    + '</div></div>';
+
+  // ---- Signatures ----
+  html += '<div class="gfc-sign"><div>Head of Department</div><div>Approved By (Store Head)</div><div>Tally Pass — Knitting Store</div><div>Security / Gate Keeper</div><div>Received By (Dyeing Unit)</div></div>';
+
+  // ---- Footer note ----
+  html += '<div class="gfc-footer"><span>Note: এই চালান নিটিং সেকশন থেকে ডাইং ইউনিটে গ্রে ফেব্রিক ডেলিভারির জন্য ইস্যুকৃত।</span><span>Generated: '+genStamp+'</span></div>';
+
+  html += '</div>';
+
+  document.getElementById('bs-print-area').innerHTML = html;
+  setTimeout(function(){ window.print(); }, 80);
 }
 
 function kntLoadChallanHistory(){
@@ -16918,6 +17002,7 @@ function kntInitDyeingChallan(){
   kntCdRenderRollsList();
   kntLoadChallanHistory();
   document.getElementById('knt-cd-no').value = 'CH-' + Date.now().toString().slice(-6);
+  document.getElementById('knt-cd-gpno').value = 'GP-' + Date.now().toString().slice(-4);
 }
 kntInitDyeingChallan();
 
