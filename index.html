@@ -746,6 +746,20 @@
           </div>
         </div>
 
+        <div class="menu-subgroup" data-subgroup="dye-mod-production">
+          <div class="menu-subgroup-head" data-toggle="body-dye-mod-production">
+            <span>Dyeing Production</span>
+            <span class="chevron">›</span>
+          </div>
+          <div class="menu-subgroup-body" id="body-dye-mod-production">
+            <div class="nav-item group-link" data-view="dye-party-stock"><span class="dot"></span> ১. Party Stock Overview</div>
+            <div class="nav-item group-link" data-view="dye-dgp-view"><span class="dot"></span> ২. Daily Dyeing Programme (View Only)</div>
+            <div class="nav-item group-link" data-view="dye-machine-production"><span class="dot"></span> ৩. Machine Production Entry</div>
+            <div class="nav-item group-link" data-view="dye-chem-stock-view"><span class="dot"></span> ৪. Dyes &amp; Chemicals Stock View</div>
+          </div>
+        </div>
+
+
         <div class="menu-subgroup" data-subgroup="dye-mod2">
           <div class="menu-subgroup-head" data-toggle="body-dye-mod2">
             <span>Module 2 — Fabric Store</span>
@@ -3999,16 +4013,124 @@
       <div class="kpi-card"><div class="kpi-label">মোট Stock in Hand (KG)</div><div class="kpi-value" id="dye-ps-total-balance">০</div></div>
       <div class="kpi-card"><div class="kpi-label">সক্রিয় পার্টি সংখ্যা</div><div class="kpi-value" id="dye-ps-party-count">০</div></div>
     </div>
-    <div class="panel">
+    <div class="panel" style="overflow-x:auto;">
       <table>
-        <thead><tr><th>Party / Buyer</th><th>Received (KG)</th><th>Delivered (KG)</th><th>Stock in Hand (KG)</th></tr></thead>
-        <tbody id="dye-ps-tbody"><tr><td colspan="4" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+        <thead><tr><th>Party / Buyer</th><th>Order No</th><th>Style / PC</th><th>Reference</th><th>Dia (Grey/Finish)</th><th>GSM</th><th>Received (KG)</th><th>Delivered (KG)</th><th>Stock in Hand (KG)</th></tr></thead>
+        <tbody id="dye-ps-tbody"><tr><td colspan="9" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
       </table>
-      <div class="placeholder-note">Received = Batch Card-এ ঐ Buyer-এর নামে তৈরি হওয়া ব্যাচগুলোর মোট ওজন। Delivered = Dyeing Delivery Challan-এ ঐ Buyer-এর নামে ডেলিভারি হওয়া Fin Wt-এর যোগফল। Stock in Hand = Received − Delivered — প্রোগ্রাম করার আগে এখানে দেখে নিন কোন পার্টির কতটুকু মাল প্ল্যান্টে বাকি আছে।</div>
+      <div class="placeholder-note">Received = Batch Card-এ ঐ Buyer-এর নামে তৈরি হওয়া ব্যাচগুলোর মোট ওজন। Delivered = Dyeing Delivery Challan-এ ঐ Buyer-এর নামে ডেলিভারি হওয়া Fin Wt-এর যোগফল। Stock in Hand = Received − Delivered। Order No / Style / Reference / Dia / GSM কলামগুলো ঐ Buyer-এর ব্যাচ ও ডেলিভারি চালান থেকে সংগ্রহ করা হয়েছে (একাধিক থাকলে কমা দিয়ে আলাদা) — প্রোগ্রাম করার আগে এখানে দেখে নিন কোন পার্টির কোন অর্ডার/স্টাইলের কতটুকু মাল প্ল্যান্টে বাকি আছে।</div>
     </div>
   </div>
 
-  <!-- 3. Order Master (Module 3 — Dyeing Order / Requirement) -->
+  <!-- Dyeing Production — ২. Daily Dyeing Programme (View Only) -->
+  <div class="view" id="view-dye-dgp-view">
+    <div class="view-head"><h1>Daily Dyeing Programme <span style="font-size:12px; font-weight:400; color:var(--g4);">(শুধু দেখার জন্য)</span></h1><div class="meta">Dyeing Production — এখানে শুধু দেখা যাবে, কোনো এন্ট্রি/এডিট করা যাবে না। প্রোগ্রাম তৈরি/সেভ করতে হলে Batch Section → Dyeing Batch → Daily Dyeing Programme পাতায় যান</div></div>
+    <div class="panel">
+      <div class="form-grid">
+        <div class="form-field"><label>তারিখ</label><input type="date" id="dye-dgpv-date"></div>
+        <div class="form-field" style="align-self:flex-end;"><button class="btn-secondary" id="btn-dye-dgpv-load" style="width:100%;">এই তারিখের প্রোগ্রাম দেখুন</button></div>
+      </div>
+    </div>
+    <div class="panel" style="overflow-x:auto;">
+      <table>
+        <thead><tr>
+          <th>M/C No</th><th>Capacity</th><th>Brand</th><th>Party</th><th>Fabrication</th><th>Process</th><th>Colour</th><th>QTY/KG</th><th>Lt No</th><th>Ens</th><th>Ref</th><th>Remarks</th>
+        </tr></thead>
+        <tbody id="dye-dgpv-tbody"><tr><td colspan="12" style="text-align:center;color:var(--muted);">তারিখ বেছে "দেখুন" চাপুন</td></tr></tbody>
+        <tfoot><tr class="gfc-total" style="font-weight:700;">
+          <td colspan="7" style="text-align:right;">Total QTY/KG</td>
+          <td id="dye-dgpv-total-qty">০</td>
+          <td colspan="4"></td>
+        </tr></tfoot>
+      </table>
+    </div>
+    <div class="section-divider">সাম্প্রতিক প্রোগ্রাম হিস্ট্রি</div>
+    <div class="panel">
+      <table>
+        <thead><tr><th>তারিখ</th><th>মোট মেশিন</th><th>মোট QTY/KG</th><th>Actions</th></tr></thead>
+        <tbody id="dye-dgpv-history-tbody"><tr><td colspan="4" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Dyeing Production — ৩. Machine Production Entry (Day/Night Shift) -->
+  <div class="view" id="view-dye-machine-production">
+    <div class="view-head"><h1>Machine Production Entry</h1><div class="meta">Dyeing Production — প্রতিদিন Day ও Night শিফট শেষে প্রতিটা মেশিনের প্রোডাকশন (KG) এন্ট্রি দিন, বিগত ১-২ বছরের রেকর্ড এখানে থাকবে</div></div>
+
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">আজকের মোট প্রোডাকশন (KG)</div><div class="kpi-value" id="dye-mp-today-total">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">এই মাসের মোট প্রোডাকশন (KG)</div><div class="kpi-value" id="dye-mp-month-total">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">মোট এন্ট্রি সংখ্যা</div><div class="kpi-value" id="dye-mp-entry-count">০</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="form-grid">
+        <div class="form-field"><label>তারিখ</label><input type="date" id="dye-mp-date"></div>
+        <div class="form-field">
+          <label>মেশিন</label>
+          <select id="dye-mp-machine"><option value="">লোড হচ্ছে...</option></select>
+        </div>
+        <div class="form-field"><label>নতুন মেশিনের নাম (লিস্টে না থাকলে এখানে টাইপ করুন)</label><input type="text" id="dye-mp-machine-new" placeholder="যেমনঃ MC-15"></div>
+        <div class="form-field">
+          <label>শিফট</label>
+          <select id="dye-mp-shift">
+            <option value="Day">Day</option>
+            <option value="Night">Night</option>
+          </select>
+        </div>
+        <div class="form-field"><label>প্রোডাকশন Qty (KG)</label><input type="number" id="dye-mp-qty" placeholder="0"></div>
+        <div class="form-field"><label>Batch / Order Ref (ঐচ্ছিক)</label><input type="text" id="dye-mp-batchref" placeholder="যেমনঃ BATCH-000123"></div>
+        <div class="form-field"><label>Remarks (ঐচ্ছিক)</label><input type="text" id="dye-mp-remarks"></div>
+      </div>
+      <div class="form-actions"><button class="btn-primary" id="btn-dye-mp-save">প্রোডাকশন এন্ট্রি সেভ করুন</button></div>
+    </div>
+
+    <div class="section-divider">প্রোডাকশন হিস্ট্রি (ফিল্টার করুন)</div>
+    <div class="panel">
+      <div class="form-grid">
+        <div class="form-field"><label>মেশিন ফিল্টার</label><select id="dye-mp-filter-machine"><option value="">সব মেশিন</option></select></div>
+        <div class="form-field"><label>শুরুর তারিখ</label><input type="date" id="dye-mp-filter-from"></div>
+        <div class="form-field"><label>শেষ তারিখ</label><input type="date" id="dye-mp-filter-to"></div>
+        <div class="form-field" style="align-self:flex-end;"><button class="btn-secondary" id="btn-dye-mp-filter" style="width:100%;">ফিল্টার করুন</button></div>
+      </div>
+    </div>
+    <div class="panel" style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>তারিখ</th><th>মেশিন</th><th>শিফট</th><th>Qty (KG)</th><th>Batch/Order Ref</th><th>Remarks</th><th>এন্ট্রি করেছেন</th></tr></thead>
+        <tbody id="dye-mp-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+      <div class="placeholder-note">ডিফল্টভাবে সর্বশেষ ৩০০টি এন্ট্রি (আনুমানিক গত ১-২ বছরের রেকর্ড) দেখানো হয় — নির্দিষ্ট মেশিন বা তারিখ রেঞ্জ দিয়ে ফিল্টার করে খুঁজে নিন।</div>
+    </div>
+  </div>
+
+  <!-- Dyeing Production — ৪. Dyes & Chemicals Stock View (Read-only) -->
+  <div class="view" id="view-dye-chem-stock-view">
+    <div class="view-head"><h1>Dyes &amp; Chemicals Stock View <span style="font-size:12px; font-weight:400; color:var(--g4);">(শুধু দেখার জন্য)</span></h1><div class="meta">Dyeing Production — স্টোরে কোন ডাই/কেমিক্যাল আছে এবং কোনটা কম/শেষ — এখান থেকে কোনো এন্ট্রি করা যাবে না। Opening Stock ও Reorder Level সেট করতে Dye Master / Chemical Master পাতায় যান</div></div>
+
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">মোট আইটেম</div><div class="kpi-value" id="dye-csv-total-items">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">Low Stock আইটেম</div><div class="kpi-value" id="dye-csv-low-items">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">Out of Stock আইটেম</div><div class="kpi-value" id="dye-csv-out-items">০</div></div>
+    </div>
+
+    <div class="section-divider">Dye Stock</div>
+    <div class="panel" style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Dye Code</th><th>Name</th><th>Unit</th><th>Opening Stock</th><th>Issued</th><th>Returned</th><th>Available Qty</th><th>Reorder Level</th><th>স্ট্যাটাস</th></tr></thead>
+        <tbody id="dye-csv-dye-tbody"><tr><td colspan="9" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="section-divider">Chemical Stock</div>
+    <div class="panel" style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Chemical Code</th><th>Name</th><th>Unit</th><th>Opening Stock</th><th>Issued</th><th>Returned</th><th>Available Qty</th><th>Reorder Level</th><th>স্ট্যাটাস</th></tr></thead>
+        <tbody id="dye-csv-chem-tbody"><tr><td colspan="9" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+      <div class="placeholder-note">Available Qty = Opening Stock − (Store Issue-এ যাওয়া Qty − ফেরত আসা Qty) − Chemical Return কালেকশনে আলাদাভাবে ফেরত আসা Qty যোগ করে। Reorder Level-এর নিচে নামলে "Low Stock", শূন্য বা তার নিচে নামলে "Out of Stock" দেখাবে।</div>
+    </div>
+  </div>
+
   <div class="view" id="view-dye-order-master">
     <div class="view-head"><h1>Dyeing Order / Requirement</h1><div class="meta">Module 3 — Dyeing Order &amp; Planning — বায়ার ও স্টাইল-ভিত্তিক অর্ডার, পরবর্তী সব মডিউল এখান থেকে রেফারেন্স নেবে</div></div>
     <div class="panel">
@@ -4034,11 +4156,11 @@
 
   <!-- 5. Chemical Master -->
   <div class="view" id="view-dye-chemical-master">
-    <div class="view-head"><h1>Chemical Master</h1><div class="meta">ডাইং এক্সপ্যানশন — কেমিক্যাল রেফারেন্স, Requisition/Issue ও Recipe-তে ব্যবহৃত হবে</div></div>
+    <div class="view-head"><h1>Chemical Master</h1><div class="meta">ডাইং এক্সপ্যানশন — কেমিক্যাল রেফারেন্স, Requisition/Issue ও Recipe-তে ব্যবহৃত হবে। Opening Stock ও Reorder Level দিয়ে রাখলে "Dyes &amp; Chemicals Stock View"-এ Available Qty ও Low Stock দেখা যাবে।</div></div>
     <div class="panel">
       <table>
-        <thead><tr><th>Chemical Code</th><th>Name</th><th>Type</th><th>Unit</th><th>Supplier</th></tr></thead>
-        <tbody id="dye-chemical-tbody"><tr><td colspan="5" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+        <thead><tr><th>Chemical Code</th><th>Name</th><th>Type</th><th>Unit</th><th>Supplier</th><th>Opening Stock</th><th>Reorder Level</th></tr></thead>
+        <tbody id="dye-chemical-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
       </table>
       <div class="form-actions"><button class="btn-primary" id="btn-add-dye-chemical">নতুন কেমিক্যাল যোগ করুন</button></div>
     </div>
@@ -4046,11 +4168,11 @@
 
   <!-- 6. Dye Master -->
   <div class="view" id="view-dye-dye-master">
-    <div class="view-head"><h1>Dye Master</h1><div class="meta">ডাইং এক্সপ্যানশন — ডাই রেফারেন্স, Recipe-তে ব্যবহৃত হবে</div></div>
+    <div class="view-head"><h1>Dye Master</h1><div class="meta">ডাইং এক্সপ্যানশন — ডাই রেফারেন্স, Recipe-তে ব্যবহৃত হবে। Opening Stock ও Reorder Level দিয়ে রাখলে "Dyes &amp; Chemicals Stock View"-এ Available Qty ও Low Stock দেখা যাবে।</div></div>
     <div class="panel">
       <table>
-        <thead><tr><th>Dye Code</th><th>Name</th><th>Class</th><th>Unit</th><th>Supplier</th></tr></thead>
-        <tbody id="dye-dye-tbody"><tr><td colspan="5" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+        <thead><tr><th>Dye Code</th><th>Name</th><th>Class</th><th>Unit</th><th>Supplier</th><th>Opening Stock</th><th>Reorder Level</th></tr></thead>
+        <tbody id="dye-dye-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
       </table>
       <div class="form-actions"><button class="btn-primary" id="btn-add-dye-dye">নতুন ডাই যোগ করুন</button></div>
     </div>
@@ -18004,21 +18126,55 @@ function dyePartyStockLoad(){
     function ensure(name){
       const k = keyFor(name);
       if(!k) return null;
-      if(!partyMap[k]) partyMap[k] = { display: name.trim(), received: 0, delivered: 0 };
+      if(!partyMap[k]) partyMap[k] = {
+        display: name.trim(), received: 0, delivered: 0,
+        orders: new Set(), styles: new Set(), refs: new Set(), dias: new Set(), gsms: new Set()
+      };
       return partyMap[k];
     }
+    function addAll(set, values){
+      (values||[]).forEach(function(v){
+        if(v === null || v === undefined) return;
+        const s = String(v).trim();
+        if(s) set.add(s);
+      });
+    }
+    function joinSet(set, limit){
+      const arr = Array.from(set);
+      if(!arr.length) return '—';
+      if(arr.length <= limit) return arr.join(', ');
+      return arr.slice(0, limit).join(', ') + ' +' + (arr.length - limit) + ' more';
+    }
+    // Received side — Batch Card / Batch Master: buyer, refNo, fgsm, grey specs (Dia/Qty), roll order numbers
     batchSnap.forEach(function(doc){
       const d = doc.data();
       if(!d.buyer) return;
       const p = ensure(d.buyer);
-      if(p) p.received += Number(d.totalWeight) || 0;
+      if(!p) return;
+      p.received += Number(d.totalWeight) || 0;
+      addAll(p.refs, [d.refNo]);
+      addAll(p.gsms, [d.fgsm]);
+      (d.rolls||[]).forEach(function(r){ addAll(p.orders, [r.orderNo]); });
+      (d.greySpecs||[]).forEach(function(spec){
+        if(spec.greyDia || spec.finishDia){
+          addAll(p.dias, [ (spec.greyDia||'—') + '/' + (spec.finishDia||'—') ]);
+        }
+      });
     });
+    // Delivered side — Dyeing Delivery Challan items: buyer, order ref, style/PC, GSM, Dia, Fin Wt
     challanSnap.forEach(function(doc){
       const d = doc.data();
       (d.items||[]).forEach(function(it){
         if(!it.buyer) return;
         const p = ensure(it.buyer);
-        if(p) p.delivered += Number(it.finWt) || 0;
+        if(!p) return;
+        p.delivered += Number(it.finWt) || 0;
+        addAll(p.orders, [it.orderReff]);
+        addAll(p.styles, [it.styPcha]);
+        addAll(p.gsms, [it.gsm]);
+        if(it.gDia || it.fDia){
+          addAll(p.dias, [ (it.gDia||'—') + '/' + (it.fDia||'—') ]);
+        }
       });
     });
     const parties = Object.keys(partyMap).map(function(k){ return partyMap[k]; });
@@ -18036,8 +18192,18 @@ function dyePartyStockLoad(){
     tbody.innerHTML = parties.length ? parties.map(function(p){
       const balance = p.received - p.delivered;
       const balStyle = balance > 0 ? 'style="color:#a4342a;font-weight:600;"' : (balance < 0 ? 'style="color:#1e7d43;font-weight:600;"' : '');
-      return '<tr><td>'+p.display+'</td><td>'+p.received.toFixed(1)+'</td><td>'+p.delivered.toFixed(1)+'</td><td '+balStyle+'>'+balance.toFixed(1)+'</td></tr>';
-    }).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--muted);">কোনো ডেটা নেই</td></tr>';
+      return '<tr>'
+        + '<td>'+p.display+'</td>'
+        + '<td>'+joinSet(p.orders, 2)+'</td>'
+        + '<td>'+joinSet(p.styles, 2)+'</td>'
+        + '<td>'+joinSet(p.refs, 2)+'</td>'
+        + '<td>'+joinSet(p.dias, 2)+'</td>'
+        + '<td>'+joinSet(p.gsms, 2)+'</td>'
+        + '<td>'+p.received.toFixed(1)+'</td>'
+        + '<td>'+p.delivered.toFixed(1)+'</td>'
+        + '<td '+balStyle+'>'+balance.toFixed(1)+'</td>'
+        + '</tr>';
+    }).join('') : '<tr><td colspan="9" style="text-align:center;color:var(--muted);">কোনো ডেটা নেই</td></tr>';
   }).catch(function(err){
     fbToast('⚠ Party Stock Overview লোড ব্যর্থ: ' + err.message, true);
   });
@@ -18079,32 +18245,36 @@ renderDyeColorMaster();
 
 // ---- 5. CHEMICAL MASTER ----
 const renderDyeChemicalMaster = wireFlatCollectionTable({
-  collectionName: 'dyeChemicalMaster', tbodyId: 'dye-chemical-tbody', addBtnId: 'btn-add-dye-chemical', colCount: 5,
+  collectionName: 'dyeChemicalMaster', tbodyId: 'dye-chemical-tbody', addBtnId: 'btn-add-dye-chemical', colCount: 7,
   fields: [
     { label: 'Chemical Code', key: 'chemicalCode' },
     { label: 'Name', key: 'chemicalName' },
     { label: 'Type', key: 'chemicalType' },
     { label: 'Unit', key: 'unit' },
-    { label: 'Supplier', key: 'supplier' }
+    { label: 'Supplier', key: 'supplier' },
+    { label: 'Opening Stock', key: 'openingStock', type: 'number' },
+    { label: 'Reorder Level', key: 'reorderLevel', type: 'number' }
   ],
   rowRenderer: function(d){
-    return '<td>'+(d.chemicalCode||'—')+'</td><td>'+(d.chemicalName||'—')+'</td><td>'+(d.chemicalType||'—')+'</td><td>'+(d.unit||'—')+'</td><td>'+(d.supplier||'—')+'</td>';
+    return '<td>'+(d.chemicalCode||'—')+'</td><td>'+(d.chemicalName||'—')+'</td><td>'+(d.chemicalType||'—')+'</td><td>'+(d.unit||'—')+'</td><td>'+(d.supplier||'—')+'</td><td>'+(d.openingStock!=null?d.openingStock:'—')+'</td><td>'+(d.reorderLevel!=null?d.reorderLevel:'—')+'</td>';
   }
 });
 renderDyeChemicalMaster();
 
 // ---- 6. DYE MASTER ----
 const renderDyeDyeMaster = wireFlatCollectionTable({
-  collectionName: 'dyeDyeMaster', tbodyId: 'dye-dye-tbody', addBtnId: 'btn-add-dye-dye', colCount: 5,
+  collectionName: 'dyeDyeMaster', tbodyId: 'dye-dye-tbody', addBtnId: 'btn-add-dye-dye', colCount: 7,
   fields: [
     { label: 'Dye Code', key: 'dyeCode' },
     { label: 'Name', key: 'dyeName' },
     { label: 'Class', key: 'dyeClass' },
     { label: 'Unit', key: 'unit' },
-    { label: 'Supplier', key: 'supplier' }
+    { label: 'Supplier', key: 'supplier' },
+    { label: 'Opening Stock', key: 'openingStock', type: 'number' },
+    { label: 'Reorder Level', key: 'reorderLevel', type: 'number' }
   ],
   rowRenderer: function(d){
-    return '<td>'+(d.dyeCode||'—')+'</td><td>'+(d.dyeName||'—')+'</td><td>'+(d.dyeClass||'—')+'</td><td>'+(d.unit||'—')+'</td><td>'+(d.supplier||'—')+'</td>';
+    return '<td>'+(d.dyeCode||'—')+'</td><td>'+(d.dyeName||'—')+'</td><td>'+(d.dyeClass||'—')+'</td><td>'+(d.unit||'—')+'</td><td>'+(d.supplier||'—')+'</td><td>'+(d.openingStock!=null?d.openingStock:'—')+'</td><td>'+(d.reorderLevel!=null?d.reorderLevel:'—')+'</td>';
   }
 });
 renderDyeDyeMaster();
@@ -19153,6 +19323,83 @@ document.getElementById('btn-dye-dgp-print') && document.getElementById('btn-dye
   dyeDgpLoadHistory();
 })();
 
+// ==================== DYEING PRODUCTION — ২. DAILY DYEING PROGRAMME (VIEW ONLY) ====================
+// এটি একেবারে read-only: শুধু দেখা যাবে, কোনো এন্ট্রি/এডিট/সেভ বাটন নেই। ডেটা একই 'dyeDailyProgramme' কালেকশন থেকে আসে।
+function dyeDgpViewRenderRows(rows, totalQty){
+  const tbody = document.getElementById('dye-dgpv-tbody');
+  if(!tbody) return;
+  if(!rows || !rows.length){
+    tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;color:var(--muted);">এই তারিখে কোনো প্রোগ্রাম সেভ করা নেই</td></tr>';
+    document.getElementById('dye-dgpv-total-qty').textContent = '০';
+    return;
+  }
+  tbody.innerHTML = rows.map(function(r){
+    return '<tr>'
+      + '<td>'+(r.mcNo||'—')+'</td>'
+      + '<td>'+(r.capacity!=null?r.capacity:'—')+'</td>'
+      + '<td>'+(r.brand||'—')+'</td>'
+      + '<td>'+(r.party||'—')+'</td>'
+      + '<td>'+(r.fabrication||'—')+'</td>'
+      + '<td>'+(r.process||'—')+'</td>'
+      + '<td>'+(r.colour||'—')+'</td>'
+      + '<td>'+(r.qtyKg!=null?r.qtyKg:'—')+'</td>'
+      + '<td>'+(r.ltNo||'—')+'</td>'
+      + '<td>'+(r.ens||'—')+'</td>'
+      + '<td>'+(r.ref||'—')+'</td>'
+      + '<td>'+(r.remarksExtra||'—')+'</td>'
+      + '</tr>';
+  }).join('');
+  document.getElementById('dye-dgpv-total-qty').textContent = totalQty;
+}
+function dyeDgpViewLoad(dateStr){
+  const tbody = document.getElementById('dye-dgpv-tbody');
+  if(!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  db.collection('dyeDailyProgramme').doc(dateStr).get().then(function(doc){
+    const d = doc.exists ? doc.data() : {};
+    const rows = d.rows || [];
+    let totalQty = 0;
+    rows.forEach(function(r){ totalQty += Number(r.qtyKg) || 0; });
+    dyeDgpViewRenderRows(rows, totalQty);
+  }).catch(function(err){
+    tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+  });
+}
+function dyeDgpViewLoadHistory(){
+  const tbody = document.getElementById('dye-dgpv-history-tbody');
+  if(!tbody) return;
+  db.collection('dyeDailyProgramme').orderBy('date','desc').limit(30).get().then(function(snap){
+    if(snap.empty){ tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);">এখনো কোনো প্রোগ্রাম সেভ হয়নি</td></tr>'; return; }
+    tbody.innerHTML = snap.docs.map(function(doc){
+      const d = doc.data();
+      return '<tr><td>'+(d.date||doc.id)+'</td><td>'+(d.machineCount!=null?d.machineCount:(d.rows||[]).length)+'</td><td>'+(d.totalQty!=null?d.totalQty:'—')+'</td><td><button class="btn-secondary dye-dgpv-view-btn" data-date="'+doc.id+'" style="padding:5px 12px;font-size:11.5px;">দেখুন</button></td></tr>';
+    }).join('');
+    tbody.querySelectorAll('.dye-dgpv-view-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        document.getElementById('dye-dgpv-date').value = this.dataset.date;
+        dyeDgpViewLoad(this.dataset.date);
+      });
+    });
+  }).catch(function(err){
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+  });
+}
+document.getElementById('btn-dye-dgpv-load') && document.getElementById('btn-dye-dgpv-load').addEventListener('click', function(){
+  const dateStr = document.getElementById('dye-dgpv-date').value;
+  if(!dateStr){ fbToast('⚠ আগে তারিখ বেছে নিন', true); return; }
+  dyeDgpViewLoad(dateStr);
+});
+function dyeDgpViewInit(){
+  const dateInput = document.getElementById('dye-dgpv-date');
+  if(!dateInput) return;
+  if(!dateInput.value){
+    const today = new Date().toISOString().slice(0,10);
+    dateInput.value = today;
+    dyeDgpViewLoad(today);
+  }
+  dyeDgpViewLoadHistory();
+}
+
 // ---- 15. DYEING JOB CARD ----
 const renderDyeJobCard = wireFlatCollectionTable({
   collectionName: 'dyeJobCard', tbodyId: 'dye-jobcard-tbody', addBtnId: 'btn-add-dye-jobcard', colCount: 9,
@@ -19388,6 +19635,78 @@ const renderDyeChemReturn = wireFlatCollectionTable({
 });
 renderDyeChemReturn();
 
+// ==================== DYEING PRODUCTION — ৪. DYES & CHEMICALS STOCK VIEW (READ-ONLY) ====================
+// Available Qty = Opening Stock (Dye/Chemical Master) − net Issue (issueQty − returnQty from dyeChemIssue,
+// ম্যাচ করা হয় requisition স্ট্রিং-এর prefix দিয়ে) + আলাদা Chemical Return কালেকশনের returnQty (itemName সরাসরি ম্যাচ)।
+// এখান থেকে কোনো এন্ট্রি/এডিট করা যায় না — শুধু দেখা যায়।
+function dyeCsvBuildStatus(available, reorderLevel){
+  if(available <= 0) return { label: 'Out of Stock', cls: 'pill warn' };
+  if(reorderLevel != null && available <= Number(reorderLevel)) return { label: 'Low Stock', cls: 'pill mid' };
+  return { label: 'OK', cls: 'pill ok' };
+}
+function dyeCsvLoad(){
+  const dyeTbody = document.getElementById('dye-csv-dye-tbody');
+  const chemTbody = document.getElementById('dye-csv-chem-tbody');
+  if(!dyeTbody || !chemTbody) return;
+  dyeTbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  chemTbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  Promise.all([
+    db.collection('dyeDyeMaster').get(),
+    db.collection('dyeChemicalMaster').get(),
+    db.collection('dyeChemIssue').get(),
+    db.collection('dyeChemReturn').get()
+  ]).then(function(results){
+    const dyeSnap = results[0], chemSnap = results[1], issueSnap = results[2], returnSnap = results[3];
+
+    const items = [];
+    dyeSnap.forEach(function(doc){
+      const d = doc.data();
+      const matchKey = 'Dye: ' + (d.dyeCode||doc.id) + ' — ' + (d.dyeName||'নাম নেই');
+      items.push({ kind:'dye', code: d.dyeCode||doc.id, name: d.dyeName||'—', unit: d.unit||'—', openingStock: Number(d.openingStock)||0, reorderLevel: d.reorderLevel!=null?Number(d.reorderLevel):null, matchKey: matchKey, issued: 0, returned: 0 });
+    });
+    chemSnap.forEach(function(doc){
+      const d = doc.data();
+      const matchKey = 'Chemical: ' + (d.chemicalCode||doc.id) + ' — ' + (d.chemicalName||'নাম নেই');
+      items.push({ kind:'chem', code: d.chemicalCode||doc.id, name: d.chemicalName||'—', unit: d.unit||'—', openingStock: Number(d.openingStock)||0, reorderLevel: d.reorderLevel!=null?Number(d.reorderLevel):null, matchKey: matchKey, issued: 0, returned: 0 });
+    });
+
+    issueSnap.forEach(function(doc){
+      const d = doc.data();
+      const req = d.requisition || '';
+      const item = items.find(function(it){ return req.indexOf(it.matchKey + ' — ') === 0; });
+      if(item){
+        item.issued += (Number(d.issueQty)||0) - (Number(d.returnQty)||0);
+      }
+    });
+    returnSnap.forEach(function(doc){
+      const d = doc.data();
+      const item = items.find(function(it){ return it.matchKey === d.itemName; });
+      if(item) item.returned += Number(d.returnQty) || 0;
+    });
+
+    let lowCount = 0, outCount = 0;
+    const dyeRows = [], chemRows = [];
+    items.forEach(function(it){
+      const available = it.openingStock - it.issued + it.returned;
+      const st = dyeCsvBuildStatus(available, it.reorderLevel);
+      if(st.label === 'Low Stock') lowCount++;
+      if(st.label === 'Out of Stock') outCount++;
+      const row = '<tr><td>'+it.code+'</td><td>'+it.name+'</td><td>'+it.unit+'</td><td>'+it.openingStock.toFixed(1)+'</td><td>'+it.issued.toFixed(1)+'</td><td>'+it.returned.toFixed(1)+'</td><td style="font-weight:600;">'+available.toFixed(1)+'</td><td>'+(it.reorderLevel!=null?it.reorderLevel:'—')+'</td><td><span class="'+st.cls+'">'+st.label+'</span></td></tr>';
+      if(it.kind === 'dye') dyeRows.push(row); else chemRows.push(row);
+    });
+
+    dyeTbody.innerHTML = dyeRows.length ? dyeRows.join('') : '<tr><td colspan="9" style="text-align:center;color:var(--muted);">কোনো ডাই নেই — আগে Dye Master-এ এন্ট্রি দিন</td></tr>';
+    chemTbody.innerHTML = chemRows.length ? chemRows.join('') : '<tr><td colspan="9" style="text-align:center;color:var(--muted);">কোনো কেমিক্যাল নেই — আগে Chemical Master-এ এন্ট্রি দিন</td></tr>';
+
+    document.getElementById('dye-csv-total-items').textContent = items.length;
+    document.getElementById('dye-csv-low-items').textContent = lowCount;
+    document.getElementById('dye-csv-out-items').textContent = outCount;
+  }).catch(function(err){
+    dyeTbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+    chemTbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+  });
+}
+
 
 // ==================== DYEING EXPANSION — PHASE C: PRODUCTION (১২-১৭) ====================
 
@@ -19417,6 +19736,125 @@ const renderDyeMachine = wireFlatCollectionTable({
   }
 });
 renderDyeMachine();
+
+// ==================== DYEING PRODUCTION — ৩. MACHINE PRODUCTION ENTRY (Day/Night শিফট, ১-২ বছরের হিস্ট্রি) ====================
+// নতুন কালেকশন: dyeMachineProduction { date, machine, shift, qtyKg, batchRef, remarks, enteredBy, createdAt }
+function dyeMpLoadMachineOptions(){
+  const sel = document.getElementById('dye-mp-machine');
+  const filterSel = document.getElementById('dye-mp-filter-machine');
+  if(!sel) return Promise.resolve();
+  return db.collection('dyeMachineMaster').orderBy('createdAt','desc').get().then(function(snap){
+    const codes = snap.docs.map(function(doc){
+      const d = doc.data();
+      return d.machineCode || doc.id;
+    });
+    sel.innerHTML = '<option value="">— আগে থেকে থাকা মেশিন বেছে নিন —</option>' + codes.map(function(c){
+      return '<option value="'+c+'">'+c+'</option>';
+    }).join('');
+    if(filterSel){
+      filterSel.innerHTML = '<option value="">সব মেশিন</option>' + codes.map(function(c){
+        return '<option value="'+c+'">'+c+'</option>';
+      }).join('');
+    }
+  }).catch(function(){});
+}
+document.getElementById('btn-dye-mp-save') && document.getElementById('btn-dye-mp-save').addEventListener('click', function(){
+  const dateStr = document.getElementById('dye-mp-date').value;
+  const machineSel = document.getElementById('dye-mp-machine').value.trim();
+  const machineNew = document.getElementById('dye-mp-machine-new').value.trim();
+  const machine = machineNew || machineSel;
+  const shift = document.getElementById('dye-mp-shift').value;
+  const qty = document.getElementById('dye-mp-qty').value;
+  const batchRef = document.getElementById('dye-mp-batchref').value.trim();
+  const remarks = document.getElementById('dye-mp-remarks').value.trim();
+  if(!dateStr){ fbToast('⚠ আগে তারিখ দিন', true); return; }
+  if(!machine){ fbToast('⚠ মেশিন বেছে নিন অথবা নতুন মেশিনের নাম টাইপ করুন', true); return; }
+  if(qty === '' || isNaN(Number(qty))){ fbToast('⚠ প্রোডাকশন Qty (KG) সঠিকভাবে দিন', true); return; }
+  const btn = this;
+  btn.disabled = true; btn.textContent = 'সেভ হচ্ছে...';
+  const enteredBy = (window.firebase && firebase.auth().currentUser) ? (firebase.auth().currentUser.displayName || firebase.auth().currentUser.email || '—') : '—';
+  db.collection('dyeMachineProduction').add({
+    date: dateStr, machine: machine, shift: shift, qtyKg: Number(qty),
+    batchRef: batchRef, remarks: remarks, enteredBy: enteredBy,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function(){
+    fbToast('✓ প্রোডাকশন এন্ট্রি সেভ হয়েছে');
+    document.getElementById('dye-mp-machine-new').value = '';
+    document.getElementById('dye-mp-qty').value = '';
+    document.getElementById('dye-mp-batchref').value = '';
+    document.getElementById('dye-mp-remarks').value = '';
+    if(machineNew) dyeMpLoadMachineOptions();
+    dyeMpLoadHistory();
+    dyeMpLoadKpis();
+  }).catch(function(err){
+    fbToast('⚠ সেভ ব্যর্থ: ' + err.message, true);
+  }).finally(function(){
+    btn.disabled = false; btn.textContent = 'প্রোডাকশন এন্ট্রি সেভ করুন';
+  });
+});
+function dyeMpRenderHistoryRows(docs){
+  const tbody = document.getElementById('dye-mp-tbody');
+  if(!tbody) return;
+  if(!docs.length){
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);">কোনো এন্ট্রি পাওয়া যায়নি</td></tr>';
+    return;
+  }
+  tbody.innerHTML = docs.map(function(doc){
+    const d = doc.data();
+    return '<tr><td>'+(d.date||'—')+'</td><td>'+(d.machine||'—')+'</td><td>'+(d.shift||'—')+'</td><td>'+(d.qtyKg!=null?d.qtyKg:'—')+'</td><td>'+(d.batchRef||'—')+'</td><td>'+(d.remarks||'—')+'</td><td>'+(d.enteredBy||'—')+'</td></tr>';
+  }).join('');
+}
+function dyeMpLoadHistory(){
+  const tbody = document.getElementById('dye-mp-tbody');
+  if(!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  db.collection('dyeMachineProduction').orderBy('date','desc').limit(300).get().then(function(snap){
+    dyeMpRenderHistoryRows(snap.docs);
+  }).catch(function(err){
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+  });
+}
+document.getElementById('btn-dye-mp-filter') && document.getElementById('btn-dye-mp-filter').addEventListener('click', function(){
+  const machine = document.getElementById('dye-mp-filter-machine').value;
+  const from = document.getElementById('dye-mp-filter-from').value;
+  const to = document.getElementById('dye-mp-filter-to').value;
+  const tbody = document.getElementById('dye-mp-tbody');
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  let q = db.collection('dyeMachineProduction');
+  if(machine) q = q.where('machine', '==', machine);
+  q.get().then(function(snap){
+    let docs = snap.docs;
+    if(from) docs = docs.filter(function(doc){ return (doc.data().date||'') >= from; });
+    if(to) docs = docs.filter(function(doc){ return (doc.data().date||'') <= to; });
+    docs.sort(function(a,b){ return (b.data().date||'').localeCompare(a.data().date||''); });
+    dyeMpRenderHistoryRows(docs.slice(0, 1000));
+  }).catch(function(err){
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+  });
+});
+function dyeMpLoadKpis(){
+  db.collection('dyeMachineProduction').get().then(function(snap){
+    const today = new Date().toISOString().slice(0,10);
+    const monthPrefix = today.slice(0,7);
+    let todayTotal = 0, monthTotal = 0;
+    snap.forEach(function(doc){
+      const d = doc.data();
+      const qty = Number(d.qtyKg) || 0;
+      if(d.date === today) todayTotal += qty;
+      if((d.date||'').slice(0,7) === monthPrefix) monthTotal += qty;
+    });
+    document.getElementById('dye-mp-today-total').textContent = todayTotal.toFixed(1);
+    document.getElementById('dye-mp-month-total').textContent = monthTotal.toFixed(1);
+    document.getElementById('dye-mp-entry-count').textContent = snap.size;
+  }).catch(function(){});
+}
+function dyeMachineProductionInit(){
+  const dateInput = document.getElementById('dye-mp-date');
+  if(dateInput && !dateInput.value) dateInput.value = new Date().toISOString().slice(0,10);
+  dyeMpLoadMachineOptions();
+  dyeMpLoadHistory();
+  dyeMpLoadKpis();
+}
 
 // ---- 22. DYEING PRODUCTION ----
 const renderDyeProduction = wireFlatCollectionTable({
@@ -24834,6 +25272,9 @@ const titles = {
   'dye-buyer-master':'Buyer Master',
   'dye-style-master':'Style Master',
   'dye-party-stock':'Party Stock Overview',
+  'dye-dgp-view':'Daily Dyeing Programme (View Only)',
+  'dye-machine-production':'Machine Production Entry',
+  'dye-chem-stock-view':'Dyes &amp; Chemicals Stock View',
   'dye-order-master':'Dyeing Order / Requirement',
   'dye-color-master':'Color Master',
   'dye-chemical-master':'Chemical Master',
@@ -25316,6 +25757,9 @@ const paths = {
   'dye-buyer-master':'Dyeing Expansion / Phase 0 — Foundation',
   'dye-style-master':'Dyeing Expansion / Phase 0 — Foundation',
   'dye-party-stock':'Dyeing Expansion / Dyeing Planning',
+  'dye-dgp-view':'Dyeing Expansion / Dyeing Production',
+  'dye-machine-production':'Dyeing Expansion / Dyeing Production',
+  'dye-chem-stock-view':'Dyeing Expansion / Dyeing Production',
   'dye-order-master':'Dyeing Expansion / Dyeing Planning',
   'dye-color-master':'Dyeing Expansion / Phase 0 — Foundation',
   'dye-chemical-master':'Dyeing Expansion / Phase 0 — Foundation',
@@ -31484,6 +31928,9 @@ function navigateToView(viewKey){
   if(viewKey === 'dye-m10-stockreport' && typeof dyeLoadM10StockReport === 'function') dyeLoadM10StockReport();
   if(viewKey === 'dye-dashboard' && typeof dyeDashLoad === 'function') dyeDashLoad();
   if(viewKey === 'dye-party-stock' && typeof dyePartyStockLoad === 'function') dyePartyStockLoad();
+  if(viewKey === 'dye-dgp-view' && typeof dyeDgpViewInit === 'function') dyeDgpViewInit();
+  if(viewKey === 'dye-machine-production' && typeof dyeMachineProductionInit === 'function') dyeMachineProductionInit();
+  if(viewKey === 'dye-chem-stock-view' && typeof dyeCsvLoad === 'function') dyeCsvLoad();
   if(viewKey === 'knt-dashboard' && typeof kntLoadDashboard === 'function') kntLoadDashboard();
   if(viewKey === 'inv-warehouse' && typeof loadWarehouseManagement === 'function') loadWarehouseManagement();
   if(viewKey === 'inv-documents' && typeof loadInventoryDocuments === 'function') loadInventoryDocuments();
