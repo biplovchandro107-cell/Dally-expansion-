@@ -129,6 +129,7 @@
     max-height:0; overflow:hidden; transition:max-height .2s ease;
   }
   .menu-subgroup-body.open{ max-height:600px; }
+  .menu-subgroup-body.mega.open{ max-height:1400px; }
 
   /* Level 3 leaf items sit inside .menu-subgroup-body, reuse .nav-item but indent further */
   .menu-subgroup-body .nav-item{ padding-left:46px; }
@@ -695,16 +696,53 @@
         <div class="nav-item group-link" data-view="dye-rackbin-master"><span>8. Rack/Bin Master</span></div>
         <div class="nav-item group-link" data-view="dye-unit-master"><span>9. Unit Master (UOM)</span></div>
 
-        <div class="menu-subgroup" data-subgroup="dye-mod1">
-          <div class="menu-subgroup-head" data-toggle="body-dye-mod1">
-            <span>Module 1 — Fabric Receiving &amp; Inspection</span>
+        <div class="menu-subgroup" data-subgroup="dye-batchsection">
+          <div class="menu-subgroup-head" data-toggle="body-dye-batchsection">
+            <span>Batch Section</span>
             <span class="chevron">›</span>
           </div>
-          <div class="menu-subgroup-body" id="body-dye-mod1">
-            <div class="nav-item group-link" data-view="dye-fabric-receive"><span class="dot"></span> ১. Greige Fabric Receive (from Knitting)</div>
-            <div class="nav-item group-link" data-view="dye-grn"><span class="dot"></span> ১. Greige Fabric GRN</div>
-            <div class="nav-item group-link" data-view="dye-fabric-inspection"><span class="dot"></span> ২. Fabric Inspection</div>
-            <div class="nav-item group-link" data-view="dye-roll-mgmt"><span class="dot"></span> ৩. Roll Management</div>
+          <div class="menu-subgroup-body mega" id="body-dye-batchsection">
+
+            <div class="menu-subgroup" data-subgroup="dye-mod1">
+              <div class="menu-subgroup-head" data-toggle="body-dye-mod1">
+                <span>১. Fabric Receiving &amp; Inspection</span>
+                <span class="chevron">›</span>
+              </div>
+              <div class="menu-subgroup-body" id="body-dye-mod1">
+                <div class="nav-item group-link" data-view="dye-fabric-receive"><span class="dot"></span> ১. Greige Fabric Receive (from Knitting)</div>
+                <div class="nav-item group-link" data-view="dye-grn"><span class="dot"></span> ২. Greige Fabric GRN</div>
+                <div class="nav-item group-link" data-view="dye-fabric-inspection"><span class="dot"></span> ৩. Fabric Inspection</div>
+                <div class="nav-item group-link" data-view="dye-roll-mgmt"><span class="dot"></span> ৪. Roll Management</div>
+              </div>
+            </div>
+
+            <div class="menu-subgroup" data-subgroup="dye-mod4">
+              <div class="menu-subgroup-head" data-toggle="body-dye-mod4">
+                <span>২. Dyeing Batch</span>
+                <span class="chevron">›</span>
+              </div>
+              <div class="menu-subgroup-body" id="body-dye-mod4">
+                <div class="nav-item group-link" data-view="dye-batch-creation"><span class="dot"></span> ১. Batch Creation</div>
+                <div class="nav-item group-link" data-view="dye-batch-card"><span class="dot"></span> ২. Batch Card</div>
+                <div class="nav-item group-link" data-view="dye-batch-roll-alloc"><span class="dot"></span> ৩. Batch Roll Allocation</div>
+                <div class="nav-item group-link" data-view="dye-batch-tracking"><span class="dot"></span> ৪. Batch Tracking</div>
+                <div class="nav-item group-link" data-view="dye-planning"><span class="dot"></span> ৫. Daily Dyeing Programme</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="menu-subgroup" data-subgroup="dye-mod3">
+          <div class="menu-subgroup-head" data-toggle="body-dye-mod3">
+            <span>Dyeing Planning</span>
+            <span class="chevron">›</span>
+          </div>
+          <div class="menu-subgroup-body" id="body-dye-mod3">
+            <div class="nav-item group-link" data-view="dye-party-stock"><span class="dot"></span> ১. Party Stock Overview</div>
+            <div class="nav-item group-link" data-view="dye-order-master"><span class="dot"></span> ২. Dyeing Order / Requirement</div>
+            <div class="nav-item group-link" data-view="dye-monthly-plan"><span class="dot"></span> ৩. Monthly Dyeing Plan</div>
+            <div class="nav-item group-link" data-view="dye-weekly-plan"><span class="dot"></span> ৪. Weekly Dyeing Plan</div>
           </div>
         </div>
 
@@ -718,33 +756,6 @@
             <div class="nav-item group-link" data-view="dye-buffer-store"><span class="dot"></span> ২. Dyeing Fabric Buffer Store</div>
             <div class="nav-item group-link" data-view="dye-fabric-store"><span class="dot"></span> ৩. Finished Fabric Store</div>
             <div class="nav-item group-link" data-view="dye-stock-transfer"><span class="dot"></span> ৪. Stock Transfer</div>
-          </div>
-        </div>
-
-        <div class="menu-subgroup" data-subgroup="dye-mod3">
-          <div class="menu-subgroup-head" data-toggle="body-dye-mod3">
-            <span>Module 3 — Dyeing Order &amp; Planning</span>
-            <span class="chevron">›</span>
-          </div>
-          <div class="menu-subgroup-body" id="body-dye-mod3">
-            <div class="nav-item group-link" data-view="dye-order-master"><span class="dot"></span> ১. Dyeing Order / Requirement</div>
-            <div class="nav-item group-link" data-view="dye-monthly-plan"><span class="dot"></span> ২. Monthly Dyeing Plan</div>
-            <div class="nav-item group-link" data-view="dye-weekly-plan"><span class="dot"></span> ৩. Weekly Dyeing Plan</div>
-            <div class="nav-item group-link" data-view="dye-planning"><span class="dot"></span> ৪. Daily Dyeing Programme</div>
-            <div class="nav-item group-link" data-view="dye-machine-alloc"><span class="dot"></span> ৫. Machine Planning</div>
-          </div>
-        </div>
-
-        <div class="menu-subgroup" data-subgroup="dye-mod4">
-          <div class="menu-subgroup-head" data-toggle="body-dye-mod4">
-            <span>Module 4 — Dyeing Batch</span>
-            <span class="chevron">›</span>
-          </div>
-          <div class="menu-subgroup-body" id="body-dye-mod4">
-            <div class="nav-item group-link" data-view="dye-batch-creation"><span class="dot"></span> ১. Batch Creation</div>
-            <div class="nav-item group-link" data-view="dye-batch-card"><span class="dot"></span> ২. Batch Card</div>
-            <div class="nav-item group-link" data-view="dye-batch-roll-alloc"><span class="dot"></span> ৩. Batch Roll Allocation</div>
-            <div class="nav-item group-link" data-view="dye-batch-tracking"><span class="dot"></span> ৪. Batch Tracking</div>
           </div>
         </div>
 
@@ -3979,6 +3990,24 @@
     </div>
   </div>
 
+  <!-- Module 3 — Party Stock Overview (নতুন) -->
+  <div class="view" id="view-dye-party-stock">
+    <div class="view-head"><h1>Party Stock Overview</h1><div class="meta">Module 3 — Dyeing Order &amp; Planning — Daily Programme বানানোর আগে প্রতিটা Party/Buyer-এর Received, Delivered ও Stock in Hand একনজরে দেখুন</div></div>
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">মোট Received (KG)</div><div class="kpi-value" id="dye-ps-total-received">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">মোট Delivered (KG)</div><div class="kpi-value" id="dye-ps-total-delivered">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">মোট Stock in Hand (KG)</div><div class="kpi-value" id="dye-ps-total-balance">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">সক্রিয় পার্টি সংখ্যা</div><div class="kpi-value" id="dye-ps-party-count">০</div></div>
+    </div>
+    <div class="panel">
+      <table>
+        <thead><tr><th>Party / Buyer</th><th>Received (KG)</th><th>Delivered (KG)</th><th>Stock in Hand (KG)</th></tr></thead>
+        <tbody id="dye-ps-tbody"><tr><td colspan="4" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+      <div class="placeholder-note">Received = Batch Card-এ ঐ Buyer-এর নামে তৈরি হওয়া ব্যাচগুলোর মোট ওজন। Delivered = Dyeing Delivery Challan-এ ঐ Buyer-এর নামে ডেলিভারি হওয়া Fin Wt-এর যোগফল। Stock in Hand = Received − Delivered — প্রোগ্রাম করার আগে এখানে দেখে নিন কোন পার্টির কতটুকু মাল প্ল্যান্টে বাকি আছে।</div>
+    </div>
+  </div>
+
   <!-- 3. Order Master (Module 3 — Dyeing Order / Requirement) -->
   <div class="view" id="view-dye-order-master">
     <div class="view-head"><h1>Dyeing Order / Requirement</h1><div class="meta">Module 3 — Dyeing Order &amp; Planning — বায়ার ও স্টাইল-ভিত্তিক অর্ডার, পরবর্তী সব মডিউল এখান থেকে রেফারেন্স নেবে</div></div>
@@ -4325,6 +4354,16 @@
         <tbody id="dye-dgp-history-tbody"><tr><td colspan="4" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
       </table>
     </div>
+
+    <div class="section-divider">Dyeing Machine Master (মেশিন ম্যানেজ করুন)</div>
+    <div class="panel">
+      <table>
+        <thead><tr><th>Machine Code</th><th>Name</th><th>Type</th><th>Brand</th><th>Capacity (KG)</th><th>Location</th><th>Status</th></tr></thead>
+        <tbody id="dye-machine-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+      <div class="form-actions"><button class="btn-primary" id="btn-add-dye-machine">নতুন মেশিন যোগ করুন</button></div>
+      <div class="placeholder-note">এখানে যোগ করা মেশিন উপরের M/C No ড্রপডাউনে স্বয়ংক্রিয়ভাবে দেখা যাবে (Capacity ও Brand সহ অটো-ফিল হবে)।</div>
+    </div>
   </div>
 
   <!-- 15. Dyeing Job Card -->
@@ -4440,29 +4479,6 @@
   </div>
 
   <!-- ===== DYEING EXPANSION — PHASE C: PRODUCTION (১২-১৭) ===== -->
-
-  <!-- 21. Dyeing Machine Allocation (Module 3 — Machine Planning) -->
-  <div class="view" id="view-dye-machine-alloc">
-    <div class="view-head"><h1>Machine Planning</h1><div class="meta">Module 3 — Dyeing Order &amp; Planning — Dyeing Machine Master + Job Card-ভিত্তিক বুকিং/অ্যালোকেশন/শিডিউল</div></div>
-
-    <div class="section-divider">Dyeing Machine Master</div>
-    <div class="panel">
-      <table>
-        <thead><tr><th>Machine Code</th><th>Name</th><th>Type</th><th>Brand</th><th>Capacity (KG)</th><th>Location</th><th>Status</th></tr></thead>
-        <tbody id="dye-machine-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
-      </table>
-      <div class="form-actions"><button class="btn-primary" id="btn-add-dye-machine">নতুন মেশিন যোগ করুন</button></div>
-    </div>
-
-    <div class="section-divider">Machine Booking / Allocation</div>
-    <div class="panel">
-      <table>
-        <thead><tr><th>Job Card</th><th>Machine</th><th>Booking Date</th><th>Start Time</th><th>End Time</th><th>Status</th></tr></thead>
-        <tbody id="dye-machinealloc-tbody"><tr><td colspan="6" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
-      </table>
-      <div class="form-actions"><button class="btn-primary" id="btn-add-dye-machinealloc">নতুন বুকিং যোগ করুন</button></div>
-    </div>
-  </div>
 
   <!-- MODULE 6 — Machine Loading -->
   <div class="view" id="view-dye-machine-loading">
@@ -17976,6 +17992,58 @@ const renderDyeStyleMaster = wireFlatCollectionTable({
 });
 renderDyeStyleMaster();
 
+// ---- Module 3 — PARTY STOCK OVERVIEW (Daily Programme বানানোর আগে পার্টি-ভিত্তিক স্টক দেখার জন্য) ----
+function dyePartyStockLoad(){
+  Promise.all([
+    db.collection('dyeBatchMaster').get(),
+    db.collection('dyeM9DeliveryChallan').get()
+  ]).then(function(results){
+    const batchSnap = results[0], challanSnap = results[1];
+    const partyMap = {};
+    function keyFor(name){ return (name||'').trim().toLowerCase(); }
+    function ensure(name){
+      const k = keyFor(name);
+      if(!k) return null;
+      if(!partyMap[k]) partyMap[k] = { display: name.trim(), received: 0, delivered: 0 };
+      return partyMap[k];
+    }
+    batchSnap.forEach(function(doc){
+      const d = doc.data();
+      if(!d.buyer) return;
+      const p = ensure(d.buyer);
+      if(p) p.received += Number(d.totalWeight) || 0;
+    });
+    challanSnap.forEach(function(doc){
+      const d = doc.data();
+      (d.items||[]).forEach(function(it){
+        if(!it.buyer) return;
+        const p = ensure(it.buyer);
+        if(p) p.delivered += Number(it.finWt) || 0;
+      });
+    });
+    const parties = Object.keys(partyMap).map(function(k){ return partyMap[k]; });
+    parties.sort(function(a,b){ return (b.received - b.delivered) - (a.received - a.delivered); });
+
+    let totalReceived = 0, totalDelivered = 0;
+    parties.forEach(function(p){ totalReceived += p.received; totalDelivered += p.delivered; });
+
+    document.getElementById('dye-ps-total-received').textContent = totalReceived.toFixed(1);
+    document.getElementById('dye-ps-total-delivered').textContent = totalDelivered.toFixed(1);
+    document.getElementById('dye-ps-total-balance').textContent = (totalReceived - totalDelivered).toFixed(1);
+    document.getElementById('dye-ps-party-count').textContent = parties.length;
+
+    const tbody = document.getElementById('dye-ps-tbody');
+    tbody.innerHTML = parties.length ? parties.map(function(p){
+      const balance = p.received - p.delivered;
+      const balStyle = balance > 0 ? 'style="color:#a4342a;font-weight:600;"' : (balance < 0 ? 'style="color:#1e7d43;font-weight:600;"' : '');
+      return '<tr><td>'+p.display+'</td><td>'+p.received.toFixed(1)+'</td><td>'+p.delivered.toFixed(1)+'</td><td '+balStyle+'>'+balance.toFixed(1)+'</td></tr>';
+    }).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--muted);">কোনো ডেটা নেই</td></tr>';
+  }).catch(function(err){
+    fbToast('⚠ Party Stock Overview লোড ব্যর্থ: ' + err.message, true);
+  });
+}
+dyePartyStockLoad();
+
 // ---- 3. ORDER MASTER ----
 const renderDyeOrderMaster = wireFlatCollectionTable({
   collectionName: 'dyeOrderMaster', tbodyId: 'dye-order-tbody', addBtnId: 'btn-add-dye-order', colCount: 7,
@@ -19332,7 +19400,7 @@ function dyeMachineDynamicOptions(){
   });
 }
 
-// ---- 21. DYEING MACHINE ALLOCATION (Machine Master + Booking) ----
+// ---- Dyeing Machine Master (Daily Dyeing Programme ভিউর ভেতরে ব্যবহৃত) ----
 const renderDyeMachine = wireFlatCollectionTable({
   collectionName: 'dyeMachineMaster', tbodyId: 'dye-machine-tbody', addBtnId: 'btn-add-dye-machine', colCount: 7,
   fields: [
@@ -19349,22 +19417,6 @@ const renderDyeMachine = wireFlatCollectionTable({
   }
 });
 renderDyeMachine();
-
-const renderDyeMachineAlloc = wireFlatCollectionTable({
-  collectionName: 'dyeMachineAlloc', tbodyId: 'dye-machinealloc-tbody', addBtnId: 'btn-add-dye-machinealloc', colCount: 6,
-  fields: [
-    { label: 'Job Card', key: 'jobCard', dynamicOptions: dyeJobCardDynamicOptions },
-    { label: 'Machine', key: 'machine', dynamicOptions: dyeMachineDynamicOptions },
-    { label: 'Booking Date', key: 'bookingDate', type: 'date' },
-    { label: 'Start Time', key: 'startTime' },
-    { label: 'End Time', key: 'endTime' },
-    { label: 'Status', key: 'status', options: ['Booked','Running','Completed'] }
-  ],
-  rowRenderer: function(d){
-    return '<td>'+(d.jobCard||'—')+'</td><td>'+(d.machine||'—')+'</td><td>'+(d.bookingDate||'—')+'</td><td>'+(d.startTime||'—')+'</td><td>'+(d.endTime||'—')+'</td><td>'+(d.status||'Booked')+'</td>';
-  }
-});
-renderDyeMachineAlloc();
 
 // ---- 22. DYEING PRODUCTION ----
 const renderDyeProduction = wireFlatCollectionTable({
@@ -24781,6 +24833,7 @@ const titles = {
   'dye-dashboard':'Dyeing Dashboard',
   'dye-buyer-master':'Buyer Master',
   'dye-style-master':'Style Master',
+  'dye-party-stock':'Party Stock Overview',
   'dye-order-master':'Dyeing Order / Requirement',
   'dye-color-master':'Color Master',
   'dye-chemical-master':'Chemical Master',
@@ -24811,7 +24864,6 @@ const titles = {
   'dye-chem-issue':'Dyes/Chemicals Issue',
   'dye-chem-consumption':'Chemical Consumption',
   'dye-chem-return':'Chemical Return',
-  'dye-machine-alloc':'Machine Planning',
   'dye-machine-loading':'Machine Loading',
   'dye-production':'Dyeing Process',
   'dye-hydro':'Hydro/De-watering',
@@ -25263,27 +25315,28 @@ const paths = {
   'dye-dashboard':'Dyeing Expansion / Overview',
   'dye-buyer-master':'Dyeing Expansion / Phase 0 — Foundation',
   'dye-style-master':'Dyeing Expansion / Phase 0 — Foundation',
-  'dye-order-master':'Dyeing Expansion / Module 3 — Dyeing Order &amp; Planning',
+  'dye-party-stock':'Dyeing Expansion / Dyeing Planning',
+  'dye-order-master':'Dyeing Expansion / Dyeing Planning',
   'dye-color-master':'Dyeing Expansion / Phase 0 — Foundation',
   'dye-chemical-master':'Dyeing Expansion / Phase 0 — Foundation',
   'dye-dye-master':'Dyeing Expansion / Phase 0 — Foundation',
   'dye-recipe-master':'Dyeing Expansion / Phase 0 — Foundation',
   'dye-rackbin-master':'Dyeing Expansion / Phase 0 — Foundation',
   'dye-unit-master':'Dyeing Expansion / Phase 0 — Foundation',
-  'dye-fabric-receive':'Dyeing Expansion / Module 1 — Fabric Receiving &amp; Inspection',
-  'dye-grn':'Dyeing Expansion / Module 1 — Fabric Receiving &amp; Inspection',
-  'dye-fabric-inspection':'Dyeing Expansion / Module 1 — Fabric Receiving &amp; Inspection',
-  'dye-roll-mgmt':'Dyeing Expansion / Module 1 — Fabric Receiving &amp; Inspection',
+  'dye-fabric-receive':'Dyeing Expansion / Batch Section / Fabric Receiving &amp; Inspection',
+  'dye-grn':'Dyeing Expansion / Batch Section / Fabric Receiving &amp; Inspection',
+  'dye-fabric-inspection':'Dyeing Expansion / Batch Section / Fabric Receiving &amp; Inspection',
+  'dye-roll-mgmt':'Dyeing Expansion / Batch Section / Fabric Receiving &amp; Inspection',
   'dye-greige-store':'Dyeing Expansion / Module 2 — Fabric Store',
   'dye-buffer-store':'Dyeing Expansion / Module 2 — Fabric Store',
   'dye-stock-transfer':'Dyeing Expansion / Module 2 — Fabric Store',
-  'dye-batch-creation':'Dyeing Expansion / Module 4 — Dyeing Batch',
-  'dye-batch-card':'Dyeing Expansion / Module 4 — Dyeing Batch',
-  'dye-batch-roll-alloc':'Dyeing Expansion / Module 4 — Dyeing Batch',
-  'dye-batch-tracking':'Dyeing Expansion / Module 4 — Dyeing Batch',
-  'dye-monthly-plan':'Dyeing Expansion / Module 3 — Dyeing Order &amp; Planning',
-  'dye-weekly-plan':'Dyeing Expansion / Module 3 — Dyeing Order &amp; Planning',
-  'dye-planning':'Dyeing Expansion / Module 3 — Dyeing Order &amp; Planning',
+  'dye-batch-creation':'Dyeing Expansion / Batch Section / Dyeing Batch',
+  'dye-batch-card':'Dyeing Expansion / Batch Section / Dyeing Batch',
+  'dye-batch-roll-alloc':'Dyeing Expansion / Batch Section / Dyeing Batch',
+  'dye-batch-tracking':'Dyeing Expansion / Batch Section / Dyeing Batch',
+  'dye-planning':'Dyeing Expansion / Batch Section / Dyeing Batch',
+  'dye-monthly-plan':'Dyeing Expansion / Dyeing Planning',
+  'dye-weekly-plan':'Dyeing Expansion / Dyeing Planning',
   'dye-jobcard':'Dyeing Expansion / Phase B — Planning',
   'dye-batch-prep':'Dyeing Expansion / Phase B — Planning',
   'dye-labdip':'Dyeing Expansion / Module 5 — Dyeing Recipe &amp; Chemical',
@@ -25293,7 +25346,6 @@ const paths = {
   'dye-chem-issue':'Dyeing Expansion / Module 5 — Dyeing Recipe &amp; Chemical',
   'dye-chem-consumption':'Dyeing Expansion / Module 5 — Dyeing Recipe &amp; Chemical',
   'dye-chem-return':'Dyeing Expansion / Module 5 — Dyeing Recipe &amp; Chemical',
-  'dye-machine-alloc':'Dyeing Expansion / Module 3 — Dyeing Order &amp; Planning',
   'dye-machine-loading':'Dyeing Expansion / Module 6 — Dyeing Production',
   'dye-production':'Dyeing Expansion / Module 6 — Dyeing Production',
   'dye-hydro':'Dyeing Expansion / Module 6 — Dyeing Production',
@@ -31431,6 +31483,7 @@ function navigateToView(viewKey){
   if(viewKey === 'inv-item' && typeof loadItemMaster === 'function') loadItemMaster();
   if(viewKey === 'dye-m10-stockreport' && typeof dyeLoadM10StockReport === 'function') dyeLoadM10StockReport();
   if(viewKey === 'dye-dashboard' && typeof dyeDashLoad === 'function') dyeDashLoad();
+  if(viewKey === 'dye-party-stock' && typeof dyePartyStockLoad === 'function') dyePartyStockLoad();
   if(viewKey === 'knt-dashboard' && typeof kntLoadDashboard === 'function') kntLoadDashboard();
   if(viewKey === 'inv-warehouse' && typeof loadWarehouseManagement === 'function') loadWarehouseManagement();
   if(viewKey === 'inv-documents' && typeof loadInventoryDocuments === 'function') loadInventoryDocuments();
