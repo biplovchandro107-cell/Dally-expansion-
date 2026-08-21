@@ -768,6 +768,7 @@
           <div class="menu-subgroup-body" id="body-dye-mod-finishing">
             <div class="nav-item group-link" data-view="dye-fabric-pipeline-dashboard"><span class="dot"></span> ০. Fabric Pipeline Dashboard</div>
             <div class="nav-item group-link" data-view="dye-finish-fabric-entry"><span class="dot"></span> ১. Finish Fabric Entry</div>
+            <div class="nav-item group-link" data-view="dye-finish-fabric-history"><span class="dot"></span> ২. Finish Fabric History &amp; Summary</div>
           </div>
         </div>
 
@@ -4249,6 +4250,13 @@
 
       <div class="form-actions"><button class="btn-primary" id="btn-dye-ffe-save">ফিনিশ ফেব্রিক এন্ট্রি সেভ করুন</button></div>
     </div>
+
+    <div class="placeholder-note">হিস্ট্রি ও পার্টি-ভিত্তিক সামারি দেখতে বামের মেনু থেকে <b>"২. Finish Fabric History &amp; Summary"</b> পাতায় যান।</div>
+  </div>
+
+  <!-- Finishing Department — ২. Finish Fabric History & Summary -->
+  <div class="view" id="view-dye-finish-fabric-history">
+    <div class="view-head"><h1>Finish Fabric History &amp; Summary</h1><div class="meta">Finishing Department — সব ফিনিশ ফেব্রিক এন্ট্রির হিস্ট্রি ও পার্টি/লট/অর্ডার/স্টাইল-ভিত্তিক সামারি (বিগত ১-২ বছরের রেকর্ড)</div></div>
 
     <div class="section-divider">প্রোডাকশন হিস্ট্রি (ফিল্টার করুন)</div>
     <div class="panel">
@@ -20244,8 +20252,11 @@ function dyeFinishFabricEntryInit(){
   if(dateInput && !dateInput.value) dateInput.value = new Date().toISOString().slice(0,10);
   window._dyeFfeChain = [];
   dyeFfeRenderChainChips();
-  dyeFfeLoadHistory();
   dyeFfeLoadKpis();
+  dyeFfeLoadPartyDatalist();
+}
+function dyeFinishFabricHistoryInit(){
+  dyeFfeLoadHistory();
   dyeFfeLoadPartyDatalist();
 }
 
@@ -25771,6 +25782,7 @@ const titles = {
   'dye-chem-stock-view':'Dyes &amp; Chemicals Stock View',
   'dye-finish-fabric-entry':'Finish Fabric Entry',
   'dye-fabric-pipeline-dashboard':'Fabric Pipeline Dashboard',
+  'dye-finish-fabric-history':'Finish Fabric History &amp; Summary',
   'dye-order-master':'Dyeing Order / Requirement',
   'dye-color-master':'Color Master',
   'dye-chemical-master':'Chemical Master',
@@ -26258,6 +26270,7 @@ const paths = {
   'dye-chem-stock-view':'Dyeing Expansion / Dyeing Production',
   'dye-finish-fabric-entry':'Dyeing Expansion / Finishing Department',
   'dye-fabric-pipeline-dashboard':'Dyeing Expansion / Finishing Department',
+  'dye-finish-fabric-history':'Dyeing Expansion / Finishing Department',
   'dye-order-master':'Dyeing Expansion / Dyeing Planning',
   'dye-color-master':'Dyeing Expansion / Phase 0 — Foundation',
   'dye-chemical-master':'Dyeing Expansion / Phase 0 — Foundation',
@@ -32429,6 +32442,7 @@ function navigateToView(viewKey){
   if(viewKey === 'dye-dgp-view' && typeof dyeDgpViewInit === 'function') dyeDgpViewInit();
   if(viewKey === 'dye-machine-production' && typeof dyeMachineProductionInit === 'function') dyeMachineProductionInit();
   if(viewKey === 'dye-finish-fabric-entry' && typeof dyeFinishFabricEntryInit === 'function') dyeFinishFabricEntryInit();
+  if(viewKey === 'dye-finish-fabric-history' && typeof dyeFinishFabricHistoryInit === 'function') dyeFinishFabricHistoryInit();
   if(viewKey === 'dye-fabric-pipeline-dashboard' && typeof dyeFabricPipelineDashboardInit === 'function') dyeFabricPipelineDashboardInit();
   if(viewKey === 'dye-chem-stock-view' && typeof dyeCsvLoad === 'function') dyeCsvLoad();
   if(viewKey === 'knt-dashboard' && typeof kntLoadDashboard === 'function') kntLoadDashboard();
