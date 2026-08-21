@@ -760,6 +760,17 @@
         </div>
 
 
+        <div class="menu-subgroup" data-subgroup="dye-mod-finishing">
+          <div class="menu-subgroup-head" data-toggle="body-dye-mod-finishing">
+            <span>Finishing Department</span>
+            <span class="chevron">›</span>
+          </div>
+          <div class="menu-subgroup-body" id="body-dye-mod-finishing">
+            <div class="nav-item group-link" data-view="dye-fabric-pipeline-dashboard"><span class="dot"></span> ০. Fabric Pipeline Dashboard</div>
+            <div class="nav-item group-link" data-view="dye-finish-fabric-entry"><span class="dot"></span> ১. Finish Fabric Entry</div>
+          </div>
+        </div>
+
         <div class="menu-subgroup" data-subgroup="dye-mod2">
           <div class="menu-subgroup-head" data-toggle="body-dye-mod2">
             <span>Module 2 — Fabric Store</span>
@@ -4128,6 +4139,161 @@
         <tbody id="dye-csv-chem-tbody"><tr><td colspan="9" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
       </table>
       <div class="placeholder-note">Available Qty = Opening Stock − (Store Issue-এ যাওয়া Qty − ফেরত আসা Qty) − Chemical Return কালেকশনে আলাদাভাবে ফেরত আসা Qty যোগ করে। Reorder Level-এর নিচে নামলে "Low Stock", শূন্য বা তার নিচে নামলে "Out of Stock" দেখাবে।</div>
+    </div>
+  </div>
+
+  <!-- Finishing Department — ০. Fabric Pipeline Dashboard -->
+  <div class="view" id="view-dye-fabric-pipeline-dashboard">
+    <div class="view-head"><h1>Fabric Pipeline Dashboard</h1><div class="meta">Finishing Department — গ্রে ফেব্রিক থেকে ডাইং হয়ে ফিনিশ পর্যন্ত পুরো পাইপলাইনে কোন স্টেজে কত কেজি কাপড় আছে, একনজরে দেখুন</div></div>
+
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">গ্রে স্টকে আছে (KG)</div><div class="kpi-value" id="dye-pd-greige-stock">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">ডাইং বাফারে আছে — In-Process (KG)</div><div class="kpi-value" id="dye-pd-dye-buffer">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">মোট ডাইং হয়েছে — সর্বমোট (KG)</div><div class="kpi-value" id="dye-pd-total-dyed">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">মোট ফিনিশ হয়েছে — সর্বমোট (KG)</div><div class="kpi-value" id="dye-pd-total-finished">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">ফিনিশড স্টকে আছে (KG)</div><div class="kpi-value" id="dye-pd-finished-stock">০</div></div>
+    </div>
+
+    <div class="section-divider">পাইপলাইন ওভারভিউ — কোন স্টেজে কত কেজি (Bar Chart)</div>
+    <div class="panel">
+      <div style="height:280px;"><canvas id="chart-dye-pipeline"></canvas></div>
+      <div class="placeholder-note">
+        গ্রে স্টক ও ফিনিশড স্টক = এই মুহূর্তের স্টক (current inventory)। ডাইং বাফার = ব্যাচ তৈরি হয়ে গেছে কিন্তু এখনো সম্পূর্ণ হয়নি এমন In-process ওজন। মোট ডাইং ও মোট ফিনিশ = সর্বমোট এখন পর্যন্ত প্রোডাকশন হওয়া ওজন (all-time cumulative, স্টক নয়)।
+      </div>
+    </div>
+
+    <div class="section-divider">মাসিক ট্রেন্ড — ডাইং vs ফিনিশ প্রোডাকশন (KG)</div>
+    <div class="panel">
+      <div style="height:280px;"><canvas id="chart-dye-pipeline-trend"></canvas></div>
+      <div class="placeholder-note">সর্বশেষ ১২ মাসের Machine Production Entry (ডাইং) ও Finish Fabric Entry (ফিনিশ)-এর মাসভিত্তিক মোট কেজি তুলনা।</div>
+    </div>
+
+    <div class="section-divider">ডেটা সোর্স</div>
+    <div class="panel">
+      <table>
+        <thead><tr><th>স্টেজ</th><th>সোর্স</th><th>হিসাব</th></tr></thead>
+        <tbody>
+          <tr><td>গ্রে স্টকে আছে</td><td>Fabric Inspection (Result = Pass), যা এখনো কোনো Batch-এ নেওয়া হয়নি</td><td>Current Stock</td></tr>
+          <tr><td>ডাইং বাফারে আছে</td><td>Batch Master, যেসব ব্যাচ Status = Completed হয়নি</td><td>Current In-Process</td></tr>
+          <tr><td>মোট ডাইং হয়েছে</td><td>Machine Production Entry (সব এন্ট্রির Qty যোগফল)</td><td>All-time Cumulative</td></tr>
+          <tr><td>মোট ফিনিশ হয়েছে</td><td>Finish Fabric Entry (সব এন্ট্রির Output Qty যোগফল)</td><td>All-time Cumulative</td></tr>
+          <tr><td>ফিনিশড স্টকে আছে</td><td>Finished Fabric Receive (QC Status = Pass)</td><td>Current Stock</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Finishing Department — ১. Finish Fabric Entry -->
+  <div class="view" id="view-dye-finish-fabric-entry">
+    <div class="view-head"><h1>Finish Fabric Entry</h1><div class="meta">Finishing Department — প্রতিদিনের ফিনিশড ফেব্রিক প্রোডাকশন এন্ট্রি, একাধিক ধাপের প্রসেস চেইন একসাথে সিলেক্ট করা যাবে, বিগত ১-২ বছরের রেকর্ড এখানে থাকবে</div></div>
+
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">আজকের মোট আউটপুট (KG)</div><div class="kpi-value" id="dye-ffe-today-total">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">এই মাসের মোট আউটপুট (KG)</div><div class="kpi-value" id="dye-ffe-month-total">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">মোট এন্ট্রি সংখ্যা</div><div class="kpi-value" id="dye-ffe-entry-count">০</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="form-grid">
+        <div class="form-field"><label>তারিখ</label><input type="date" id="dye-ffe-date"></div>
+        <div class="form-field"><label>Party / Buyer</label><input type="text" id="dye-ffe-party" list="dye-ffe-party-datalist" placeholder="যেমনঃ ABC Buying House"></div>
+        <div class="form-field"><label>Lot No</label><input type="text" id="dye-ffe-lotno" placeholder="যেমনঃ LOT-045"></div>
+        <div class="form-field"><label>Order No</label><input type="text" id="dye-ffe-orderno" placeholder="যেমনঃ ORD-2201"></div>
+        <div class="form-field"><label>Style</label><input type="text" id="dye-ffe-style" placeholder="যেমনঃ ST-7788"></div>
+        <div class="form-field"><label>Order Qty (KG)</label><input type="number" id="dye-ffe-orderqty" placeholder="0"></div>
+        <div class="form-field"><label>Colour</label><input type="text" id="dye-ffe-colour" placeholder="যেমনঃ Navy Blue"></div>
+        <div class="form-field"><label>Dia (Inch)</label><input type="text" id="dye-ffe-dia" placeholder="যেমনঃ 60"></div>
+        <div class="form-field"><label>GSM</label><input type="number" id="dye-ffe-gsm" placeholder="যেমনঃ 180"></div>
+        <div class="form-field"><label>Batch / Order Ref</label><input type="text" id="dye-ffe-batchref" placeholder="যেমনঃ BATCH-000123"></div>
+        <div class="form-field"><label>Fabric / Quality</label><input type="text" id="dye-ffe-fabric" placeholder="যেমনঃ Single Jersey 180 GSM"></div>
+        <div class="form-field">
+          <label>শিফট</label>
+          <select id="dye-ffe-shift">
+            <option value="Day">Day</option>
+            <option value="Night">Night</option>
+          </select>
+        </div>
+        <div class="form-field"><label>Input Qty (KG)</label><input type="number" id="dye-ffe-input-qty" placeholder="0"></div>
+        <div class="form-field"><label>Output Qty (KG)</label><input type="number" id="dye-ffe-output-qty" placeholder="0"></div>
+        <div class="form-field"><label>মেশিন/লাইন (ঐচ্ছিক)</label><input type="text" id="dye-ffe-machine" placeholder="যেমনঃ Stenter-2"></div>
+        <div class="form-field"><label>Remarks (ঐচ্ছিক)</label><input type="text" id="dye-ffe-remarks"></div>
+      </div>
+      <datalist id="dye-ffe-party-datalist"></datalist>
+
+      <div class="form-field" style="margin-top:6px;">
+        <label>Process (একাধিক ধাপ একসাথে, ক্রম অনুযায়ী যোগ করুন — যেমনঃ Dyeing → Slitting → Stenter → Compacting)</label>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <input type="text" id="dye-ffe-process-input" list="dye-ffe-process-datalist" placeholder="প্রসেসের নাম লিখুন বা লিস্ট থেকে বেছে নিন" style="flex:1; min-width:220px;">
+          <datalist id="dye-ffe-process-datalist">
+            <option value="Dyeing">
+            <option value="Hydro/De-watering">
+            <option value="Slitting/Opening">
+            <option value="Stenter">
+            <option value="Compacting">
+            <option value="Brushing">
+            <option value="Peaching">
+            <option value="Raising">
+            <option value="Sanforizing">
+            <option value="Calendering">
+            <option value="Heat Setting">
+            <option value="Washing">
+            <option value="Softening">
+            <option value="Shearing">
+          </datalist>
+          <button type="button" class="btn-secondary" id="btn-dye-ffe-add-step">+ চেইনে যোগ করুন</button>
+          <button type="button" class="btn-secondary" id="btn-dye-ffe-clear-chain">চেইন খালি করুন</button>
+        </div>
+        <div id="dye-ffe-chain-chips" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; min-height:28px;"></div>
+        <div class="placeholder-note">প্রতিটা ধাপ ক্রম অনুযায়ী যোগ হবে (একই প্রসেস একাধিকবারও যোগ করা যাবে, যেমন Stenter → Compacting → Brush → Stenter → Compacting)। লিস্টে নেই এমন নতুন কোনো প্রসেসের নাম সরাসরি টাইপ করেও যোগ করা যাবে।</div>
+      </div>
+
+      <div class="form-actions"><button class="btn-primary" id="btn-dye-ffe-save">ফিনিশ ফেব্রিক এন্ট্রি সেভ করুন</button></div>
+    </div>
+
+    <div class="section-divider">প্রোডাকশন হিস্ট্রি (ফিল্টার করুন)</div>
+    <div class="panel">
+      <div class="form-grid">
+        <div class="form-field"><label>প্রসেস ফিল্টার (চেইনে থাকলে দেখাবে)</label><input type="text" id="dye-ffe-filter-process" list="dye-ffe-process-datalist" placeholder="যেমনঃ Compacting"></div>
+        <div class="form-field"><label>শুরুর তারিখ</label><input type="date" id="dye-ffe-filter-from"></div>
+        <div class="form-field"><label>শেষ তারিখ</label><input type="date" id="dye-ffe-filter-to"></div>
+        <div class="form-field" style="align-self:flex-end;"><button class="btn-secondary" id="btn-dye-ffe-filter" style="width:100%;">ফিল্টার করুন</button></div>
+      </div>
+    </div>
+    <div class="panel" style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>তারিখ</th><th>Party</th><th>Lot No</th><th>Order No</th><th>Style</th><th>Colour</th><th>Dia</th><th>GSM</th><th>Order Qty (KG)</th><th>Batch/Order Ref</th><th>Fabric/Quality</th><th>Process Chain</th><th>Input (KG)</th><th>Output (KG)</th><th>শিফট</th><th>মেশিন/লাইন</th><th>Remarks</th><th>এন্ট্রি করেছেন</th></tr></thead>
+        <tbody id="dye-ffe-tbody"><tr><td colspan="17" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+      <div class="placeholder-note">ডিফল্টভাবে সর্বশেষ ৩০০টি এন্ট্রি (আনুমানিক গত ১-২ বছরের রেকর্ড) দেখানো হয় — নির্দিষ্ট প্রসেস বা তারিখ রেঞ্জ দিয়ে ফিল্টার করে খুঁজে নিন।</div>
+    </div>
+
+    <div class="section-divider">পার্টি-ভিত্তিক ফিনিশ সামারি (Order Qty, Colour, Dia, GSM অনুপাতে)</div>
+    <div class="panel">
+      <div class="form-grid">
+        <div class="form-field">
+          <label>যেভাবে গ্রুপ করে দেখতে চান</label>
+          <select id="dye-ffe-summary-groupby">
+            <option value="party">Party</option>
+            <option value="lotNo">Lot No</option>
+            <option value="orderNo">Order No</option>
+            <option value="style">Style</option>
+            <option value="colour">Colour</option>
+            <option value="dia">Dia</option>
+            <option value="gsm">GSM</option>
+          </select>
+        </div>
+        <div class="form-field"><label>Party ফিল্টার (ঐচ্ছিক)</label><input type="text" id="dye-ffe-summary-party" list="dye-ffe-party-datalist" placeholder="সব পার্টি"></div>
+        <div class="form-field"><label>শুরুর তারিখ</label><input type="date" id="dye-ffe-summary-from"></div>
+        <div class="form-field"><label>শেষ তারিখ</label><input type="date" id="dye-ffe-summary-to"></div>
+        <div class="form-field" style="align-self:flex-end;"><button class="btn-secondary" id="btn-dye-ffe-summary" style="width:100%;">সামারি দেখুন</button></div>
+      </div>
+    </div>
+    <div class="panel" style="overflow-x:auto;">
+      <table>
+        <thead><tr><th id="dye-ffe-summary-groupth">Party</th><th>মোট Order Qty (KG)</th><th>মোট ফিনিশড Output (KG)</th><th>ফিনিশড %</th><th>মোট Input (KG)</th><th>এন্ট্রি সংখ্যা</th></tr></thead>
+        <tbody id="dye-ffe-summary-tbody"><tr><td colspan="6" style="text-align:center;color:var(--muted);">"সামারি দেখুন" চাপুন</td></tr></tbody>
+      </table>
+      <div class="placeholder-note">একই Order/Lot-এর Order Qty একবারই গণনায় ধরা হয় (একাধিক ফিনিশ এন্ট্রি থাকলেও ডাবল-কাউন্ট হবে না) — তাই "ফিনিশড %" নির্ভরযোগ্যভাবে বোঝাবে মোট অর্ডারের কত শতাংশ ফিনিশ হয়ে গেছে।</div>
     </div>
   </div>
 
@@ -19856,6 +20022,334 @@ function dyeMachineProductionInit(){
   dyeMpLoadKpis();
 }
 
+// ==================== FINISHING DEPARTMENT — ১. FINISH FABRIC ENTRY (প্রসেস চেইন সহ, ১-২ বছরের হিস্ট্রি) ====================
+// নতুন কালেকশন: dyeFinishFabricEntry { date, batchRef, fabric, processChain[], inputQtyKg, outputQtyKg, shift, machine, remarks, enteredBy, createdAt }
+window._dyeFfeChain = [];
+function dyeFfeRenderChainChips(){
+  const wrap = document.getElementById('dye-ffe-chain-chips');
+  if(!wrap) return;
+  if(!window._dyeFfeChain.length){
+    wrap.innerHTML = '<span style="font-size:12px;color:var(--g4);">এখনো কোনো প্রসেস যোগ করা হয়নি</span>';
+    return;
+  }
+  wrap.innerHTML = window._dyeFfeChain.map(function(step, i){
+    return '<span style="display:inline-flex;align-items:center;gap:6px;background:var(--g1);border:1px solid var(--g2);border-radius:20px;padding:4px 6px 4px 12px;font-size:12.5px;">'
+      + (i+1) + '. ' + escapeHtml(step)
+      + ' <button type="button" data-chain-idx="'+i+'" class="dye-ffe-remove-step" style="border:none;background:none;color:var(--ink-soft);cursor:pointer;font-size:14px;line-height:1;padding:0 4px;">×</button></span>';
+  }).join(' <span style="color:var(--g3);">→</span> ');
+  wrap.querySelectorAll('.dye-ffe-remove-step').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      window._dyeFfeChain.splice(Number(btn.getAttribute('data-chain-idx')), 1);
+      dyeFfeRenderChainChips();
+    });
+  });
+}
+document.getElementById('btn-dye-ffe-add-step') && document.getElementById('btn-dye-ffe-add-step').addEventListener('click', function(){
+  const input = document.getElementById('dye-ffe-process-input');
+  const val = input.value.trim();
+  if(!val){ fbToast('⚠ আগে প্রসেসের নাম লিখুন বা বেছে নিন', true); return; }
+  window._dyeFfeChain.push(val);
+  input.value = '';
+  input.focus();
+  dyeFfeRenderChainChips();
+});
+document.getElementById('dye-ffe-process-input') && document.getElementById('dye-ffe-process-input').addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    document.getElementById('btn-dye-ffe-add-step').click();
+  }
+});
+document.getElementById('btn-dye-ffe-clear-chain') && document.getElementById('btn-dye-ffe-clear-chain').addEventListener('click', function(){
+  window._dyeFfeChain = [];
+  dyeFfeRenderChainChips();
+});
+document.getElementById('btn-dye-ffe-save') && document.getElementById('btn-dye-ffe-save').addEventListener('click', function(){
+  const dateStr = document.getElementById('dye-ffe-date').value;
+  const party = document.getElementById('dye-ffe-party').value.trim();
+  const lotNo = document.getElementById('dye-ffe-lotno').value.trim();
+  const orderNo = document.getElementById('dye-ffe-orderno').value.trim();
+  const style = document.getElementById('dye-ffe-style').value.trim();
+  const orderQtyVal = document.getElementById('dye-ffe-orderqty').value;
+  const colour = document.getElementById('dye-ffe-colour').value.trim();
+  const dia = document.getElementById('dye-ffe-dia').value.trim();
+  const gsmVal = document.getElementById('dye-ffe-gsm').value;
+  const batchRef = document.getElementById('dye-ffe-batchref').value.trim();
+  const fabric = document.getElementById('dye-ffe-fabric').value.trim();
+  const shift = document.getElementById('dye-ffe-shift').value;
+  const inputQty = document.getElementById('dye-ffe-input-qty').value;
+  const outputQty = document.getElementById('dye-ffe-output-qty').value;
+  const machine = document.getElementById('dye-ffe-machine').value.trim();
+  const remarks = document.getElementById('dye-ffe-remarks').value.trim();
+  const chain = window._dyeFfeChain.slice();
+  if(!dateStr){ fbToast('⚠ আগে তারিখ দিন', true); return; }
+  if(!chain.length){ fbToast('⚠ অন্তত একটি প্রসেস চেইনে যোগ করুন', true); return; }
+  if(outputQty === '' || isNaN(Number(outputQty))){ fbToast('⚠ Output Qty (KG) সঠিকভাবে দিন', true); return; }
+  const btn = this;
+  btn.disabled = true; btn.textContent = 'সেভ হচ্ছে...';
+  const enteredBy = (window.firebase && firebase.auth().currentUser) ? (firebase.auth().currentUser.displayName || firebase.auth().currentUser.email || '—') : '—';
+  db.collection('dyeFinishFabricEntry').add({
+    date: dateStr, party: party, lotNo: lotNo, orderNo: orderNo, style: style,
+    orderQtyKg: orderQtyVal === '' ? null : Number(orderQtyVal),
+    colour: colour, dia: dia, gsm: gsmVal === '' ? null : Number(gsmVal),
+    batchRef: batchRef, fabric: fabric, processChain: chain,
+    inputQtyKg: inputQty === '' ? null : Number(inputQty), outputQtyKg: Number(outputQty),
+    shift: shift, machine: machine, remarks: remarks, enteredBy: enteredBy,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function(){
+    fbToast('✓ ফিনিশ ফেব্রিক এন্ট্রি সেভ হয়েছে');
+    document.getElementById('dye-ffe-lotno').value = '';
+    document.getElementById('dye-ffe-orderno').value = '';
+    document.getElementById('dye-ffe-style').value = '';
+    document.getElementById('dye-ffe-orderqty').value = '';
+    document.getElementById('dye-ffe-colour').value = '';
+    document.getElementById('dye-ffe-dia').value = '';
+    document.getElementById('dye-ffe-gsm').value = '';
+    document.getElementById('dye-ffe-batchref').value = '';
+    document.getElementById('dye-ffe-fabric').value = '';
+    document.getElementById('dye-ffe-input-qty').value = '';
+    document.getElementById('dye-ffe-output-qty').value = '';
+    document.getElementById('dye-ffe-machine').value = '';
+    document.getElementById('dye-ffe-remarks').value = '';
+    window._dyeFfeChain = [];
+    dyeFfeRenderChainChips();
+    dyeFfeLoadHistory();
+    dyeFfeLoadKpis();
+    dyeFfeLoadPartyDatalist();
+  }).catch(function(err){
+    fbToast('⚠ সেভ ব্যর্থ: ' + err.message, true);
+  }).finally(function(){
+    btn.disabled = false; btn.textContent = 'ফিনিশ ফেব্রিক এন্ট্রি সেভ করুন';
+  });
+});
+function dyeFfeRenderHistoryRows(docs){
+  const tbody = document.getElementById('dye-ffe-tbody');
+  if(!tbody) return;
+  if(!docs.length){
+    tbody.innerHTML = '<tr><td colspan="17" style="text-align:center;color:var(--muted);">কোনো এন্ট্রি পাওয়া যায়নি</td></tr>';
+    return;
+  }
+  tbody.innerHTML = docs.map(function(doc){
+    const d = doc.data();
+    const chainStr = Array.isArray(d.processChain) ? d.processChain.map(escapeHtml).join(' → ') : '—';
+    return '<tr><td>'+(d.date||'—')+'</td><td>'+escapeHtml(d.party||'—')+'</td><td>'+escapeHtml(d.lotNo||'—')+'</td><td>'+escapeHtml(d.orderNo||'—')+'</td><td>'+escapeHtml(d.style||'—')+'</td><td>'+escapeHtml(d.colour||'—')+'</td><td>'+escapeHtml(d.dia||'—')+'</td><td>'+(d.gsm!=null?d.gsm:'—')+'</td><td>'+(d.orderQtyKg!=null?d.orderQtyKg:'—')+'</td><td>'+escapeHtml(d.batchRef||'—')+'</td><td>'+escapeHtml(d.fabric||'—')+'</td><td>'+chainStr+'</td><td>'+(d.inputQtyKg!=null?d.inputQtyKg:'—')+'</td><td>'+(d.outputQtyKg!=null?d.outputQtyKg:'—')+'</td><td>'+(d.shift||'—')+'</td><td>'+escapeHtml(d.machine||'—')+'</td><td>'+escapeHtml(d.remarks||'—')+'</td><td>'+escapeHtml(d.enteredBy||'—')+'</td></tr>';
+  }).join('');
+}
+function dyeFfeLoadHistory(){
+  const tbody = document.getElementById('dye-ffe-tbody');
+  if(!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="17" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  db.collection('dyeFinishFabricEntry').orderBy('date','desc').limit(300).get().then(function(snap){
+    dyeFfeRenderHistoryRows(snap.docs);
+  }).catch(function(err){
+    tbody.innerHTML = '<tr><td colspan="17" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+  });
+}
+document.getElementById('btn-dye-ffe-filter') && document.getElementById('btn-dye-ffe-filter').addEventListener('click', function(){
+  const process = document.getElementById('dye-ffe-filter-process').value.trim();
+  const from = document.getElementById('dye-ffe-filter-from').value;
+  const to = document.getElementById('dye-ffe-filter-to').value;
+  const tbody = document.getElementById('dye-ffe-tbody');
+  tbody.innerHTML = '<tr><td colspan="17" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  let q = db.collection('dyeFinishFabricEntry');
+  if(process) q = q.where('processChain', 'array-contains', process);
+  q.get().then(function(snap){
+    let docs = snap.docs;
+    if(from) docs = docs.filter(function(doc){ return (doc.data().date||'') >= from; });
+    if(to) docs = docs.filter(function(doc){ return (doc.data().date||'') <= to; });
+    docs.sort(function(a,b){ return (b.data().date||'').localeCompare(a.data().date||''); });
+    dyeFfeRenderHistoryRows(docs.slice(0, 1000));
+  }).catch(function(err){
+    tbody.innerHTML = '<tr><td colspan="17" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+  });
+});
+function dyeFfeLoadKpis(){
+  db.collection('dyeFinishFabricEntry').get().then(function(snap){
+    const today = new Date().toISOString().slice(0,10);
+    const monthPrefix = today.slice(0,7);
+    let todayTotal = 0, monthTotal = 0;
+    snap.forEach(function(doc){
+      const d = doc.data();
+      const qty = Number(d.outputQtyKg) || 0;
+      if(d.date === today) todayTotal += qty;
+      if((d.date||'').slice(0,7) === monthPrefix) monthTotal += qty;
+    });
+    document.getElementById('dye-ffe-today-total').textContent = todayTotal.toFixed(1);
+    document.getElementById('dye-ffe-month-total').textContent = monthTotal.toFixed(1);
+    document.getElementById('dye-ffe-entry-count').textContent = snap.size;
+  }).catch(function(){});
+}
+// পার্টি ইনপুট-এ আগে থেকে ব্যবহৃত পার্টির নাম সাজেস্ট করার জন্য ডেটালিস্ট
+function dyeFfeLoadPartyDatalist(){
+  const dl = document.getElementById('dye-ffe-party-datalist');
+  if(!dl) return;
+  db.collection('dyeFinishFabricEntry').get().then(function(snap){
+    const names = new Set();
+    snap.forEach(function(doc){ const p = (doc.data().party||'').trim(); if(p) names.add(p); });
+    dl.innerHTML = Array.from(names).sort().map(function(n){ return '<option value="'+escapeHtml(n)+'">'; }).join('');
+  }).catch(function(){});
+}
+// ---- পার্টি/লট/অর্ডার/স্টাইল/কালার/ডায়া/জিএসএম — যেকোনো একটার ভিত্তিতে গ্রুপ করে ফিনিশড কেজি ও অর্ডারের অনুপাতে % দেখানো ----
+const dyeFfeSummaryFieldLabel = {
+  party:'Party', lotNo:'Lot No', orderNo:'Order No', style:'Style', colour:'Colour', dia:'Dia', gsm:'GSM'
+};
+document.getElementById('btn-dye-ffe-summary') && document.getElementById('btn-dye-ffe-summary').addEventListener('click', function(){
+  const groupField = document.getElementById('dye-ffe-summary-groupby').value;
+  const partyFilter = document.getElementById('dye-ffe-summary-party').value.trim();
+  const from = document.getElementById('dye-ffe-summary-from').value;
+  const to = document.getElementById('dye-ffe-summary-to').value;
+  const tbody = document.getElementById('dye-ffe-summary-tbody');
+  const groupTh = document.getElementById('dye-ffe-summary-groupth');
+  if(groupTh) groupTh.textContent = dyeFfeSummaryFieldLabel[groupField] || 'Group';
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  let q = db.collection('dyeFinishFabricEntry');
+  if(partyFilter) q = q.where('party', '==', partyFilter);
+  q.get().then(function(snap){
+    let docs = snap.docs;
+    if(from) docs = docs.filter(function(doc){ return (doc.data().date||'') >= from; });
+    if(to) docs = docs.filter(function(doc){ return (doc.data().date||'') <= to; });
+    // group buckets: totalOutput, totalInput, entryCount, এবং orderQtyByOrderNo ম্যাপ (একই অর্ডারের Qty ডাবল-কাউন্ট এড়াতে)
+    const groups = {};
+    docs.forEach(function(doc){
+      const d = doc.data();
+      const rawKey = (d[groupField] == null || d[groupField] === '') ? '(খালি)' : String(d[groupField]);
+      if(!groups[rawKey]) groups[rawKey] = { totalOutput:0, totalInput:0, entryCount:0, orderQtyByOrder:{} };
+      const g = groups[rawKey];
+      g.totalOutput += Number(d.outputQtyKg) || 0;
+      g.totalInput += Number(d.inputQtyKg) || 0;
+      g.entryCount += 1;
+      const orderKey = (d.orderNo && String(d.orderNo).trim()) ? String(d.orderNo).trim() : ('__nolot__' + (d.lotNo||'') + '__' + rawKey);
+      if(d.orderQtyKg != null && !isNaN(Number(d.orderQtyKg))){
+        g.orderQtyByOrder[orderKey] = Number(d.orderQtyKg); // একই অর্ডারের জন্য শেষ পাওয়া মান রাখা হয়, বারবার যোগ হয় না
+      }
+    });
+    const rows = Object.keys(groups).map(function(key){
+      const g = groups[key];
+      const targetOrderQty = Object.values(g.orderQtyByOrder).reduce(function(a,b){ return a+b; }, 0);
+      const pct = targetOrderQty > 0 ? ((g.totalOutput / targetOrderQty) * 100).toFixed(1) + '%' : '—';
+      return { key: key, orderQty: targetOrderQty, output: g.totalOutput, pct: pct, input: g.totalInput, count: g.entryCount };
+    }).sort(function(a,b){ return b.output - a.output; });
+    if(!rows.length){
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);">কোনো ডেটা পাওয়া যায়নি</td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(function(r){
+      return '<tr><td>'+escapeHtml(r.key)+'</td><td>'+(r.orderQty>0 ? r.orderQty.toFixed(1) : '—')+'</td><td>'+r.output.toFixed(1)+'</td><td>'+r.pct+'</td><td>'+r.input.toFixed(1)+'</td><td>'+r.count+'</td></tr>';
+    }).join('');
+  }).catch(function(err){
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+  });
+});
+function dyeFinishFabricEntryInit(){
+  const dateInput = document.getElementById('dye-ffe-date');
+  if(dateInput && !dateInput.value) dateInput.value = new Date().toISOString().slice(0,10);
+  window._dyeFfeChain = [];
+  dyeFfeRenderChainChips();
+  dyeFfeLoadHistory();
+  dyeFfeLoadKpis();
+  dyeFfeLoadPartyDatalist();
+}
+
+// ==================== FINISHING DEPARTMENT — ০. FABRIC PIPELINE DASHBOARD ====================
+// গ্রে স্টক (dyeFabricInspection), ডাইং বাফার (dyeBatchMaster), মোট ডাইং (dyeMachineProduction),
+// মোট ফিনিশ (dyeFinishFabricEntry), ফিনিশড স্টক (dyeFinishedReceive) — সব একসাথে দেখানো হয়
+function dyeFabricPipelineDashboardInit(){
+  Promise.all([
+    db.collection('dyeFabricInspection').get(),
+    db.collection('dyeBatchMaster').get(),
+    db.collection('dyeMachineProduction').get(),
+    db.collection('dyeFinishFabricEntry').get(),
+    db.collection('dyeFinishedReceive').get()
+  ]).then(function(results){
+    const inspSnap = results[0], batchSnap = results[1], mpSnap = results[2], ffeSnap = results[3], frSnap = results[4];
+
+    // গ্রে স্টক = Fabric Inspection Result=Pass কিন্তু এখনো কোনো Batch-এ অ্যাসাইন হয়নি
+    const batchedRolls = {};
+    batchSnap.forEach(function(doc){ (doc.data().rolls||[]).forEach(function(r){ batchedRolls[r.rollNo] = true; }); });
+    let greigeStock = 0;
+    inspSnap.forEach(function(doc){
+      const d = doc.data();
+      if(d.result === 'Pass' && !batchedRolls[d.rollNo]) greigeStock += Number(d.weight)||0;
+    });
+
+    // ডাইং বাফার = Batch Master-এ Status != Completed
+    let dyeBuffer = 0;
+    batchSnap.forEach(function(doc){
+      const d = doc.data();
+      if((d.status||'Created') !== 'Completed') dyeBuffer += Number(d.totalWeight)||0;
+    });
+
+    // মোট ডাইং হয়েছে (all-time) + মাসভিত্তিক ব্রেকডাউন
+    let totalDyed = 0;
+    const dyeMonthTotals = {};
+    mpSnap.forEach(function(doc){
+      const d = doc.data();
+      const q = Number(d.qtyKg)||0;
+      totalDyed += q;
+      const m = (d.date||'').slice(0,7);
+      if(m) dyeMonthTotals[m] = (dyeMonthTotals[m]||0) + q;
+    });
+
+    // মোট ফিনিশ হয়েছে (all-time) + মাসভিত্তিক ব্রেকডাউন
+    let totalFinished = 0;
+    const finishMonthTotals = {};
+    ffeSnap.forEach(function(doc){
+      const d = doc.data();
+      const q = Number(d.outputQtyKg)||0;
+      totalFinished += q;
+      const m = (d.date||'').slice(0,7);
+      if(m) finishMonthTotals[m] = (finishMonthTotals[m]||0) + q;
+    });
+
+    // ফিনিশড স্টক = Finished Fabric Receive-এ QC Status = Pass
+    let finishedStock = 0;
+    frSnap.forEach(function(doc){
+      const d = doc.data();
+      if(d.qcStatus === 'Pass') finishedStock += Number(d.verifiedWeight)||0;
+    });
+
+    const setKpi = function(id, val){ const el = document.getElementById(id); if(el) el.textContent = val.toFixed(1); };
+    setKpi('dye-pd-greige-stock', greigeStock);
+    setKpi('dye-pd-dye-buffer', dyeBuffer);
+    setKpi('dye-pd-total-dyed', totalDyed);
+    setKpi('dye-pd-total-finished', totalFinished);
+    setKpi('dye-pd-finished-stock', finishedStock);
+
+    // পাইপলাইন বার চার্ট
+    const pipelineCanvas = document.getElementById('chart-dye-pipeline');
+    if(pipelineCanvas){
+      const existing = (typeof Chart.getChart === 'function') ? Chart.getChart(pipelineCanvas) : null;
+      if(existing) existing.destroy();
+      barChart(pipelineCanvas,
+        ['গ্রে স্টক', 'ডাইং বাফার', 'মোট ডাইং', 'মোট ফিনিশ', 'ফিনিশড স্টক'],
+        [greigeStock, dyeBuffer, totalDyed, totalFinished, finishedStock],
+        ['#c9c9c9', '#8f8f8f', '#5b5b5b', '#333333', '#141414']
+      );
+    }
+
+    // মাসিক ট্রেন্ড — ডাইং vs ফিনিশ, সর্বশেষ ১২ মাস
+    const trendCanvas = document.getElementById('chart-dye-pipeline-trend');
+    if(trendCanvas){
+      const existingTrend = (typeof Chart.getChart === 'function') ? Chart.getChart(trendCanvas) : null;
+      if(existingTrend) existingTrend.destroy();
+      const allMonths = new Set(Object.keys(dyeMonthTotals).concat(Object.keys(finishMonthTotals)));
+      const sortedMonths = Array.from(allMonths).sort().slice(-12);
+      new Chart(trendCanvas, {
+        type: 'line',
+        data: {
+          labels: sortedMonths,
+          datasets: [
+            { label:'ডাইং (KG)', data: sortedMonths.map(function(m){ return dyeMonthTotals[m]||0; }), borderColor:'#141414', backgroundColor:'rgba(20,20,20,0.06)', borderWidth:2, pointRadius:2, tension:.3, fill:false },
+            { label:'ফিনিশ (KG)', data: sortedMonths.map(function(m){ return finishMonthTotals[m]||0; }), borderColor:'#8f8f8f', backgroundColor:'rgba(143,143,143,0.08)', borderWidth:2, pointRadius:2, tension:.3, fill:false }
+          ]
+        },
+        options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:true, position:'bottom'}}, scales:{ x:{grid:{display:false}}, y:{grid:{color:'#f0f0f0'}} } }
+      });
+    }
+  }).catch(function(err){
+    fbToast('⚠ Pipeline Dashboard লোড ব্যর্থ: ' + err.message, true);
+  });
+}
+
 // ---- 22. DYEING PRODUCTION ----
 const renderDyeProduction = wireFlatCollectionTable({
   collectionName: 'dyeProduction', tbodyId: 'dye-production-tbody', addBtnId: 'btn-add-dye-production', colCount: 8,
@@ -25275,6 +25769,8 @@ const titles = {
   'dye-dgp-view':'Daily Dyeing Programme (View Only)',
   'dye-machine-production':'Machine Production Entry',
   'dye-chem-stock-view':'Dyes &amp; Chemicals Stock View',
+  'dye-finish-fabric-entry':'Finish Fabric Entry',
+  'dye-fabric-pipeline-dashboard':'Fabric Pipeline Dashboard',
   'dye-order-master':'Dyeing Order / Requirement',
   'dye-color-master':'Color Master',
   'dye-chemical-master':'Chemical Master',
@@ -25760,6 +26256,8 @@ const paths = {
   'dye-dgp-view':'Dyeing Expansion / Dyeing Production',
   'dye-machine-production':'Dyeing Expansion / Dyeing Production',
   'dye-chem-stock-view':'Dyeing Expansion / Dyeing Production',
+  'dye-finish-fabric-entry':'Dyeing Expansion / Finishing Department',
+  'dye-fabric-pipeline-dashboard':'Dyeing Expansion / Finishing Department',
   'dye-order-master':'Dyeing Expansion / Dyeing Planning',
   'dye-color-master':'Dyeing Expansion / Phase 0 — Foundation',
   'dye-chemical-master':'Dyeing Expansion / Phase 0 — Foundation',
@@ -31930,6 +32428,8 @@ function navigateToView(viewKey){
   if(viewKey === 'dye-party-stock' && typeof dyePartyStockLoad === 'function') dyePartyStockLoad();
   if(viewKey === 'dye-dgp-view' && typeof dyeDgpViewInit === 'function') dyeDgpViewInit();
   if(viewKey === 'dye-machine-production' && typeof dyeMachineProductionInit === 'function') dyeMachineProductionInit();
+  if(viewKey === 'dye-finish-fabric-entry' && typeof dyeFinishFabricEntryInit === 'function') dyeFinishFabricEntryInit();
+  if(viewKey === 'dye-fabric-pipeline-dashboard' && typeof dyeFabricPipelineDashboardInit === 'function') dyeFabricPipelineDashboardInit();
   if(viewKey === 'dye-chem-stock-view' && typeof dyeCsvLoad === 'function') dyeCsvLoad();
   if(viewKey === 'knt-dashboard' && typeof kntLoadDashboard === 'function') kntLoadDashboard();
   if(viewKey === 'inv-warehouse' && typeof loadWarehouseManagement === 'function') loadWarehouseManagement();
