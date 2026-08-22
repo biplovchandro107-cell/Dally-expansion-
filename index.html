@@ -785,6 +785,20 @@
           </div>
         </div>
 
+        <div class="menu-subgroup" data-subgroup="dye-mod9">
+          <div class="menu-subgroup-head" data-toggle="body-dye-mod9">
+            <span>Module 9 — Fabric Delivery</span>
+            <span class="chevron">›</span>
+          </div>
+          <div class="menu-subgroup-body" id="body-dye-mod9">
+            <div class="nav-item group-link" data-view="dye-m9-cutreq"><span class="dot"></span> ১. Cutting Requirement/Requisition</div>
+            <div class="nav-item group-link" data-view="dye-m9-rollalloc"><span class="dot"></span> ২. Fabric Roll Allocation</div>
+            <div class="nav-item group-link" data-view="dye-m9-delivchallan"><span class="dot"></span> ৩. Dyeing Delivery Challan</div>
+            <div class="nav-item group-link" data-view="dye-m9-gatepass"><span class="dot"></span> ৪. Gate Pass</div>
+            <div class="nav-item group-link" data-view="dye-m9-cutreceive"><span class="dot"></span> ৫. Cutting Receive</div>
+          </div>
+        </div>
+
         <div class="menu-subgroup" data-subgroup="dye-mod2">
           <div class="menu-subgroup-head" data-toggle="body-dye-mod2">
             <span>Module 2 — Fabric Store</span>
@@ -852,20 +866,6 @@
             <div class="nav-item group-link" data-view="dye-finish-planning"><span class="dot"></span> ১. Finishing Planning</div>
             <div class="nav-item group-link" data-view="dye-finish-process"><span class="dot"></span> ২. Finishing Process</div>
             <div class="nav-item group-link" data-view="dye-finish-roll"><span class="dot"></span> ৩. Finished Roll Creation</div>
-          </div>
-        </div>
-
-        <div class="menu-subgroup" data-subgroup="dye-mod9">
-          <div class="menu-subgroup-head" data-toggle="body-dye-mod9">
-            <span>Module 9 — Fabric Delivery</span>
-            <span class="chevron">›</span>
-          </div>
-          <div class="menu-subgroup-body" id="body-dye-mod9">
-            <div class="nav-item group-link" data-view="dye-m9-cutreq"><span class="dot"></span> ১. Cutting Requirement/Requisition</div>
-            <div class="nav-item group-link" data-view="dye-m9-rollalloc"><span class="dot"></span> ২. Fabric Roll Allocation</div>
-            <div class="nav-item group-link" data-view="dye-m9-delivchallan"><span class="dot"></span> ৩. Dyeing Delivery Challan</div>
-            <div class="nav-item group-link" data-view="dye-m9-gatepass"><span class="dot"></span> ৪. Gate Pass</div>
-            <div class="nav-item group-link" data-view="dye-m9-cutreceive"><span class="dot"></span> ৫. Cutting Receive</div>
           </div>
         </div>
 
@@ -4390,18 +4390,19 @@
 
   <!-- QC Department — ৩. Party Stock Overview (শুধু দেখার জন্য) -->
   <div class="view" id="view-qc-party-stock">
-    <div class="view-head"><h1>Party Stock Overview <span style="font-size:12px; font-weight:400; color:var(--g4);">(শুধু দেখার জন্য)</span></h1><div class="meta">QC Department — Finishing Department থেকে যেসব ফিনিশড ফেব্রিক এন্ট্রি হয়েছে, তার পার্টি-ভিত্তিক সামারি এখানে অটো দেখা যাবে। এই পেজ থেকে কোনো এন্ট্রি, এডিট বা ডিলিট করা যাবে না</div></div>
+    <div class="view-head"><h1>Party Stock Overview <span style="font-size:12px; font-weight:400; color:var(--g4);">(শুধু দেখার জন্য)</span></h1><div class="meta">QC Department — Finishing Department থেকে যেসব ফিনিশড ফেব্রিক এন্ট্রি হয়েছে এবং Module 9 — Fabric Delivery থেকে যেসব মাল ডেলিভারি হয়ে গেছে, তার পার্টি-ভিত্তিক সামারি এখানে অটো দেখা যাবে — ডেলিভারি হয়ে যাওয়া মাল বাদ দিয়ে বর্তমান Stock in Hand দেখাবে। এই পেজ থেকে কোনো এন্ট্রি, এডিট বা ডিলিট করা যাবে না</div></div>
     <div class="kpi-row">
       <div class="kpi-card"><div class="kpi-label">মোট Order Qty (KG)</div><div class="kpi-value" id="qc-ps-total-order">০</div></div>
       <div class="kpi-card"><div class="kpi-label">মোট ফিনিশড Output (KG)</div><div class="kpi-value" id="qc-ps-total-output">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">মোট ডেলিভারি হয়েছে (KG)</div><div class="kpi-value" id="qc-ps-total-delivered">০</div></div>
       <div class="kpi-card"><div class="kpi-label">সক্রিয় পার্টি সংখ্যা</div><div class="kpi-value" id="qc-ps-party-count">০</div></div>
     </div>
     <div class="panel" style="overflow-x:auto;">
       <table>
-        <thead><tr><th>Party / Buyer</th><th>Order No</th><th>Lot No</th><th>Style</th><th>মোট Order Qty (KG)</th><th>মোট ফিনিশড Output (KG)</th><th>এন্ট্রি সংখ্যা</th></tr></thead>
-        <tbody id="qc-ps-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+        <thead><tr><th>Party / Buyer</th><th>Order No</th><th>Lot No</th><th>Style</th><th>মোট Order Qty (KG)</th><th>মোট ফিনিশড Output (KG)</th><th>মোট ডেলিভারি (KG)</th><th>Stock in Hand (KG)</th><th>এন্ট্রি সংখ্যা</th></tr></thead>
+        <tbody id="qc-ps-tbody"><tr><td colspan="9" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
       </table>
-      <div class="placeholder-note">এই ডেটা Finishing Department → Finish Fabric Entry থেকে সরাসরি টেনে আনা হয় — QC ডিপার্টমেন্ট শুধু দেখতে পারবে, এখান থেকে কোনো পরিবর্তন করা যাবে না।</div>
+      <div class="placeholder-note">Output = Finishing Department → Finish Fabric Entry থেকে। Delivery = Module 9 — Fabric Delivery → Dyeing Delivery Challan থেকে। Stock in Hand = Output − Delivery। এই ডেটা সরাসরি অন্য মডিউল থেকে টেনে আনা হয় — QC ডিপার্টমেন্ট শুধু দেখতে পারবে, এখান থেকে কোনো পরিবর্তন করা যাবে না।</div>
     </div>
   </div>
 
@@ -4514,7 +4515,7 @@
 
   <!-- 10. Fabric Receive (from Knitting) -->
   <div class="view" id="view-dye-fabric-receive">
-    <div class="view-head"><h1>Fabric Receive (from Knitting)</h1><div class="meta">ডাইং এক্সপ্যানশন — Knitting-এর পাঠানো চালান রোল-ওয়াইজ ভেরিফাই করে রিসিভ করা হয়</div></div>
+    <div class="view-head"><h1>Fabric Receive (from Knitting)</h1><div class="meta">ডাইং এক্সপ্যানশন — Knitting-এর পাঠানো চালান রোল-ওয়াইজ ভেরিফাই করে রিসিভ করা হয়, অথবা বাইরের সাপ্লায়ার/মিল থেকে সরাসরি গ্রে ফেব্রিক ক্রয় করলে নিচের ফর্ম দিয়ে ম্যানুয়ালি এন্ট্রি দিন</div></div>
 
     <div class="section-divider">Pending Challan (Knitting থেকে এসেছে, রিসিভ বাকি)</div>
     <div class="panel">
@@ -4523,11 +4524,36 @@
       </div>
     </div>
 
+    <div class="section-divider">বাইরের সাপ্লায়ার/মিল থেকে গ্রে ফেব্রিক ক্রয় (ম্যানুয়াল এন্ট্রি)</div>
+    <div class="panel">
+      <div class="form-grid">
+        <div class="form-field"><label>তারিখ</label><input type="date" id="dye-frm-date"></div>
+        <div class="form-field"><label>সাপ্লায়ার / মিল নাম</label><input type="text" id="dye-frm-supplier" placeholder="যেমনঃ ABC Textile Mills"></div>
+        <div class="form-field"><label>বিল/ইনভয়েস নং (ঐচ্ছিক)</label><input type="text" id="dye-frm-billno" placeholder="যেমনঃ INV-4521"></div>
+        <div class="form-field"><label>রেফারেন্স (ঐচ্ছিক)</label><input type="text" id="dye-frm-reference" placeholder="যেমনঃ REF-2201"></div>
+      </div>
+      <div class="panel" style="margin-top:10px;">
+        <table>
+          <thead><tr>
+            <th>Roll No</th><th>সুতার Lot No</th><th>Style</th><th>Fabric Type</th><th>Color</th><th>Count</th><th>Dia</th><th>GSM</th><th>Weight (KG)</th><th></th>
+          </tr></thead>
+          <tbody id="dye-frm-items-tbody"></tbody>
+          <tfoot><tr class="gfc-total" style="font-weight:700;">
+            <td colspan="8" style="text-align:right;">Total Weight</td>
+            <td id="dye-frm-total-weight">০</td><td></td>
+          </tr></tfoot>
+        </table>
+        <div class="form-actions"><button class="btn-secondary" id="btn-dye-frm-addline">+ রোল যোগ করুন</button></div>
+      </div>
+      <div class="form-actions"><button class="btn-primary" id="btn-dye-frm-save">সাপ্লায়ার থেকে ক্রয় এন্ট্রি সেভ করুন</button></div>
+      <div class="placeholder-note">এই এন্ট্রি সেভ হলেই "Receive হিস্ট্রি"-তে Source = "বাইরের ক্রয়" হিসেবে যোগ হবে, অটো GRN তৈরি হবে, এবং প্রতিটা রোল সাথে সাথে Fabric Inspection-এ ইন্সপেকশনের জন্য পাওয়া যাবে — ঠিক Knitting থেকে আসা রোলের মতোই।</div>
+    </div>
+
     <div class="section-divider">Receive হিস্ট্রি</div>
     <div class="panel">
       <table>
-        <thead><tr><th>Challan No</th><th>Dyeing Unit</th><th>Received Date</th><th>রোল সংখ্যা</th><th>Challan Weight</th><th>Received Weight</th></tr></thead>
-        <tbody id="dye-fr-history-tbody"><tr><td colspan="6" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+        <thead><tr><th>Source</th><th>Challan/Bill No</th><th>Dyeing Unit / সাপ্লায়ার</th><th>Received Date</th><th>রোল সংখ্যা</th><th>Challan Weight</th><th>Received Weight</th></tr></thead>
+        <tbody id="dye-fr-history-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -5333,23 +5359,25 @@
 
   <!-- 31. Fabric Store -->
   <div class="view" id="view-dye-fabric-store">
-    <div class="view-head"><h1>Finished Fabric Store</h1><div class="meta">Module 2 — Fabric Store — QC Pass হওয়া ফিনিশড রোলের স্টক, Rack/Bin অ্যাসাইনমেন্ট</div></div>
+    <div class="view-head"><h1>Finished Fabric Store</h1><div class="meta">Module 2 — Fabric Store — QC Pass হওয়া ফিনিশড রোলের স্টক, Rack/Bin অ্যাসাইনমেন্ট। Fabric Roll Allocation-এ যে রোল ডেলিভারির জন্য অ্যালোকেট/ইস্যু হয়ে যায়, সেই পরিমাণ ওজন এখানকার স্টক থেকে অটো বাদ যায়</div></div>
     <div class="kpi-row">
-      <div class="kpi-card"><div class="kpi-label">মোট রোল</div><div class="kpi-value" id="dye-fs-kpi-rolls">০</div></div>
-      <div class="kpi-card"><div class="kpi-label">মোট ওজন (KG)</div><div class="kpi-value" id="dye-fs-kpi-weight">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">মোট রোল (স্টকে আছে)</div><div class="kpi-value" id="dye-fs-kpi-rolls">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">স্টক ইন হ্যান্ড (KG)</div><div class="kpi-value" id="dye-fs-kpi-weight">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">ডেলিভারি/অ্যালোকেশনে গেছে (KG)</div><div class="kpi-value" id="dye-fs-kpi-delivered">০</div></div>
     </div>
     <div class="panel">
       <table>
-        <thead><tr><th>Roll No</th><th>Weight (KG)</th><th>Rack/Bin</th><th>Status</th><th>অ্যাসাইন</th></tr></thead>
+        <thead><tr><th>Roll No</th><th>Remaining Weight (KG)</th><th>Rack/Bin</th><th>Status</th><th>অ্যাসাইন</th></tr></thead>
         <tbody id="dye-fabricstore-tbody"><tr><td colspan="5" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
       </table>
-      <div class="placeholder-note">এটি অটো-পপুলেটেড — Finished Fabric Receive-এ QC Status = Pass হলেই এখানে দেখাবে। প্রতিটা রোলের পাশে Rack/Bin dropdown থেকে বেছে "অ্যাসাইন" চাপলে সেই লোকেশনে স্টক লেজার আপডেট হবে।</div>
+      <div class="placeholder-note">এটি অটো-পপুলেটেড — Finished Fabric Receive-এ QC Status = Pass হলেই এখানে দেখাবে। যে রোল Fabric Roll Allocation-এ পুরোপুরি অ্যালোকেট/ইস্যু হয়ে গেছে (Remaining = 0), সেটা এই তালিকা থেকে বাদ যায় — কারণ সেটা আর স্টকে নেই। প্রতিটা রোলের পাশে Rack/Bin dropdown থেকে বেছে "অ্যাসাইন" চাপলে সেই লোকেশনে স্টক লেজার আপডেট হবে।</div>
     </div>
   </div>
 
   <!-- MODULE 2 — Stock Transfer -->
   <div class="view" id="view-dye-stock-transfer">
     <div class="view-head"><h1>Stock Transfer</h1><div class="meta">Module 2 — Fabric Store — এক স্টোর থেকে আরেক স্টোরে ফেব্রিক স্টক ট্রান্সফারের রেকর্ড</div></div>
+
     <div class="panel">
       <table>
         <thead><tr><th>From Store</th><th>To Store</th><th>Reference (Roll/Batch No)</th><th>Weight (KG)</th><th>Date</th><th>Remarks</th></tr></thead>
@@ -18702,15 +18730,120 @@ function dyeFrConfirmReceive(challanId, btn){
 function dyeFrLoadHistory(){
   const tbody = document.getElementById('dye-fr-history-tbody');
   db.collection('dyeFabricReceive').orderBy('createdAt','desc').limit(100).get().then(function(snap){
-    if(snap.empty){ tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);">এখনো কোনো রিসিভ হয়নি</td></tr>'; return; }
+    if(snap.empty){ tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);">এখনো কোনো রিসিভ হয়নি</td></tr>'; return; }
     tbody.innerHTML = snap.docs.map(function(doc){
       const d = doc.data();
-      return '<tr><td>'+(d.challanNo||'—')+'</td><td>'+(d.dyeingUnit||'—')+'</td><td>'+(d.receivedDate||'—')+'</td><td>'+((d.rolls||[]).length)+'</td><td>'+(d.challanWeight!=null?d.challanWeight:'—')+'</td><td>'+(d.receivedWeight!=null?d.receivedWeight:'—')+'</td></tr>';
+      const isOutside = d.source === 'Outside Purchase';
+      const srcPill = isOutside ? '<span class="pill mid">বাইরের ক্রয়</span>' : '<span class="pill ok">Knitting</span>';
+      return '<tr><td>'+srcPill+'</td><td>'+(d.challanNo||'—')+'</td><td>'+(d.dyeingUnit||'—')+'</td><td>'+(d.receivedDate||'—')+'</td><td>'+((d.rolls||[]).length)+'</td><td>'+(d.challanWeight!=null?d.challanWeight:'—')+'</td><td>'+(d.receivedWeight!=null?d.receivedWeight:'—')+'</td></tr>';
     }).join('');
   });
 }
 dyeFrRenderPendingChallans();
 dyeFrLoadHistory();
+
+// ---- ১০.ক FABRIC RECEIVE — বাইরের সাপ্লায়ার/মিল থেকে গ্রে ফেব্রিক ক্রয় (ম্যানুয়াল এন্ট্রি) ----
+// একই dyeFabricReceive কালেকশনে source:'Outside Purchase' দিয়ে সেভ হয়, তাই GRN/Fabric Inspection/Batch Creation
+// অটোমেটিক্যালি এই রোলগুলোকেও Knitting-এর রোলের মতোই চিনবে ও ব্যবহার করতে পারবে
+let dyeFrmItems = [];
+function dyeFrmRenderItems(){
+  const tbody = document.getElementById('dye-frm-items-tbody');
+  if(!tbody) return;
+  tbody.innerHTML = dyeFrmItems.map(function(it, i){
+    return '<tr>' +
+      '<td><input type="text" class="dye-frm-cell" data-idx="'+i+'" data-key="rollNo" value="'+(it.rollNo||'').replace(/"/g,'&quot;')+'" style="width:100px;"></td>' +
+      '<td><input type="text" class="dye-frm-cell" data-idx="'+i+'" data-key="yarnLot" value="'+(it.yarnLot||'').replace(/"/g,'&quot;')+'" style="width:90px;"></td>' +
+      '<td><input type="text" class="dye-frm-cell" data-idx="'+i+'" data-key="style" value="'+(it.style||'').replace(/"/g,'&quot;')+'" style="width:90px;"></td>' +
+      '<td><input type="text" class="dye-frm-cell" data-idx="'+i+'" data-key="fabricType" value="'+(it.fabricType||'').replace(/"/g,'&quot;')+'" style="width:110px;"></td>' +
+      '<td><input type="text" class="dye-frm-cell" data-idx="'+i+'" data-key="color" value="'+(it.color||'').replace(/"/g,'&quot;')+'" style="width:90px;"></td>' +
+      '<td><input type="text" class="dye-frm-cell" data-idx="'+i+'" data-key="count" value="'+(it.count||'').replace(/"/g,'&quot;')+'" style="width:70px;"></td>' +
+      '<td><input type="text" class="dye-frm-cell" data-idx="'+i+'" data-key="dia" value="'+(it.dia||'').replace(/"/g,'&quot;')+'" style="width:70px;"></td>' +
+      '<td><input type="number" class="dye-frm-cell" data-idx="'+i+'" data-key="gsm" value="'+(it.gsm!=null?it.gsm:'')+'" style="width:70px;"></td>' +
+      '<td><input type="number" class="dye-frm-cell" data-idx="'+i+'" data-key="weight" value="'+(it.weight!=null?it.weight:'')+'" style="width:90px;"></td>' +
+      '<td><button type="button" class="dye-frm-remove" data-idx="'+i+'" style="border:none;background:none;color:#a4342a;cursor:pointer;font-size:16px;">×</button></td>' +
+    '</tr>';
+  }).join('');
+  tbody.querySelectorAll('.dye-frm-cell').forEach(function(inp){
+    inp.addEventListener('input', function(){
+      const idx = Number(inp.dataset.idx), key = inp.dataset.key;
+      dyeFrmItems[idx][key] = (key === 'gsm' || key === 'weight') ? (inp.value === '' ? null : Number(inp.value)) : inp.value;
+      dyeFrmCalcTotal();
+    });
+  });
+  tbody.querySelectorAll('.dye-frm-remove').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      dyeFrmItems.splice(Number(btn.dataset.idx), 1);
+      dyeFrmRenderItems();
+      dyeFrmCalcTotal();
+    });
+  });
+  dyeFrmCalcTotal();
+}
+function dyeFrmCalcTotal(){
+  const total = dyeFrmItems.reduce(function(s, it){ return s + (Number(it.weight)||0); }, 0);
+  const el = document.getElementById('dye-frm-total-weight');
+  if(el) el.textContent = total;
+  return total;
+}
+document.getElementById('btn-dye-frm-addline') && document.getElementById('btn-dye-frm-addline').addEventListener('click', function(){
+  const seq = String(dyeFrmItems.length + 1).padStart(3, '0');
+  dyeFrmItems.push({ rollNo: 'OUT-' + Date.now().toString().slice(-6) + '-' + seq, yarnLot:'', style:'', fabricType:'', color:'', count:'', dia:'', gsm:null, weight:null });
+  dyeFrmRenderItems();
+});
+document.getElementById('btn-dye-frm-save') && document.getElementById('btn-dye-frm-save').addEventListener('click', function(){
+  const dateStr = document.getElementById('dye-frm-date').value;
+  const supplier = document.getElementById('dye-frm-supplier').value.trim();
+  const billNo = document.getElementById('dye-frm-billno').value.trim();
+  const reference = document.getElementById('dye-frm-reference').value.trim();
+  if(!dateStr){ fbToast('⚠ আগে তারিখ দিন', true); return; }
+  if(!supplier){ fbToast('⚠ সাপ্লায়ার/মিল নাম দিন', true); return; }
+  if(!dyeFrmItems.length){ fbToast('⚠ অন্তত একটা রোল যোগ করুন', true); return; }
+  const invalid = dyeFrmItems.some(function(it){ return !it.rollNo || !it.weight || it.weight <= 0; });
+  if(invalid){ fbToast('⚠ প্রতিটা রোলের Roll No ও Weight (KG) ঠিকভাবে দিন', true); return; }
+  const totalWeight = dyeFrmCalcTotal();
+  const btn = this;
+  btn.disabled = true; btn.textContent = 'সেভ হচ্ছে...';
+  const challanNo = 'EXT-' + (billNo || Date.now().toString().slice(-7));
+  const rolls = dyeFrmItems.map(function(it){
+    return {
+      rollNo: it.rollNo, orderNo: reference || '—', yarnLot: it.yarnLot || '', style: it.style || '',
+      fabricType: it.fabricType || '', color: it.color || '', count: it.count || '', dia: it.dia || '',
+      gsm: it.gsm != null ? it.gsm : null, weight: Number(it.weight)||0,
+      challanWeight: Number(it.weight)||0, receivedWeight: Number(it.weight)||0
+    };
+  });
+  db.collection('dyeFabricReceive').add({
+    source: 'Outside Purchase', challanNo: challanNo, dyeingUnit: supplier, supplierName: supplier,
+    billNo: billNo, reference: reference, receivedDate: dateStr,
+    rolls: rolls, challanWeight: totalWeight, receivedWeight: totalWeight,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function(){
+    const grnNo = 'GRN-' + Date.now().toString().slice(-6);
+    return db.collection('dyeGRN').add({
+      grnNo: grnNo, challanNo: challanNo, dyeingUnit: supplier, receivedDate: dateStr,
+      challanWeight: totalWeight, receivedWeight: totalWeight, shortExcess: 0,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }).then(function(){
+    fbToast('✓ সাপ্লায়ার থেকে ক্রয় এন্ট্রি সেভ হয়েছে, Fabric Inspection-এ পাওয়া যাবে');
+    dyeFrmItems = [];
+    document.getElementById('dye-frm-supplier').value = '';
+    document.getElementById('dye-frm-billno').value = '';
+    document.getElementById('dye-frm-reference').value = '';
+    dyeFrmRenderItems();
+    dyeFrLoadHistory();
+    if(typeof dyeLoadGRN === 'function') dyeLoadGRN();
+  }).catch(function(err){
+    fbToast('⚠ সেভ ব্যর্থ: ' + err.message, true);
+  }).finally(function(){
+    btn.disabled = false; btn.textContent = 'সাপ্লায়ার থেকে ক্রয় এন্ট্রি সেভ করুন';
+  });
+});
+(function dyeFrmInit(){
+  const dateInput = document.getElementById('dye-frm-date');
+  if(dateInput && !dateInput.value) dateInput.value = new Date().toISOString().slice(0,10);
+  dyeFrmRenderItems();
+})();
 
 // ---- 11. FABRIC RECEIVING / GRN (Fabric Receive থেকে অটো তৈরি হয়) ----
 function dyeLoadGRN(){
@@ -20433,11 +20566,14 @@ function dyeFabricPipelineDashboardInit(){
       if(m) finishMonthTotals[m] = (finishMonthTotals[m]||0) + q;
     });
 
-    // ফিনিশড স্টক = Finished Fabric Receive-এ QC Status = Pass
+    // ফিনিশড স্টক = Finished Fabric Receive-এ QC Status = Pass, বিয়োগ যা Fabric Roll Allocation-এ ডেলিভারির জন্য অ্যালোকেট/ইস্যু হয়ে গেছে (remainingWeight)
     let finishedStock = 0;
     frSnap.forEach(function(doc){
       const d = doc.data();
-      if(d.qcStatus === 'Pass') finishedStock += Number(d.verifiedWeight)||0;
+      if(d.qcStatus === 'Pass'){
+        const verified = Number(d.verifiedWeight) || 0;
+        finishedStock += (d.remainingWeight != null) ? Number(d.remainingWeight) : verified;
+      }
     });
 
     const setKpi = function(id, val){ const el = document.getElementById(id); if(el) el.textContent = val.toFixed(1); };
@@ -20617,15 +20753,19 @@ document.getElementById('btn-qc-be-filter') && document.getElementById('btn-qc-b
 // ---- ৩. Party Stock Overview (শুধু দেখার জন্য — Finishing Department থেকে অটো) ----
 function qcPartyStockInit(){
   const tbody = document.getElementById('qc-ps-tbody');
-  if(tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
-  db.collection('dyeFinishFabricEntry').get().then(function(snap){
+  if(tbody) tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  Promise.all([
+    db.collection('dyeFinishFabricEntry').get(),
+    db.collection('dyeM9DeliveryChallan').get()
+  ]).then(function(results){
+    const snap = results[0], challanSnap = results[1];
     const partyMap = {};
     function keyFor(name){ return (name||'').trim().toLowerCase(); }
     function ensure(name){
       const k = keyFor(name);
       if(!k) return null;
       if(!partyMap[k]) partyMap[k] = {
-        display: name.trim(), orderQty: 0, output: 0, count: 0,
+        display: name.trim(), orderQty: 0, output: 0, delivered: 0, count: 0,
         orders: new Set(), lots: new Set(), styles: new Set(), orderQtyByOrder: {}
       };
       return partyMap[k];
@@ -20658,21 +20798,35 @@ function qcPartyStockInit(){
         p.orderQtyByOrder[orderKey] = Number(d.orderQtyKg);
       }
     });
+    // Dyeing Delivery Challan (Module 9 — Fabric Delivery) থেকে পার্টি-ভিত্তিক ডেলিভারি — এই পরিমাণ Stock in Hand থেকে বিয়োগ হবে
+    challanSnap.forEach(function(doc){
+      const d = doc.data();
+      (d.items||[]).forEach(function(it){
+        if(!it.buyer) return;
+        const p = ensure(it.buyer);
+        if(!p) return;
+        p.delivered += Number(it.finWt) || 0;
+      });
+    });
     const parties = Object.keys(partyMap).map(function(k){ return partyMap[k]; });
     parties.forEach(function(p){ p.orderQty = Object.values(p.orderQtyByOrder).reduce(function(a,b){ return a+b; }, 0); });
     parties.sort(function(a,b){ return b.output - a.output; });
 
-    let totalOrderQty = 0, totalOutput = 0;
-    parties.forEach(function(p){ totalOrderQty += p.orderQty; totalOutput += p.output; });
+    let totalOrderQty = 0, totalOutput = 0, totalDelivered = 0;
+    parties.forEach(function(p){ totalOrderQty += p.orderQty; totalOutput += p.output; totalDelivered += p.delivered; });
 
     const setKpi = function(id, val){ const el = document.getElementById(id); if(el) el.textContent = val.toFixed(1); };
     setKpi('qc-ps-total-order', totalOrderQty);
     setKpi('qc-ps-total-output', totalOutput);
     const countEl = document.getElementById('qc-ps-party-count');
     if(countEl) countEl.textContent = parties.length;
+    const deliveredEl = document.getElementById('qc-ps-total-delivered');
+    if(deliveredEl) deliveredEl.textContent = totalDelivered.toFixed(1);
 
     if(tbody){
       tbody.innerHTML = parties.length ? parties.map(function(p){
+        const stockInHand = p.output - p.delivered;
+        const stockStyle = stockInHand > 0 ? 'style="color:#1e7d43;font-weight:600;"' : (stockInHand < 0 ? 'style="color:#a4342a;font-weight:600;"' : '');
         return '<tr>'
           + '<td>'+escapeHtml(p.display)+'</td>'
           + '<td>'+joinSet(p.orders, 2)+'</td>'
@@ -20680,12 +20834,14 @@ function qcPartyStockInit(){
           + '<td>'+joinSet(p.styles, 2)+'</td>'
           + '<td>'+(p.orderQty>0 ? p.orderQty.toFixed(1) : '—')+'</td>'
           + '<td>'+p.output.toFixed(1)+'</td>'
+          + '<td>'+p.delivered.toFixed(1)+'</td>'
+          + '<td '+stockStyle+'>'+stockInHand.toFixed(1)+'</td>'
           + '<td>'+p.count+'</td>'
           + '</tr>';
-      }).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--muted);">কোনো ডেটা নেই</td></tr>';
+      }).join('') : '<tr><td colspan="9" style="text-align:center;color:var(--muted);">কোনো ডেটা নেই</td></tr>';
     }
   }).catch(function(err){
-    if(tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+    if(tbody) tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
   });
 }
 
@@ -21011,6 +21167,57 @@ const renderDyeM9RollAlloc = wireFlatCollectionTable({
   rowRenderer: function(d){
     const cls = d.status === 'Issued' ? 'pill ok' : (d.status === 'Cancelled' ? 'pill warn' : 'pill mid');
     return '<td>'+(d.requisition||'—')+'</td><td>'+(d.rollNo||'—')+'</td><td>'+(d.allocatedWeight!=null?d.allocatedWeight:'—')+'</td><td>'+(d.allocationDate||'—')+'</td><td><span class="'+cls+'">'+(d.status||'Allocated')+'</span></td>';
+  },
+  onAdd: function(colRef, render){
+    openFbAddModal({
+      title: 'নতুন ফেব্রিক রোল অ্যালোকেশন',
+      subtitle: 'Roll বেছে নিলেই সেই রোলের Fabric Store স্টক (Remaining Weight) অটো কমে যাবে — Cancelled দিলে স্টক ফেরত যাবে না, তাই সাবধানে বেছে নিন',
+      fields: [
+        { label: 'Requisition', key: 'requisition', dynamicOptions: dyeM9ApprovedReqDynamicOptions },
+        { label: 'Roll (FIFO)', key: 'rollPick', dynamicOptions: dyeFifoRollDynamicOptions },
+        { label: 'Allocated Weight (KG)', key: 'allocatedWeight', type: 'number' },
+        { label: 'Allocation Date', key: 'allocationDate', type: 'date' },
+        { label: 'Status', key: 'status', options: ['Allocated','Issued','Cancelled'] }
+      ],
+      onSave: function(data){
+        const rollNo = (data.rollPick || '').split(' — ')[0] || '';
+        const allocatedWeight = Number(data.allocatedWeight) || 0;
+        const status = data.status || 'Allocated';
+        if(!rollNo || allocatedWeight <= 0){
+          fbToast('⚠ রোল বা Allocated Weight ঠিক নেই', true);
+          return Promise.resolve();
+        }
+        const savePayload = {
+          requisition: data.requisition, rollNo: rollNo, allocatedWeight: allocatedWeight,
+          allocationDate: data.allocationDate, status: status,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        // Cancelled অ্যালোকেশনে স্টক থেকে কিছু বিয়োগ হবে না
+        if(status === 'Cancelled'){
+          return colRef.add(savePayload).then(function(){
+            fbToast('✓ অ্যালোকেশন সেভ হয়েছে (Cancelled — স্টক অপরিবর্তিত)');
+            render();
+          });
+        }
+        return db.collection('dyeFinishedReceive').where('rollNo','==', rollNo).limit(1).get().then(function(snap){
+          if(snap.empty){
+            fbToast('⚠ রোল পাওয়া যায়নি', true);
+            return;
+          }
+          const rollDoc = snap.docs[0];
+          const rd = rollDoc.data();
+          const currentRemaining = (rd.remainingWeight != null) ? rd.remainingWeight : (rd.verifiedWeight || 0);
+          const remainingAfter = Math.max(currentRemaining - allocatedWeight, 0);
+          return colRef.add(savePayload).then(function(){
+            return rollDoc.ref.update({ remainingWeight: remainingAfter });
+          }).then(function(){
+            fbToast('✓ অ্যালোকেশন সেভ হয়েছে, Fabric Store স্টক অটো কমে গেছে');
+            render();
+            if(typeof dyeLoadFabricStore === 'function') dyeLoadFabricStore();
+          });
+        });
+      }
+    });
   }
 });
 renderDyeM9RollAlloc();
@@ -21587,6 +21794,7 @@ const renderDyeFinishedReceive = wireFlatCollectionTable({
 renderDyeFinishedReceive();
 
 // ---- 31. FABRIC STORE (auto-populated, QC Pass রোল + Rack/Bin অ্যাসাইনমেন্ট) ----
+// স্টক ইন হ্যান্ড = remainingWeight (Fabric Roll Allocation-এ অ্যালোকেট/ইস্যু হলে এই মান অটো কমে)
 function dyeLoadFabricStore(){
   const tbody = document.getElementById('dye-fabricstore-tbody');
   Promise.all([
@@ -21599,17 +21807,21 @@ function dyeLoadFabricStore(){
       return (d.rackCode || doc.id) + ' — ' + (d.warehouse||'—');
     });
     const rows = [];
-    let totalWeight = 0;
+    let totalWeight = 0, totalDelivered = 0;
     receiveSnap.forEach(function(doc){
       const d = doc.data();
       if(d.qcStatus === 'Pass'){
-        totalWeight += Number(d.verifiedWeight)||0;
+        const verified = Number(d.verifiedWeight) || 0;
+        const remaining = (d.remainingWeight != null) ? Number(d.remainingWeight) : verified;
+        totalDelivered += Math.max(verified - remaining, 0);
+        if(remaining <= 0) return; // পুরোপুরি অ্যালোকেট/ইস্যু হয়ে গেছে — আর স্টকে নেই
+        totalWeight += remaining;
         const selectHtml = '<select class="dye-fs-rack-select" data-id="'+doc.id+'" style="font-size:12px;">' +
           '<option value="">— Rack/Bin বেছে নিন —</option>' +
           rackOptions.map(function(o){ return '<option value="'+o.replace(/"/g,'&quot;')+'"'+(d.rackBin===o?' selected':'')+'>'+o+'</option>'; }).join('') +
         '</select>';
         rows.push(
-          '<tr><td>'+(d.rollNo||'—')+'</td><td>'+(d.verifiedWeight!=null?d.verifiedWeight:'—')+'</td>'+
+          '<tr><td>'+(d.rollNo||'—')+'</td><td>'+remaining+'</td>'+
           '<td>'+(d.rackBin||'অ্যাসাইন করা হয়নি')+'</td>'+
           '<td><span class="pill ok">In Store</span></td>'+
           '<td style="display:flex; gap:6px; align-items:center;">'+selectHtml+'<button class="btn-secondary dye-fs-assign-btn" data-id="'+doc.id+'" style="padding:4px 10px;font-size:11px;">অ্যাসাইন</button></td></tr>'
@@ -21619,6 +21831,8 @@ function dyeLoadFabricStore(){
     tbody.innerHTML = rows.length ? rows.join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);">কোনো ফিনিশড ফেব্রিক স্টকে নেই</td></tr>';
     document.getElementById('dye-fs-kpi-rolls').textContent = rows.length;
     document.getElementById('dye-fs-kpi-weight').textContent = totalWeight;
+    const deliveredEl = document.getElementById('dye-fs-kpi-delivered');
+    if(deliveredEl) deliveredEl.textContent = totalDelivered;
 
     tbody.querySelectorAll('.dye-fs-assign-btn').forEach(function(btn){
       btn.addEventListener('click', function(){
