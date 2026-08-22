@@ -772,6 +772,19 @@
           </div>
         </div>
 
+        <div class="menu-subgroup" data-subgroup="dye-mod-qc">
+          <div class="menu-subgroup-head" data-toggle="body-dye-mod-qc">
+            <span>QC Department</span>
+            <span class="chevron">›</span>
+          </div>
+          <div class="menu-subgroup-body" id="body-dye-mod-qc">
+            <div class="nav-item group-link" data-view="qc-dashboard"><span class="dot"></span> ১. QC ডিপার্টমেন্ট ড্যাশবোর্ড</div>
+            <div class="nav-item group-link" data-view="qc-batch-entry"><span class="dot"></span> ২. ব্যাচ QC এন্ট্রি</div>
+            <div class="nav-item group-link" data-view="qc-party-stock"><span class="dot"></span> ৩. Party Stock Overview</div>
+            <div class="nav-item group-link" data-view="qc-delivery-list"><span class="dot"></span> ৪. ডেলিভারি লিস্ট (OK / Not OK)</div>
+          </div>
+        </div>
+
         <div class="menu-subgroup" data-subgroup="dye-mod2">
           <div class="menu-subgroup-head" data-toggle="body-dye-mod2">
             <span>Module 2 — Fabric Store</span>
@@ -4302,6 +4315,115 @@
         <tbody id="dye-ffe-summary-tbody"><tr><td colspan="6" style="text-align:center;color:var(--muted);">"সামারি দেখুন" চাপুন</td></tr></tbody>
       </table>
       <div class="placeholder-note">একই Order/Lot-এর Order Qty একবারই গণনায় ধরা হয় (একাধিক ফিনিশ এন্ট্রি থাকলেও ডাবল-কাউন্ট হবে না) — তাই "ফিনিশড %" নির্ভরযোগ্যভাবে বোঝাবে মোট অর্ডারের কত শতাংশ ফিনিশ হয়ে গেছে।</div>
+    </div>
+  </div>
+
+  <!-- ==================== QC DEPARTMENT ==================== -->
+
+  <!-- QC Department — ১. QC ডিপার্টমেন্ট ড্যাশবোর্ড -->
+  <div class="view" id="view-qc-dashboard">
+    <div class="view-head"><h1>QC ডিপার্টমেন্ট ড্যাশবোর্ড</h1><div class="meta">QC Department — মোট QC হওয়া ব্যাচ, কতগুলো OK ও কতগুলো Not OK — একনজরে দেখুন</div></div>
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">মোট QC ব্যাচ</div><div class="kpi-value" id="qc-dash-total">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">OK ব্যাচ</div><div class="kpi-value" id="qc-dash-ok" style="color:#1e7d43;">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">Not OK ব্যাচ</div><div class="kpi-value" id="qc-dash-notok" style="color:#a4342a;">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">আজকের QC এন্ট্রি</div><div class="kpi-value" id="qc-dash-today">০</div></div>
+    </div>
+    <div class="section-divider">সাম্প্রতিক QC এন্ট্রি</div>
+    <div class="panel" style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>তারিখ</th><th>Batch No</th><th>Party</th><th>চেকার</th><th>ফলাফল</th><th>রিমার্কস</th></tr></thead>
+        <tbody id="qc-dash-tbody"><tr><td colspan="6" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- QC Department — ২. ব্যাচ QC এন্ট্রি -->
+  <div class="view" id="view-qc-batch-entry">
+    <div class="view-head"><h1>ব্যাচ QC এন্ট্রি</h1><div class="meta">QC Department — প্রতিটা ব্যাচ এখানে এন্ট্রি করুন, ফলাফল OK দিলে ব্যাচ ডেলিভারির যোগ্য বলে বিবেচিত হবে, Not OK দিলে রিমার্কসসহ ডেলিভারি Stop লিস্টে যাবে</div></div>
+    <div class="panel">
+      <div class="form-grid">
+        <div class="form-field"><label>তারিখ</label><input type="date" id="qc-be-date"></div>
+        <div class="form-field"><label>Batch No</label><input type="text" id="qc-be-batchno" placeholder="যেমনঃ BATCH-000123"></div>
+        <div class="form-field"><label>Party / Buyer</label><input type="text" id="qc-be-party" list="qc-be-party-datalist" placeholder="যেমনঃ ABC Buying House"></div>
+        <div class="form-field"><label>Lot No (ঐচ্ছিক)</label><input type="text" id="qc-be-lotno" placeholder="যেমনঃ LOT-045"></div>
+        <div class="form-field"><label>Order No (ঐচ্ছিক)</label><input type="text" id="qc-be-orderno" placeholder="যেমনঃ ORD-2201"></div>
+        <div class="form-field"><label>চেক করেছেন</label><input type="text" id="qc-be-checker" placeholder="QC ইন্সপেক্টরের নাম"></div>
+        <div class="form-field">
+          <label>ফলাফল</label>
+          <select id="qc-be-result">
+            <option value="OK">OK — ডেলিভারির যোগ্য</option>
+            <option value="Not OK">Not OK — ডেলিভারি Stop</option>
+          </select>
+        </div>
+        <div class="form-field"><label>রিমার্কস (Not OK হলে কারণ লিখুন)</label><input type="text" id="qc-be-remarks" placeholder="যেমনঃ Shade mismatch"></div>
+      </div>
+      <datalist id="qc-be-party-datalist"></datalist>
+      <div class="form-actions"><button class="btn-primary" id="btn-qc-be-save">ব্যাচ QC এন্ট্রি সেভ করুন</button></div>
+    </div>
+
+    <div class="section-divider">QC এন্ট্রি হিস্ট্রি (ফিল্টার করুন)</div>
+    <div class="panel">
+      <div class="form-grid">
+        <div class="form-field"><label>Party ফিল্টার</label><input type="text" id="qc-be-filter-party" list="qc-be-party-datalist" placeholder="সব পার্টি"></div>
+        <div class="form-field">
+          <label>ফলাফল ফিল্টার</label>
+          <select id="qc-be-filter-result">
+            <option value="">সব</option>
+            <option value="OK">OK</option>
+            <option value="Not OK">Not OK</option>
+          </select>
+        </div>
+        <div class="form-field"><label>শুরুর তারিখ</label><input type="date" id="qc-be-filter-from"></div>
+        <div class="form-field"><label>শেষ তারিখ</label><input type="date" id="qc-be-filter-to"></div>
+        <div class="form-field" style="align-self:flex-end;"><button class="btn-secondary" id="btn-qc-be-filter" style="width:100%;">ফিল্টার করুন</button></div>
+      </div>
+    </div>
+    <div class="panel" style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>তারিখ</th><th>Batch No</th><th>Party</th><th>Lot No</th><th>Order No</th><th>চেকার</th><th>ফলাফল</th><th>রিমার্কস</th><th>এন্ট্রি করেছেন</th></tr></thead>
+        <tbody id="qc-be-tbody"><tr><td colspan="9" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+      <div class="placeholder-note">ডিফল্টভাবে সর্বশেষ ৩০০টি এন্ট্রি দেখানো হয় — নির্দিষ্ট পার্টি, ফলাফল বা তারিখ রেঞ্জ দিয়ে ফিল্টার করে খুঁজে নিন।</div>
+    </div>
+  </div>
+
+  <!-- QC Department — ৩. Party Stock Overview (শুধু দেখার জন্য) -->
+  <div class="view" id="view-qc-party-stock">
+    <div class="view-head"><h1>Party Stock Overview <span style="font-size:12px; font-weight:400; color:var(--g4);">(শুধু দেখার জন্য)</span></h1><div class="meta">QC Department — Finishing Department থেকে যেসব ফিনিশড ফেব্রিক এন্ট্রি হয়েছে, তার পার্টি-ভিত্তিক সামারি এখানে অটো দেখা যাবে। এই পেজ থেকে কোনো এন্ট্রি, এডিট বা ডিলিট করা যাবে না</div></div>
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">মোট Order Qty (KG)</div><div class="kpi-value" id="qc-ps-total-order">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">মোট ফিনিশড Output (KG)</div><div class="kpi-value" id="qc-ps-total-output">০</div></div>
+      <div class="kpi-card"><div class="kpi-label">সক্রিয় পার্টি সংখ্যা</div><div class="kpi-value" id="qc-ps-party-count">০</div></div>
+    </div>
+    <div class="panel" style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Party / Buyer</th><th>Order No</th><th>Lot No</th><th>Style</th><th>মোট Order Qty (KG)</th><th>মোট ফিনিশড Output (KG)</th><th>এন্ট্রি সংখ্যা</th></tr></thead>
+        <tbody id="qc-ps-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+      <div class="placeholder-note">এই ডেটা Finishing Department → Finish Fabric Entry থেকে সরাসরি টেনে আনা হয় — QC ডিপার্টমেন্ট শুধু দেখতে পারবে, এখান থেকে কোনো পরিবর্তন করা যাবে না।</div>
+    </div>
+  </div>
+
+  <!-- QC Department — ৪. ডেলিভারি লিস্ট (OK / Not OK) -->
+  <div class="view" id="view-qc-delivery-list">
+    <div class="view-head"><h1>ডেলিভারি লিস্ট (OK / Not OK)</h1><div class="meta">QC Department — ব্যাচ QC এন্ট্রি থেকে অটো তৈরি হওয়া তালিকা: কোন ব্যাচ ডেলিভারির যোগ্য (OK) এবং কোন ব্যাচ Stop (Not OK) আছে</div></div>
+
+    <div class="section-divider">🛑 ডেলিভারি Stop / Not OK ব্যাচ</div>
+    <div class="panel" style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>তারিখ</th><th>Batch No</th><th>Party</th><th>Lot No</th><th>Order No</th><th>চেকার</th><th>রিমার্কস</th></tr></thead>
+        <tbody id="qc-dl-notok-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="section-divider">✅ OK ব্যাচ (ডেলিভারির যোগ্য)</div>
+    <div class="panel" style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>তারিখ</th><th>Batch No</th><th>Party</th><th>Lot No</th><th>Order No</th><th>চেকার</th></tr></thead>
+        <tbody id="qc-dl-ok-tbody"><tr><td colspan="6" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr></tbody>
+      </table>
+      <div class="placeholder-note">এই দুই তালিকা ব্যাচ QC এন্ট্রি পাতা থেকে ফলাফল (OK / Not OK) অনুযায়ী অটোমেটিক আলাদা হয়ে যায়। ফলাফল পরিবর্তন করতে হলে "ব্যাচ QC এন্ট্রি" পাতায় গিয়ে নতুন এন্ট্রি দিন।</div>
     </div>
   </div>
 
@@ -20361,6 +20483,240 @@ function dyeFabricPipelineDashboardInit(){
   });
 }
 
+// ==================== QC DEPARTMENT ====================
+// কালেকশন: qcBatchEntry { date, batchNo, party, lotNo, orderNo, checkedBy, result('OK'/'Not OK'), remarks, enteredBy, createdAt }
+
+function qcLoadPartyDatalist(){
+  const dl = document.getElementById('qc-be-party-datalist');
+  if(!dl) return;
+  db.collection('dyeFinishFabricEntry').get().then(function(snap){
+    const parties = new Set();
+    snap.forEach(function(doc){ const p = doc.data().party; if(p) parties.add(p); });
+    dl.innerHTML = Array.from(parties).sort().map(function(p){ return '<option value="'+escapeHtml(p)+'">'; }).join('');
+  }).catch(function(){});
+}
+
+// ---- ১. QC ডিপার্টমেন্ট ড্যাশবোর্ড ----
+function qcDashboardInit(){
+  const tbody = document.getElementById('qc-dash-tbody');
+  if(tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  db.collection('qcBatchEntry').orderBy('date','desc').limit(500).get().then(function(snap){
+    let total = 0, ok = 0, notOk = 0;
+    const today = new Date().toISOString().slice(0,10);
+    let todayCount = 0;
+    const docs = snap.docs;
+    docs.forEach(function(doc){
+      const d = doc.data();
+      total++;
+      if(d.result === 'Not OK') notOk++; else ok++;
+      if(d.date === today) todayCount++;
+    });
+    const setKpi = function(id, val){ const el = document.getElementById(id); if(el) el.textContent = val; };
+    setKpi('qc-dash-total', total);
+    setKpi('qc-dash-ok', ok);
+    setKpi('qc-dash-notok', notOk);
+    setKpi('qc-dash-today', todayCount);
+    if(tbody){
+      const recent = docs.slice(0, 20);
+      tbody.innerHTML = recent.length ? recent.map(function(doc){
+        const d = doc.data();
+        const resultStyle = d.result === 'Not OK' ? 'style="color:#a4342a;font-weight:600;"' : 'style="color:#1e7d43;font-weight:600;"';
+        return '<tr><td>'+(d.date||'—')+'</td><td>'+escapeHtml(d.batchNo||'—')+'</td><td>'+escapeHtml(d.party||'—')+'</td><td>'+escapeHtml(d.checkedBy||'—')+'</td><td '+resultStyle+'>'+(d.result||'—')+'</td><td>'+escapeHtml(d.remarks||'—')+'</td></tr>';
+      }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);">কোনো QC এন্ট্রি পাওয়া যায়নি</td></tr>';
+    }
+  }).catch(function(err){
+    if(tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+  });
+}
+
+// ---- ২. ব্যাচ QC এন্ট্রি ----
+function qcBatchEntryInit(){
+  const dateInput = document.getElementById('qc-be-date');
+  if(dateInput && !dateInput.value) dateInput.value = new Date().toISOString().slice(0,10);
+  qcLoadPartyDatalist();
+  qcBeLoadHistory();
+}
+function qcBeRenderRows(docs){
+  const tbody = document.getElementById('qc-be-tbody');
+  if(!tbody) return;
+  if(!docs.length){
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);">কোনো এন্ট্রি পাওয়া যায়নি</td></tr>';
+    return;
+  }
+  tbody.innerHTML = docs.map(function(doc){
+    const d = doc.data();
+    const resultStyle = d.result === 'Not OK' ? 'style="color:#a4342a;font-weight:600;"' : 'style="color:#1e7d43;font-weight:600;"';
+    return '<tr><td>'+(d.date||'—')+'</td><td>'+escapeHtml(d.batchNo||'—')+'</td><td>'+escapeHtml(d.party||'—')+'</td><td>'+escapeHtml(d.lotNo||'—')+'</td><td>'+escapeHtml(d.orderNo||'—')+'</td><td>'+escapeHtml(d.checkedBy||'—')+'</td><td '+resultStyle+'>'+(d.result||'—')+'</td><td>'+escapeHtml(d.remarks||'—')+'</td><td>'+escapeHtml(d.enteredBy||'—')+'</td></tr>';
+  }).join('');
+}
+function qcBeLoadHistory(){
+  const tbody = document.getElementById('qc-be-tbody');
+  if(!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  db.collection('qcBatchEntry').orderBy('date','desc').limit(300).get().then(function(snap){
+    qcBeRenderRows(snap.docs);
+  }).catch(function(err){
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+  });
+}
+document.getElementById('btn-qc-be-save') && document.getElementById('btn-qc-be-save').addEventListener('click', function(){
+  const dateStr = document.getElementById('qc-be-date').value;
+  const batchNo = document.getElementById('qc-be-batchno').value.trim();
+  const party = document.getElementById('qc-be-party').value.trim();
+  const lotNo = document.getElementById('qc-be-lotno').value.trim();
+  const orderNo = document.getElementById('qc-be-orderno').value.trim();
+  const checkedBy = document.getElementById('qc-be-checker').value.trim();
+  const result = document.getElementById('qc-be-result').value;
+  const remarks = document.getElementById('qc-be-remarks').value.trim();
+  if(!dateStr){ fbToast('⚠ আগে তারিখ দিন', true); return; }
+  if(!batchNo){ fbToast('⚠ Batch No দিন', true); return; }
+  if(result === 'Not OK' && !remarks){ fbToast('⚠ Not OK হলে রিমার্কসে কারণ লিখুন', true); return; }
+  const btn = this;
+  btn.disabled = true; btn.textContent = 'সেভ হচ্ছে...';
+  const enteredBy = (window.firebase && firebase.auth().currentUser) ? (firebase.auth().currentUser.displayName || firebase.auth().currentUser.email || '—') : '—';
+  db.collection('qcBatchEntry').add({
+    date: dateStr, batchNo: batchNo, party: party, lotNo: lotNo, orderNo: orderNo,
+    checkedBy: checkedBy, result: result, remarks: remarks, enteredBy: enteredBy,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function(){
+    fbToast('✓ ব্যাচ QC এন্ট্রি সেভ হয়েছে');
+    document.getElementById('qc-be-batchno').value = '';
+    document.getElementById('qc-be-lotno').value = '';
+    document.getElementById('qc-be-orderno').value = '';
+    document.getElementById('qc-be-checker').value = '';
+    document.getElementById('qc-be-remarks').value = '';
+    document.getElementById('qc-be-result').value = 'OK';
+    qcBeLoadHistory();
+  }).catch(function(err){
+    fbToast('⚠ সেভ ব্যর্থ: ' + err.message, true);
+  }).finally(function(){
+    btn.disabled = false; btn.textContent = 'ব্যাচ QC এন্ট্রি সেভ করুন';
+  });
+});
+document.getElementById('btn-qc-be-filter') && document.getElementById('btn-qc-be-filter').addEventListener('click', function(){
+  const party = document.getElementById('qc-be-filter-party').value.trim();
+  const result = document.getElementById('qc-be-filter-result').value;
+  const from = document.getElementById('qc-be-filter-from').value;
+  const to = document.getElementById('qc-be-filter-to').value;
+  const tbody = document.getElementById('qc-be-tbody');
+  tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  let q = db.collection('qcBatchEntry');
+  if(party) q = q.where('party', '==', party);
+  if(result) q = q.where('result', '==', result);
+  q.get().then(function(snap){
+    let docs = snap.docs;
+    if(from) docs = docs.filter(function(doc){ return (doc.data().date||'') >= from; });
+    if(to) docs = docs.filter(function(doc){ return (doc.data().date||'') <= to; });
+    docs.sort(function(a,b){ return (b.data().date||'').localeCompare(a.data().date||''); });
+    qcBeRenderRows(docs.slice(0, 1000));
+  }).catch(function(err){
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+  });
+});
+
+// ---- ৩. Party Stock Overview (শুধু দেখার জন্য — Finishing Department থেকে অটো) ----
+function qcPartyStockInit(){
+  const tbody = document.getElementById('qc-ps-tbody');
+  if(tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  db.collection('dyeFinishFabricEntry').get().then(function(snap){
+    const partyMap = {};
+    function keyFor(name){ return (name||'').trim().toLowerCase(); }
+    function ensure(name){
+      const k = keyFor(name);
+      if(!k) return null;
+      if(!partyMap[k]) partyMap[k] = {
+        display: name.trim(), orderQty: 0, output: 0, count: 0,
+        orders: new Set(), lots: new Set(), styles: new Set(), orderQtyByOrder: {}
+      };
+      return partyMap[k];
+    }
+    function addAll(set, values){
+      (values||[]).forEach(function(v){
+        if(v === null || v === undefined) return;
+        const s = String(v).trim();
+        if(s) set.add(s);
+      });
+    }
+    function joinSet(set, limit){
+      const arr = Array.from(set);
+      if(!arr.length) return '—';
+      if(arr.length <= limit) return arr.join(', ');
+      return arr.slice(0, limit).join(', ') + ' +' + (arr.length - limit) + ' more';
+    }
+    snap.forEach(function(doc){
+      const d = doc.data();
+      if(!d.party) return;
+      const p = ensure(d.party);
+      if(!p) return;
+      p.output += Number(d.outputQtyKg) || 0;
+      p.count += 1;
+      addAll(p.orders, [d.orderNo]);
+      addAll(p.lots, [d.lotNo]);
+      addAll(p.styles, [d.style]);
+      const orderKey = (d.orderNo && String(d.orderNo).trim()) ? String(d.orderNo).trim() : ('__nolot__' + (d.lotNo||'') + '__' + keyFor(d.party));
+      if(d.orderQtyKg != null && !isNaN(Number(d.orderQtyKg))){
+        p.orderQtyByOrder[orderKey] = Number(d.orderQtyKg);
+      }
+    });
+    const parties = Object.keys(partyMap).map(function(k){ return partyMap[k]; });
+    parties.forEach(function(p){ p.orderQty = Object.values(p.orderQtyByOrder).reduce(function(a,b){ return a+b; }, 0); });
+    parties.sort(function(a,b){ return b.output - a.output; });
+
+    let totalOrderQty = 0, totalOutput = 0;
+    parties.forEach(function(p){ totalOrderQty += p.orderQty; totalOutput += p.output; });
+
+    const setKpi = function(id, val){ const el = document.getElementById(id); if(el) el.textContent = val.toFixed(1); };
+    setKpi('qc-ps-total-order', totalOrderQty);
+    setKpi('qc-ps-total-output', totalOutput);
+    const countEl = document.getElementById('qc-ps-party-count');
+    if(countEl) countEl.textContent = parties.length;
+
+    if(tbody){
+      tbody.innerHTML = parties.length ? parties.map(function(p){
+        return '<tr>'
+          + '<td>'+escapeHtml(p.display)+'</td>'
+          + '<td>'+joinSet(p.orders, 2)+'</td>'
+          + '<td>'+joinSet(p.lots, 2)+'</td>'
+          + '<td>'+joinSet(p.styles, 2)+'</td>'
+          + '<td>'+(p.orderQty>0 ? p.orderQty.toFixed(1) : '—')+'</td>'
+          + '<td>'+p.output.toFixed(1)+'</td>'
+          + '<td>'+p.count+'</td>'
+          + '</tr>';
+      }).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--muted);">কোনো ডেটা নেই</td></tr>';
+    }
+  }).catch(function(err){
+    if(tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+  });
+}
+
+// ---- ৪. ডেলিভারি লিস্ট (OK / Not OK) — qcBatchEntry থেকে অটো-ফিল্টার ----
+function qcDeliveryListInit(){
+  const notOkTbody = document.getElementById('qc-dl-notok-tbody');
+  const okTbody = document.getElementById('qc-dl-ok-tbody');
+  if(notOkTbody) notOkTbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  if(okTbody) okTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);">লোড হচ্ছে...</td></tr>';
+  db.collection('qcBatchEntry').orderBy('date','desc').limit(1000).get().then(function(snap){
+    const notOkRows = [], okRows = [];
+    snap.forEach(function(doc){
+      const d = doc.data();
+      if(d.result === 'Not OK') notOkRows.push(d); else okRows.push(d);
+    });
+    if(notOkTbody){
+      notOkTbody.innerHTML = notOkRows.length ? notOkRows.map(function(d){
+        return '<tr><td>'+(d.date||'—')+'</td><td>'+escapeHtml(d.batchNo||'—')+'</td><td>'+escapeHtml(d.party||'—')+'</td><td>'+escapeHtml(d.lotNo||'—')+'</td><td>'+escapeHtml(d.orderNo||'—')+'</td><td>'+escapeHtml(d.checkedBy||'—')+'</td><td style="color:#a4342a;">'+escapeHtml(d.remarks||'—')+'</td></tr>';
+      }).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--muted);">কোনো Stop/Not OK ব্যাচ নেই</td></tr>';
+    }
+    if(okTbody){
+      okTbody.innerHTML = okRows.length ? okRows.map(function(d){
+        return '<tr><td>'+(d.date||'—')+'</td><td>'+escapeHtml(d.batchNo||'—')+'</td><td>'+escapeHtml(d.party||'—')+'</td><td>'+escapeHtml(d.lotNo||'—')+'</td><td>'+escapeHtml(d.orderNo||'—')+'</td><td>'+escapeHtml(d.checkedBy||'—')+'</td></tr>';
+      }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);">কোনো OK ব্যাচ নেই</td></tr>';
+    }
+  }).catch(function(err){
+    if(notOkTbody) notOkTbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#a4342a;">⚠ লোড ব্যর্থ: '+err.message+'</td></tr>';
+    if(okTbody) okTbody.innerHTML = '';
+  });
+}
+
 // ---- 22. DYEING PRODUCTION ----
 const renderDyeProduction = wireFlatCollectionTable({
   collectionName: 'dyeProduction', tbodyId: 'dye-production-tbody', addBtnId: 'btn-add-dye-production', colCount: 8,
@@ -25783,6 +26139,10 @@ const titles = {
   'dye-finish-fabric-entry':'Finish Fabric Entry',
   'dye-fabric-pipeline-dashboard':'Fabric Pipeline Dashboard',
   'dye-finish-fabric-history':'Finish Fabric History &amp; Summary',
+  'qc-dashboard':'QC ডিপার্টমেন্ট ড্যাশবোর্ড',
+  'qc-batch-entry':'ব্যাচ QC এন্ট্রি',
+  'qc-party-stock':'Party Stock Overview (QC)',
+  'qc-delivery-list':'ডেলিভারি লিস্ট (OK / Not OK)',
   'dye-order-master':'Dyeing Order / Requirement',
   'dye-color-master':'Color Master',
   'dye-chemical-master':'Chemical Master',
@@ -26271,6 +26631,10 @@ const paths = {
   'dye-finish-fabric-entry':'Dyeing Expansion / Finishing Department',
   'dye-fabric-pipeline-dashboard':'Dyeing Expansion / Finishing Department',
   'dye-finish-fabric-history':'Dyeing Expansion / Finishing Department',
+  'qc-dashboard':'Dyeing Expansion / QC Department',
+  'qc-batch-entry':'Dyeing Expansion / QC Department',
+  'qc-party-stock':'Dyeing Expansion / QC Department',
+  'qc-delivery-list':'Dyeing Expansion / QC Department',
   'dye-order-master':'Dyeing Expansion / Dyeing Planning',
   'dye-color-master':'Dyeing Expansion / Phase 0 — Foundation',
   'dye-chemical-master':'Dyeing Expansion / Phase 0 — Foundation',
@@ -32444,6 +32808,10 @@ function navigateToView(viewKey){
   if(viewKey === 'dye-finish-fabric-entry' && typeof dyeFinishFabricEntryInit === 'function') dyeFinishFabricEntryInit();
   if(viewKey === 'dye-finish-fabric-history' && typeof dyeFinishFabricHistoryInit === 'function') dyeFinishFabricHistoryInit();
   if(viewKey === 'dye-fabric-pipeline-dashboard' && typeof dyeFabricPipelineDashboardInit === 'function') dyeFabricPipelineDashboardInit();
+  if(viewKey === 'qc-dashboard' && typeof qcDashboardInit === 'function') qcDashboardInit();
+  if(viewKey === 'qc-batch-entry' && typeof qcBatchEntryInit === 'function') qcBatchEntryInit();
+  if(viewKey === 'qc-party-stock' && typeof qcPartyStockInit === 'function') qcPartyStockInit();
+  if(viewKey === 'qc-delivery-list' && typeof qcDeliveryListInit === 'function') qcDeliveryListInit();
   if(viewKey === 'dye-chem-stock-view' && typeof dyeCsvLoad === 'function') dyeCsvLoad();
   if(viewKey === 'knt-dashboard' && typeof kntLoadDashboard === 'function') kntLoadDashboard();
   if(viewKey === 'inv-warehouse' && typeof loadWarehouseManagement === 'function') loadWarehouseManagement();
